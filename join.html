@@ -104,14 +104,16 @@ document.addEventListener("click",function(e){var b=e.target.closest("[data-copy
 .shots .ph.wide{grid-column:1 / -1;aspect-ratio:2/1}
 .shots img{width:100%;aspect-ratio:1;object-fit:cover;border-radius:8px;display:block}.shots img.wide{grid-column:1 / -1;aspect-ratio:2/1}
 .todo{background:#fff8e1;border-radius:3px;padding:0 .2rem}
-.quotes{list-style:none;margin:1.4rem 0 0;padding:0;display:grid;grid-template-columns:repeat(auto-fit,minmax(16rem,1fr));gap:1.2rem}
+.quotes{list-style:none;margin:1.4rem 0 0;padding:0 0 1rem;display:flex;gap:1.2rem;overflow-x:auto;scroll-snap-type:x mandatory;scroll-padding-inline:0;overscroll-behavior-x:contain;-webkit-overflow-scrolling:touch;scrollbar-width:thin;scrollbar-color:rgba(31,111,235,.4) transparent}
+.quotes li{flex:0 0 min(21rem,80%);scroll-snap-align:start}
+.quotes:focus-visible{outline:2px solid var(--blue);outline-offset:4px}
 .quotes li{background:#fff;border:1px solid var(--line);border-radius:12px;padding:1.4rem;display:grid;gap:1rem;align-content:space-between}
 .quotes blockquote{margin:0;font:500 1.02rem/1.5 var(--f-display);color:var(--ink)}
 .quotes blockquote::before{content:"\201C";display:block;font:700 2.4rem/1 var(--f-display);color:var(--blue);margin-bottom:.2rem}
 .quotes .who{display:flex;align-items:center;gap:.6rem;font-size:.85rem;color:var(--muted)}
 .quotes .who b{display:block;color:var(--ink);font-weight:600}
 .quotes .av{width:40px;height:40px;border-radius:50%;object-fit:cover;flex:none}
-.quotes li:only-child blockquote{font-size:clamp(1.15rem,1rem + .6vw,1.45rem)}
+
 .faq{margin:0}
 .faq details{border-bottom:1px solid var(--line)}
 .faq summary{list-style:none;cursor:pointer;display:flex;justify-content:space-between;gap:1rem;align-items:center;padding-block:1.1rem;font:600 1.05rem var(--f-display)}
@@ -128,7 +130,7 @@ document.addEventListener("click",function(e){var b=e.target.closest("[data-copy
 .card .mailbtn{background:var(--blue)}
 .card .mailbtn:hover{background:#fff;color:var(--ink)}
 .card .copybtn{color:#fff;border-color:rgba(255,255,255,.3)}
-@media (max-width:820px){.life{grid-template-columns:minmax(0,1fr)}.quotes{grid-template-columns:minmax(0,1fr)}.proj li{grid-template-columns:minmax(0,1fr);gap:.2rem}}
+@media (max-width:820px){.life{grid-template-columns:minmax(0,1fr)}.proj li{grid-template-columns:minmax(0,1fr);gap:.2rem}}
 @media (prefers-reduced-motion:reduce){.faq summary::after{transition:none}}
 </style>
 <header class="mast"><div class="wrap"><a class="brand" href="index.html" aria-label="RAIN Lab home"><svg class="logo" viewBox="0 0 397 73" role="img" aria-label="RAIN LAB">
@@ -162,8 +164,10 @@ document.addEventListener("click",function(e){var b=e.target.closest("[data-copy
     </section>
 
     <section class="sec"><h2>From the crew</h2>
-      <ul class="quotes">
+      <ul class="quotes" tabindex="0" aria-label="Quotes from lab members, scroll sideways for more">
         <li><blockquote>What I value most about the RAIN Lab is its friendly atmosphere and the freedom to pursue the research questions that interest me.</blockquote><p class="who"><img class="av" src="shiva-shakeri.jpg" alt=""><span><b>Shiva Shakeri</b>Ph.D. student</span></p></li>
+        <li><blockquote>I love how interdisciplinary and connected the research we do in the RAIN Lab is. It gives me more insight into the world of autonomous control!</blockquote><p class="who"><img class="av" src="joalda-morancy.jpg" alt=""><span><b>Joalda Morancy</b>Ph.D. student</span></p></li>
+        <li><blockquote>I joined the lab because it is a highly professional and intelligent team that is also very open and inclusive.</blockquote><p class="who"><img class="av" src="ruiqi-li.jpg" alt=""><span><b>Ruiqi Li</b>Ph.D. student</span></p></li>
       </ul>
     </section>
 
