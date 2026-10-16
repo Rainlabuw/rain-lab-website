@@ -7,7 +7,7 @@ var LAB_CFG={
   key:"sb_publishable_BFwGDxrQtwCcW3pSZtQ-0A_f661pXMo",
   meeting:{weekday:3,start:"10:30",end:"12:30",where:"GUG 211D"} // group meeting: Thursdays (0 = Monday)
 };
-var LAB_CARDS=["needs","pinned","week","talks","confs"]; // Today cards that are connected so far
+var LAB_CARDS=["needs","pinned","week","oneone","talks","confs"]; // Today cards that are connected so far
 var sb=supabase.createClient(LAB_CFG.url,LAB_CFG.key);
 var _labQ=[],_labOK=false;
 function labReady(f){if(_labOK)f();else _labQ.push(f)}
@@ -40,7 +40,8 @@ var LAB=(function(){
       q(sb.from("talks").select("*").gte("meeting_date",since)),
       q(sb.from("conferences").select("*").order("starts_on")),
       q(sb.from("conference_attendance").select("*")),
-      q(sb.from("requests").select("*").order("created_at",{ascending:false}))
+      q(sb.from("requests").select("*").order("created_at",{ascending:false})),
+      q(sb.from("office_hours").select("*").gte("slot_start",new Date(Date.now()-14*864e5).toISOString()))
     ]);
     var people=r[0];people.forEach(function(p){N[p.email]=p.name;E[p.name]=p.email});
     var pub=((typeof DATA!=="undefined"&&DATA.members)||[]).find(function(m){return m.name===meRow.name})||{};
@@ -54,6 +55,7 @@ var LAB=(function(){
         when:ds?(MON[ds.getMonth()]+" "+ds.getDate()+(de&&e!==s?(de.getMonth()===ds.getMonth()?" to "+de.getDate():" to "+MON[de.getMonth()]+" "+de.getDate()):"")+", "+ds.getFullYear()):"Dates to add",
         who:r[4].filter(function(a){return a.conference_id===c.id}).map(function(a){return nm(a.email)})}});
     DASH.requests=r[5].map(function(x){return {id:x.id,by:nm(x.author),email:x.author,type:x.kind,text:x.body,when:when(x.created_at),status:x.status,reply:x.reply}});
+    DASH.oneone=r[6].map(function(b){return {start:new Date(b.slot_start).toISOString(),email:b.email,name:nm(b.email),note:b.note||""}});
     // birthdays in the next 7 days, for people who chose to share them
     var today=new Date();today.setHours(0,0,0,0);
     DASH.birthdays=people.filter(function(p){return p.show_birthday&&p.birthday_month&&p.birthday_day}).map(function(p){
@@ -83,6 +85,9 @@ var LAB=(function(){
     addMember:async function(m){try{await q(sb.from("members").insert(m));N[m.email]=m.name;return true}catch(e){fail(e);return false}},
     delMember:async function(email){try{await q(sb.from("members").delete().eq("email",email))}catch(e){fail(e)}},
     setRole:async function(email,role){try{await q(sb.from("members").update({role:role}).eq("email",email))}catch(e){fail(e)}},
+    bookOO:async function(b){try{await q(sb.from("office_hours").insert({slot_start:b.start,email:DASH.me.email,note:b.note||null}))}
+      catch(e){var i=DASH.oneone.indexOf(b);if(i>=0)DASH.oneone.splice(i,1);ooEvents();document.dispatchEvent(new Event("dash:redraw"));if(window.toast)toast("Someone just took that slot. Please pick another.");console.error(e)}},
+    cancelOO:async function(b){try{await q(sb.from("office_hours").delete().eq("slot_start",b.start).eq("email",DASH.me.email))}catch(e){fail(e)}},
     signOut:async function(){await sb.auth.signOut();location.replace("members.html")}
   };
   return api;
