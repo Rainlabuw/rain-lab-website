@@ -501,7 +501,7 @@ function ooIsProf(){return DASH.me.email==="mesbahi@uw.edu"}
 // calendar events for bookings
 function ooEvents(){DASH.events=DASH.events.filter(function(e){return e.t!=="oneone"});var m=monday(new Date());
   DASH.oneone.forEach(function(b){var d=new Date(b.start),day=Math.round((new Date(d.getFullYear(),d.getMonth(),d.getDate())-m)/864e5),s=("0"+d.getHours()).slice(-2)+":"+("0"+d.getMinutes()).slice(-2),en=new Date(d.getTime()+OO.mins*6e4);
-    var mine=b.email===DASH.me.email;DASH.events.push({t:"oneone",title:mine?"1:1 with Prof. Mesbahi":ooIsProf()||isAdmin()?"1:1 with "+b.name:"1:1 with Prof. Mesbahi (booked)",day:day,s:s,e:("0"+en.getHours()).slice(-2)+":"+("0"+en.getMinutes()).slice(-2),where:"Prof. Mesbahi's office",who:mine||ooIsProf()||isAdmin()?(b.note||b.name):"Booked"})})}
+    var mine=b.email===DASH.me.email;DASH.events.push({t:"oneone",start:b.start,mine:mine,title:mine?"1:1 with Prof. Mesbahi":ooIsProf()||isAdmin()?"1:1 with "+b.name:"1:1 with Prof. Mesbahi (booked)",day:day,s:s,e:("0"+en.getHours()).slice(-2)+":"+("0"+en.getMinutes()).slice(-2),where:"Prof. Mesbahi's office",who:mine||ooIsProf()||isAdmin()?(b.note||b.name):"Booked"})})}
 // Today card
 function ooCardHTML(){var mine=ooMine();
   if(ooIsProf()){var up=DASH.oneone.filter(function(b){return new Date(b.start)>new Date()}).sort(function(a,b){return new Date(a.start)-new Date(b.start)}).slice(0,6);
@@ -519,7 +519,7 @@ labReady(function(){
       '<div class="slots">'+ooSlots(day).map(function(t){var b=ooAt(t),mine=b&&b.email===me,on=st.slot&&+st.slot===+t;
         return '<button type="button" data-ooslot="'+t.toISOString()+'" aria-pressed="'+!!on+'"'+(b&&!mine?' disabled':'')+(mine?' class="mine"':'')+'><b>'+fmtTime(("0"+t.getHours()).slice(-2)+":"+("0"+t.getMinutes()).slice(-2))+'</b><small>'+(mine?'Your booking':b?(isAdmin()?'Booked by '+esc(b.name):'Taken'):'Open')+'</small></button>'}).join("")+'</div>'+
       '<label class="fld"><span>What is it about? (optional)</span><input id="ooNote" placeholder="For example, CDC draft"></label>'+
-      '<p class="err" id="ooErr" role="alert" hidden></p><div class="mfoot"><button type="button" class="btn" data-close>Close</button><button type="button" class="btn dark" id="ooGo"'+(st.slot?'':' disabled')+'>Book</button></div></div>'}
+      '<p class="err" id="ooErr" role="alert" hidden></p><div class="mfoot">'+(function(){var mb=DASH.oneone.find(function(b){return b.email===me&&new Date(b.start).toDateString()===day.toDateString()});return mb?'<button type="button" class="btn" data-oo-cancel="'+esc(mb.start)+'" style="margin-right:auto">Cancel my 1:1</button>':''})()+'<button type="button" class="btn" data-close>Close</button><button type="button" class="btn dark" id="ooGo"'+(st.slot?'':' disabled')+'>Book</button></div></div>'}
   function open(){opener=document.activeElement;st={day:0,slot:null};draw();m.hidden=false;var f=m.querySelector(".days button");if(f)f.focus()}
   function close(){m.hidden=true;if(opener&&opener.focus)opener.focus()}
   window.openOneOne=open;
@@ -532,7 +532,7 @@ labReady(function(){
       if(window.LAB)LAB.bookOO(b)}});
   document.addEventListener("keydown",function(e){if(e.key==="Escape"&&!m.hidden)close()});
   document.addEventListener("click",function(e){var b=e.target.closest("[data-book]");if(b&&b.dataset.book==="oneone"){e.preventDefault();var mn=b.closest(".bookmenu");if(mn)mn.hidden=true;open()}
-    var c=e.target.closest("[data-oo-cancel]");if(c){var x=DASH.oneone.find(function(y){return y.start===c.dataset.ooCancel&&y.email===DASH.me.email});if(!x)return;
+    var c=e.target.closest("[data-oo-cancel]");if(c){if(!m.hidden)m.hidden=true;var x=DASH.oneone.find(function(y){return y.start===c.dataset.ooCancel&&y.email===DASH.me.email});if(!x)return;
       DASH.oneone.splice(DASH.oneone.indexOf(x),1);ooEvents();document.dispatchEvent(new Event("dash:redraw"));
       var t=setTimeout(function(){if(window.LAB)LAB.cancelOO(x)},6500);toast("Your 1:1 was cancelled.",function(){clearTimeout(t);DASH.oneone.push(x);ooEvents();document.dispatchEvent(new Event("dash:redraw"))})}});
   // "Book" menu
@@ -661,14 +661,14 @@ ooEvents();
   document.addEventListener("click",function(e){var b=e.target.closest("[data-ev]");
     if(b){e.stopPropagation();var ev=DASH.events[+b.dataset.ev],d=evDate(ev),book=ev.who==="Book this slot";opener=b;
       pop.innerHTML='<p class="t-'+ev.t+' ty"><span class="dot"></span>'+esc(DASH.types[ev.t])+'</p><h3>'+esc(ev.title)+'</h3><p>'+d.toLocaleDateString("en-US",{weekday:"long",month:"long",day:"numeric"})+', '+fmtTime(ev.s)+' to '+fmtTime(ev.e)+'</p><p>'+esc(ev.where)+'</p>'+(book?'':'<p class="w">'+esc(ev.who)+'</p>')+
-        '<div class="pf">'+(book?'<a class="btn sm dark" href="#" data-soon>Book this slot</a>':ev.t==="group"?'<a class="btn sm" href="#talksCard">Talk sign-ups</a>':'')+'<button type="button" class="btn sm" data-close>Close</button></div>';
+        '<div class="pf">'+(book?'<a class="btn sm dark" href="#" data-soon>Book this slot</a>':ev.t==="group"?'<a class="btn sm" href="#talksCard">Talk sign-ups</a>':ev.t==="oneone"&&ev.mine&&new Date(ev.start)>new Date()?'<button type="button" class="btn sm" data-oo-cancel="'+esc(ev.start)+'">Cancel my 1:1</button>':'')+'<button type="button" class="btn sm" data-close>Close</button></div>';
       pop.hidden=false;var r=b.getBoundingClientRect(),w=pop.offsetWidth,x=Math.min(Math.max(8,r.left),document.documentElement.clientWidth-w-8),y=r.bottom+6;if(y+pop.offsetHeight>innerHeight-8)y=Math.max(8,r.top-pop.offsetHeight-6);
       pop.style.left=x+"px";pop.style.top=y+"px";pop.querySelector("[data-close]").focus();return}
-    if(e.target.closest("[data-close]")||!pop.contains(e.target))closePop()});
+    if(e.target.closest("[data-close],[data-oo-cancel]")||!pop.contains(e.target))closePop()});
   document.addEventListener("keydown",function(e){if(e.key==="Escape")closePop()});
   window.addEventListener("scroll",function(){if(!pop.hidden)pop.hidden=true},{passive:true});
   draw();
-  document.getElementById("legend").innerHTML=Object.keys(DASH.types).map(function(k){return '<li class="t-'+k+'"><span class="dot"></span>'+esc(DASH.types[k])+'</li>'}).join("");
+  document.getElementById("legend").innerHTML=Object.keys(DASH.types).filter(function(k){return DASH.events.some(function(e){return e.t===k})}).map(function(k){return '<li class="t-'+k+'"><span class="dot"></span>'+esc(DASH.types[k])+'</li>'}).join("");
   function side(){document.getElementById("talks").innerHTML=talksHTML();document.getElementById("confs").innerHTML=confsHTML()}
   side();document.addEventListener("dash:redraw",function(){side();draw()});
 })();

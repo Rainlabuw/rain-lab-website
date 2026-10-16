@@ -501,7 +501,7 @@ function ooIsProf(){return DASH.me.email==="mesbahi@uw.edu"}
 // calendar events for bookings
 function ooEvents(){DASH.events=DASH.events.filter(function(e){return e.t!=="oneone"});var m=monday(new Date());
   DASH.oneone.forEach(function(b){var d=new Date(b.start),day=Math.round((new Date(d.getFullYear(),d.getMonth(),d.getDate())-m)/864e5),s=("0"+d.getHours()).slice(-2)+":"+("0"+d.getMinutes()).slice(-2),en=new Date(d.getTime()+OO.mins*6e4);
-    var mine=b.email===DASH.me.email;DASH.events.push({t:"oneone",title:mine?"1:1 with Prof. Mesbahi":ooIsProf()||isAdmin()?"1:1 with "+b.name:"1:1 with Prof. Mesbahi (booked)",day:day,s:s,e:("0"+en.getHours()).slice(-2)+":"+("0"+en.getMinutes()).slice(-2),where:"Prof. Mesbahi's office",who:mine||ooIsProf()||isAdmin()?(b.note||b.name):"Booked"})})}
+    var mine=b.email===DASH.me.email;DASH.events.push({t:"oneone",start:b.start,mine:mine,title:mine?"1:1 with Prof. Mesbahi":ooIsProf()||isAdmin()?"1:1 with "+b.name:"1:1 with Prof. Mesbahi (booked)",day:day,s:s,e:("0"+en.getHours()).slice(-2)+":"+("0"+en.getMinutes()).slice(-2),where:"Prof. Mesbahi's office",who:mine||ooIsProf()||isAdmin()?(b.note||b.name):"Booked"})})}
 // Today card
 function ooCardHTML(){var mine=ooMine();
   if(ooIsProf()){var up=DASH.oneone.filter(function(b){return new Date(b.start)>new Date()}).sort(function(a,b){return new Date(a.start)-new Date(b.start)}).slice(0,6);
@@ -519,7 +519,7 @@ labReady(function(){
       '<div class="slots">'+ooSlots(day).map(function(t){var b=ooAt(t),mine=b&&b.email===me,on=st.slot&&+st.slot===+t;
         return '<button type="button" data-ooslot="'+t.toISOString()+'" aria-pressed="'+!!on+'"'+(b&&!mine?' disabled':'')+(mine?' class="mine"':'')+'><b>'+fmtTime(("0"+t.getHours()).slice(-2)+":"+("0"+t.getMinutes()).slice(-2))+'</b><small>'+(mine?'Your booking':b?(isAdmin()?'Booked by '+esc(b.name):'Taken'):'Open')+'</small></button>'}).join("")+'</div>'+
       '<label class="fld"><span>What is it about? (optional)</span><input id="ooNote" placeholder="For example, CDC draft"></label>'+
-      '<p class="err" id="ooErr" role="alert" hidden></p><div class="mfoot"><button type="button" class="btn" data-close>Close</button><button type="button" class="btn dark" id="ooGo"'+(st.slot?'':' disabled')+'>Book</button></div></div>'}
+      '<p class="err" id="ooErr" role="alert" hidden></p><div class="mfoot">'+(function(){var mb=DASH.oneone.find(function(b){return b.email===me&&new Date(b.start).toDateString()===day.toDateString()});return mb?'<button type="button" class="btn" data-oo-cancel="'+esc(mb.start)+'" style="margin-right:auto">Cancel my 1:1</button>':''})()+'<button type="button" class="btn" data-close>Close</button><button type="button" class="btn dark" id="ooGo"'+(st.slot?'':' disabled')+'>Book</button></div></div>'}
   function open(){opener=document.activeElement;st={day:0,slot:null};draw();m.hidden=false;var f=m.querySelector(".days button");if(f)f.focus()}
   function close(){m.hidden=true;if(opener&&opener.focus)opener.focus()}
   window.openOneOne=open;
@@ -532,7 +532,7 @@ labReady(function(){
       if(window.LAB)LAB.bookOO(b)}});
   document.addEventListener("keydown",function(e){if(e.key==="Escape"&&!m.hidden)close()});
   document.addEventListener("click",function(e){var b=e.target.closest("[data-book]");if(b&&b.dataset.book==="oneone"){e.preventDefault();var mn=b.closest(".bookmenu");if(mn)mn.hidden=true;open()}
-    var c=e.target.closest("[data-oo-cancel]");if(c){var x=DASH.oneone.find(function(y){return y.start===c.dataset.ooCancel&&y.email===DASH.me.email});if(!x)return;
+    var c=e.target.closest("[data-oo-cancel]");if(c){if(!m.hidden)m.hidden=true;var x=DASH.oneone.find(function(y){return y.start===c.dataset.ooCancel&&y.email===DASH.me.email});if(!x)return;
       DASH.oneone.splice(DASH.oneone.indexOf(x),1);ooEvents();document.dispatchEvent(new Event("dash:redraw"));
       var t=setTimeout(function(){if(window.LAB)LAB.cancelOO(x)},6500);toast("Your 1:1 was cancelled.",function(){clearTimeout(t);DASH.oneone.push(x);ooEvents();document.dispatchEvent(new Event("dash:redraw"))})}});
   // "Book" menu
