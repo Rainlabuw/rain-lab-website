@@ -1,4 +1,4 @@
-<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover"></head><body><script src="vendor/supabase-2.117.2.js"></script><script src="lab.js?v=e19535d6"></script><style>.lab-loading body{visibility:hidden}.live-hide{display:none!important}</style><!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover"></head><body><title>Reading | RAIN Lab members</title><link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Caveat:wght@500;600&family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:wght@400;500;600&family=Urbanist:wght@500;600;700&display=swap"><style>:root{
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover"></head><body><script src="vendor/supabase-2.117.2.js"></script><script src="lab.js?v=ad19b5ef"></script><style>.lab-loading body{visibility:hidden}.live-hide{display:none!important}</style><!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover"></head><body><title>Reading | RAIN Lab members</title><link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Caveat:wght@500;600&family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:wght@400;500;600&family=Urbanist:wght@500;600;700&display=swap"><style>:root{
   --cloud:#f6f8fb; --white:#ffffff; --ink:#13101d; --muted:#586174; --line:#e1e6ee;
   --blue:#1f6feb; --blue-text:#1a5fcc; --blue-soft:#e7effd;
   --night:#0b0714; --black:#000; --night-ink:#eef1f7; --night-muted:#9aa3b6; --night-line:#231d33;
@@ -648,8 +648,13 @@ select.freq{font:500 .8rem var(--f-body);border:1px solid var(--line);border-rad
 .fgrid label,.fgrid .lbl{display:grid;gap:.3rem;font:500 .66rem var(--f-mono);letter-spacing:.1em;text-transform:uppercase;color:var(--muted)}
 .fgrid input,.fgrid select{font:400 .92rem var(--f-body);color:var(--ink);border:1px solid var(--line);border-radius:7px;padding:.5rem .65rem;text-transform:none;letter-spacing:0;background:#fff}
 .fgrid .full{grid-column:1 / -1}
+.gseg{display:flex;flex-wrap:wrap;gap:.35rem;text-transform:none;letter-spacing:0}
+.gseg button{font:500 .84rem var(--f-body);background:#fff;border:1px solid var(--line);border-radius:999px;padding:.4rem .85rem;cursor:pointer;color:var(--ink)}
+.gseg button[aria-pressed="true"]{background:var(--ink);border-color:var(--ink);color:#fff}
 .fgrid .times{text-transform:none;letter-spacing:0;font:400 .85rem var(--f-body);color:var(--ink)}
 .fgrid select,.fgrid input{width:100%;min-width:0}
+.fgrid .times .row{display:flex;flex-wrap:wrap;align-items:center;gap:.5rem;margin-bottom:.4rem}
+.fgrid .times select{width:auto}
 .tabbar{overflow-x:auto;scrollbar-width:none}.tabbar button{white-space:nowrap}
 .fgrid .chk{display:flex;align-items:center;gap:.5rem;text-transform:none;letter-spacing:0;font:400 .88rem var(--f-body);color:var(--ink)}
 .fgrid .chk input{width:auto}
@@ -715,7 +720,7 @@ select.freq{font:500 .8rem var(--f-body);border:1px solid var(--line);border-rad
     </section>
 
     <section id="tab-rg">
-      <div class="about"><p><b>Reading groups</b> are small groups any member can start around a topic. Invite people or let others join, vote on a weekly time, and once everyone has voted the time is set until <span id="qend"></span>.</p><button type="button" class="btn dark" id="startBtn"><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M8 3v10M3 8h10" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>Start a reading group</button></div>
+      <div class="about"><p><b>Reading groups</b> are small groups any member can start around a topic. Invite people or let others join, then set a weekly time yourself or let everyone vote on one. It repeats until <span id="qend"></span>.</p><button type="button" class="btn dark" id="startBtn"><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M8 3v10M3 8h10" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>Start a reading group</button></div>
       <form class="card gform" id="gform" novalidate>
         <h2>Start a reading group</h2>
         <div class="fgrid">
@@ -723,6 +728,7 @@ select.freq{font:500 .8rem var(--f-body);border:1px solid var(--line);border-rad
           <label>Research area<select name="area" id="garea"></select></label>
           <label class="full">What it is about<input name="desc" placeholder="One line on the topic"></label>
           <div class="full lbl" role="group" aria-labelledby="ginvL"><span id="ginvL">Invite people</span><div class="pick" id="ginv"></div></div>
+          <div class="full lbl" role="group" aria-labelledby="gmodeL"><span id="gmodeL">Weekly time</span><div class="gseg" id="gmode"><button type="button" data-m="vote" aria-pressed="true">Members vote on a time</button><button type="button" data-m="set" aria-pressed="false">I'll set the time</button></div></div>
           <div class="full lbl" role="group" aria-labelledby="gtL"><span id="gtL">Times to vote on (weekly, until the end of the quarter)</span><div id="gtimes" class="times"></div><button type="button" class="linkbtn" id="addTime">+ Add another time</button></div>
           <label class="full chk"><input type="checkbox" name="open" checked> Anyone in the lab can join</label>
         </div>
@@ -826,6 +832,14 @@ select.freq{font:500 .8rem var(--f-body);border:1px solid var(--line);border-rad
   var HOURS=["9 am","10 am","11 am","noon","1 pm","2 pm","3 pm","4 pm","5 pm"];
   function timeRow(d,h){return '<div class="row"><select aria-label="Day">'+DAYS.map(function(x,i){return '<option value="'+i+'"'+(i===d?' selected':'')+'>'+x+'</option>'}).join("")+'</select><select aria-label="Start time">'+HOURS.map(function(x,i){return '<option value="'+i+'"'+(i===h?' selected':'')+'>'+x+'</option>'}).join("")+'</select><span class="wait">for an hour</span></div>'}
   document.getElementById("gtimes").innerHTML=timeRow(1,5)+timeRow(3,7);
+  var gmode="vote";
+  document.getElementById("gmode").addEventListener("click",function(e){var b=e.target.closest("[data-m]");if(!b)return;gmode=b.dataset.m;
+    this.querySelectorAll("button").forEach(function(x){x.setAttribute("aria-pressed",String(x===b))});
+    var T=document.getElementById("gtimes"),rows=T.querySelectorAll(".row");
+    if(gmode==="set"){for(var i=1;i<rows.length;i++)rows[i].remove()}else if(rows.length<2)T.insertAdjacentHTML("beforeend",timeRow(3,7));
+    document.getElementById("addTime").hidden=gmode==="set";
+    document.getElementById("gtL").textContent=gmode==="set"?"Time (weekly, until the end of the quarter)":"Times to vote on (weekly, until the end of the quarter)";
+    var sb=gform.querySelector('[type="submit"]');sb.textContent=gmode==="set"?"Create group":"Create and send invitations"});
   document.getElementById("addTime").onclick=function(){document.getElementById("gtimes").insertAdjacentHTML("beforeend",timeRow(2,2))};
   document.getElementById("startBtn").onclick=function(){gform.classList.add("open");gform.querySelector("input").focus()};
   document.getElementById("gcancel").onclick=function(){gform.classList.remove("open")};
@@ -834,7 +848,9 @@ select.freq{font:500 .8rem var(--f-body);border:1px solid var(--line);border-rad
     if(!String(d.get("name")||"").trim()){document.getElementById("gerr").textContent="Give the group a name.";return}
     var opts=[].map.call(document.querySelectorAll("#gtimes .row"),function(r){var s=r.querySelectorAll("select"),day=+s[0].value,hh=+s[1].value;return {d:DAYS[day]+", "+HOURS[hh]+" to "+(HOURS[hh+1]||"6 pm"),day:day,hour:9+hh,v:[]}});
     opts=opts.filter(function(o,i){return opts.findIndex(function(x){return x.d===o.d})===i});
-    var ng={id:Date.now(),name:String(d.get("name")).trim(),area:d.get("area"),desc:String(d.get("desc")||"").trim(),owner:me,members:[me],invited:inv.slice(),open:!!d.get("open"),state:"scheduling",where:"To decide",options:opts};G.unshift(ng);
+    var ng={id:Date.now(),name:String(d.get("name")).trim(),area:d.get("area"),desc:String(d.get("desc")||"").trim(),owner:me,members:[me],invited:inv.slice(),open:!!d.get("open"),state:"scheduling",where:"To decide",options:opts};
+    if(gmode==="set"||opts.length===1){var o0=opts[0];Object.assign(ng,{state:"set",time:o0.d,day:o0.day,hour:o0.hour,justSet:true,options:[],sessions:window.LAB?[]:[{day:o0.day+7,mode:"pick",by:me,q:null}],past:[]})}
+    G.unshift(ng);
     if(window.LAB)LAB.addGroup(ng).then(function(ok){if(ok)drawRG()});toast(ng.invited.length?"Group started. Invitations sent to "+ng.invited.length+(ng.invited.length===1?" person.":" people."):"Group started.");
     gform.reset();inv=[];document.querySelectorAll("#ginv button").forEach(function(b){b.setAttribute("aria-pressed","false")});document.getElementById("gerr").textContent="";gform.classList.remove("open");drawRG()});
 

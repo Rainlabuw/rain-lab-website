@@ -118,10 +118,13 @@ var LAB=(function(){
         else if(a==="withdraw")await q(sb.from("review_requests").delete().eq("id",r.id));
       }catch(e){fail(e)}},
     addGroup:async function(g){try{
-        var row=(await q(sb.from("reading_groups").insert({name:g.name,area:g.area,description:g.desc||null,owner:DASH.me.email,open_to_all:!!g.open,state:"scheduling"}).select()))[0];
+        var pad=function(x){return ("0"+x).slice(-2)+":00"},set=g.state==="set",gr={name:g.name,area:g.area,description:g.desc||null,owner:DASH.me.email,open_to_all:!!g.open,state:set?"set":"scheduling"};
+        if(set)Object.assign(gr,{weekly_time:g.time,weekday:g.day,start_time:pad(g.hour||15),end_time:pad((g.hour||15)+1)});
+        var row=(await q(sb.from("reading_groups").insert(gr).select()))[0];
         await q(sb.from("reading_group_people").insert([{group_id:row.id,email:DASH.me.email,status:"member"}].concat(g.invited.map(function(n){return {group_id:row.id,email:E[n],status:"invited"}}))));
-        var opts=await q(sb.from("reading_time_options").insert(g.options.map(function(o){var h=o.hour||15,pad=function(x){return ("0"+x).slice(-2)+":00"};return {group_id:row.id,weekday:o.day,start_time:pad(h),end_time:pad(h+1),label:o.d}})).select());
-        g.id=row.id;opts.forEach(function(o,i){g.options[i].id=o.id});return true}catch(e){fail(e);return false}},
+        g.id=row.id;if(set)return true;
+        var opts=await q(sb.from("reading_time_options").insert(g.options.map(function(o){var h=o.hour||15;return {group_id:row.id,weekday:o.day,start_time:pad(h),end_time:pad(h+1),label:o.d}})).select());
+        opts.forEach(function(o,i){g.options[i].id=o.id});return true}catch(e){fail(e);return false}},
     groupPerson:async function(g,a){try{var t=sb.from("reading_group_people");
         if(a==="join")await q(t.insert({group_id:g.id,email:DASH.me.email,status:"member"}));
         else if(a==="accept")await q(t.update({status:"member"}).eq("group_id",g.id).eq("email",DASH.me.email));
