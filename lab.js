@@ -7,7 +7,7 @@ var LAB_CFG={
   key:"sb_publishable_BFwGDxrQtwCcW3pSZtQ-0A_f661pXMo",
   meeting:{weekday:3,start:"10:30",end:"12:30",where:"GUG 211D"} // group meeting: Thursdays (0 = Monday)
 };
-var LAB_CARDS=["needs","pinned","week","oneone","talks","reviews","confs"]; // Today cards that are connected so far
+var LAB_CARDS=["needs","pinned","week","oneone","talks","reading","reviews","confs"]; // Today cards that are connected so far
 var sb=supabase.createClient(LAB_CFG.url,LAB_CFG.key);
 var _labQ=[],_labOK=false;
 function labReady(f){if(_labOK)f();else _labQ.push(f)}
@@ -43,7 +43,11 @@ var LAB=(function(){
       q(sb.from("requests").select("*").order("created_at",{ascending:false})),
       q(sb.from("office_hours").select("*").gte("slot_start",new Date(Date.now()-14*864e5).toISOString())),
       q(sb.from("review_requests").select("*").order("needed_by")),
-      q(sb.from("reviewers").select("*"))
+      q(sb.from("reviewers").select("*")),
+      q(sb.from("reading_groups").select("*").neq("state","archived").order("created_at",{ascending:false})),
+      q(sb.from("reading_group_people").select("*")),
+      q(sb.from("reading_time_options").select("*").order("id")),
+      q(sb.from("reading_time_votes").select("*"))
     ]);
     var people=r[0];people.forEach(function(p){N[p.email]=p.name;E[p.name]=p.email});
     var pub=((typeof DATA!=="undefined"&&DATA.members)||[]).find(function(m){return m.name===meRow.name})||{};
@@ -66,7 +70,18 @@ var LAB=(function(){
     // parts of the dashboard that are not connected yet start empty
     DASH.reviews=r[7].map(function(x){return {id:x.id,title:x.title,author:nm(x.author),venue:x.venue||"Venue to add",need:x.needed_by,link:x.link||"",kinds:x.kinds||[],open:x.open_to_volunteers,
       reviewers:r[8].filter(function(v){return v.request_id===x.id}).map(function(v){return {n:nm(v.email),st:v.status}})}});
-    ["groups","changes","polls","library","digest","courses","quals"].forEach(function(k){DASH[k]=[]});
+    DASH.groups=r[9].map(function(g){var ppl=r[10].filter(function(x){return x.group_id===g.id});
+      return {id:g.id,name:g.name,area:g.area||"learning",desc:g.description||"",owner:nm(g.owner),open:g.open_to_all,state:g.state,time:g.weekly_time,day:g.weekday,where:g.location||"To decide",
+        start:g.start_time,end:g.end_time,
+        members:ppl.filter(function(x){return x.status==="member"}).map(function(x){return nm(x.email)}),
+        invited:ppl.filter(function(x){return x.status==="invited"}).map(function(x){return nm(x.email)}),
+        options:r[11].filter(function(o){return o.group_id===g.id}).map(function(o){return {id:o.id,d:o.label,day:o.weekday,
+          v:r[12].filter(function(v){return v.option_id===o.id}).map(function(v){return nm(v.email)})}}),
+        sessions:[],past:[]}});
+    // weekly reading group meetings on the calendar
+    DASH.groups.filter(function(g){return g.state==="set"&&g.day!=null}).forEach(function(g){
+      for(var w=-1;w<=10;w++)DASH.events.push({t:"reading",title:g.name+" reading group",day:w*7+g.day,s:(g.start||"15:00").slice(0,5),e:(g.end||"16:00").slice(0,5),where:g.where,who:g.members.length+" members"})});
+    ["changes","polls","library","digest","courses","quals"].forEach(function(k){DASH[k]=[]});
   }
 
   // ---- writes
@@ -102,6 +117,23 @@ var LAB=(function(){
         else if(a==="volunteer")await q(t.insert({request_id:r.id,email:me,status:"accepted"}));
         else if(a==="withdraw")await q(sb.from("review_requests").delete().eq("id",r.id));
       }catch(e){fail(e)}},
+    addGroup:async function(g){try{
+        var row=(await q(sb.from("reading_groups").insert({name:g.name,area:g.area,description:g.desc||null,owner:DASH.me.email,open_to_all:!!g.open,state:"scheduling"}).select()))[0];
+        await q(sb.from("reading_group_people").insert([{group_id:row.id,email:DASH.me.email,status:"member"}].concat(g.invited.map(function(n){return {group_id:row.id,email:E[n],status:"invited"}}))));
+        var opts=await q(sb.from("reading_time_options").insert(g.options.map(function(o){var h=o.hour||15,pad=function(x){return ("0"+x).slice(-2)+":00"};return {group_id:row.id,weekday:o.day,start_time:pad(h),end_time:pad(h+1),label:o.d}})).select());
+        g.id=row.id;opts.forEach(function(o,i){g.options[i].id=o.id});return true}catch(e){fail(e);return false}},
+    groupPerson:async function(g,a){try{var t=sb.from("reading_group_people");
+        if(a==="join")await q(t.insert({group_id:g.id,email:DASH.me.email,status:"member"}));
+        else if(a==="accept")await q(t.update({status:"member"}).eq("group_id",g.id).eq("email",DASH.me.email));
+        else await q(t.delete().eq("group_id",g.id).eq("email",DASH.me.email));
+      }catch(e){fail(e)}},
+    timeVote:async function(o,on){try{
+        if(on)await q(sb.from("reading_time_votes").insert({option_id:o.id,email:DASH.me.email}));
+        else await q(sb.from("reading_time_votes").delete().eq("option_id",o.id).eq("email",DASH.me.email));
+      }catch(e){fail(e)}},
+    settleGroup:function(g){
+      // the vote that completes the poll may still be saving, so wait a moment before asking the database to set the time
+      setTimeout(async function(){try{var r=await sb.rpc("settle_reading_group",{gid:g.id});if(r.error)throw r.error}catch(e){console.error(e)}},1200)},
     signOut:async function(){await sb.auth.signOut();location.replace("members.html")}
   };
   return api;
