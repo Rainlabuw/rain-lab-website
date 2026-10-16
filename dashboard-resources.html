@@ -216,8 +216,7 @@ body{background:var(--cloud)}
 .poll .po .ppl img,.poll .po .ppl .ini{width:20px;height:20px}
 .poll .po .n{font:500 .7rem var(--f-mono);color:var(--muted)}
 </style>
-<script>labReady(function(){
-
+<script>
 // Sample data for the prototype. In the real version this comes from the lab's Google Calendar and the database.
 var DASH={
   me:{name:"Shiva Shakeri",role:"Admin",photo:"shiva-shakeri.jpg"},
@@ -463,8 +462,7 @@ document.addEventListener("keydown",function(e){if(e.key!=="Tab")return;var m=[]
   var f=[].filter.call(m.querySelectorAll('a[href],button:not([disabled]),input:not([disabled]),select,textarea,[tabindex="0"]'),function(x){return x.offsetParent!==null});if(!f.length)return;
   var a=f[0],z=f[f.length-1];if(!m.contains(document.activeElement)){e.preventDefault();a.focus();return}
   if(e.shiftKey&&document.activeElement===a){e.preventDefault();z.focus()}else if(!e.shiftKey&&document.activeElement===z){e.preventDefault();a.focus()}});
-
-});</script>
+</script>
 
 <style>
 .sec{margin-bottom:2rem}
