@@ -7,7 +7,7 @@ var LAB_CFG={
   key:"sb_publishable_BFwGDxrQtwCcW3pSZtQ-0A_f661pXMo",
   meeting:{weekday:3,start:"10:30",end:"12:30",where:"GUG 211D"} // group meeting: Thursdays (0 = Monday)
 };
-var LAB_CARDS=["needs","pinned","week","oneone","talks","confs"]; // Today cards that are connected so far
+var LAB_CARDS=["needs","pinned","week","oneone","talks","reviews","confs"]; // Today cards that are connected so far
 var sb=supabase.createClient(LAB_CFG.url,LAB_CFG.key);
 var _labQ=[],_labOK=false;
 function labReady(f){if(_labOK)f();else _labQ.push(f)}
@@ -41,7 +41,9 @@ var LAB=(function(){
       q(sb.from("conferences").select("*").order("starts_on")),
       q(sb.from("conference_attendance").select("*")),
       q(sb.from("requests").select("*").order("created_at",{ascending:false})),
-      q(sb.from("office_hours").select("*").gte("slot_start",new Date(Date.now()-14*864e5).toISOString()))
+      q(sb.from("office_hours").select("*").gte("slot_start",new Date(Date.now()-14*864e5).toISOString())),
+      q(sb.from("review_requests").select("*").order("needed_by")),
+      q(sb.from("reviewers").select("*"))
     ]);
     var people=r[0];people.forEach(function(p){N[p.email]=p.name;E[p.name]=p.email});
     var pub=((typeof DATA!=="undefined"&&DATA.members)||[]).find(function(m){return m.name===meRow.name})||{};
@@ -62,7 +64,9 @@ var LAB=(function(){
       var d=new Date(today.getFullYear(),p.birthday_month-1,p.birthday_day);if(d<today)d.setFullYear(d.getFullYear()+1);
       return {n:p.name,inDays:Math.round((d-today)/864e5)}}).filter(function(b){return b.inDays<=7});
     // parts of the dashboard that are not connected yet start empty
-    ["groups","reviews","changes","polls","library","digest","courses","quals"].forEach(function(k){DASH[k]=[]});
+    DASH.reviews=r[7].map(function(x){return {id:x.id,title:x.title,author:nm(x.author),venue:x.venue||"Venue to add",need:x.needed_by,link:x.link||"",kinds:x.kinds||[],open:x.open_to_volunteers,
+      reviewers:r[8].filter(function(v){return v.request_id===x.id}).map(function(v){return {n:nm(v.email),st:v.status}})}});
+    ["groups","changes","polls","library","digest","courses","quals"].forEach(function(k){DASH[k]=[]});
   }
 
   // ---- writes
@@ -88,6 +92,16 @@ var LAB=(function(){
     bookOO:async function(b){try{await q(sb.from("office_hours").insert({slot_start:b.start,email:DASH.me.email,note:b.note||null}))}
       catch(e){var i=DASH.oneone.indexOf(b);if(i>=0)DASH.oneone.splice(i,1);ooEvents();document.dispatchEvent(new Event("dash:redraw"));if(window.toast)toast("Someone just took that slot. Please pick another.");console.error(e)}},
     cancelOO:async function(b){try{await q(sb.from("office_hours").delete().eq("slot_start",b.start).eq("email",DASH.me.email))}catch(e){fail(e)}},
+    addReview:async function(r){try{
+        var x=(await q(sb.from("review_requests").insert({title:r.title,author:DASH.me.email,venue:r.venue,link:r.link||null,needed_by:r.need,kinds:r.kinds,open_to_volunteers:!!r.open}).select()))[0];
+        await q(sb.from("reviewers").insert(r.reviewers.map(function(v){return {request_id:x.id,email:E[v.n],status:"invited"}})));return x.id}catch(e){fail(e)}},
+    review:async function(a,r){try{var me=DASH.me.email,t=sb.from("reviewers");
+        if(a==="accept")await q(t.update({status:"accepted"}).eq("request_id",r.id).eq("email",me));
+        else if(a==="done")await q(t.update({status:"done"}).eq("request_id",r.id).eq("email",me));
+        else if(a==="decline")await q(t.delete().eq("request_id",r.id).eq("email",me));
+        else if(a==="volunteer")await q(t.insert({request_id:r.id,email:me,status:"accepted"}));
+        else if(a==="withdraw")await q(sb.from("review_requests").delete().eq("id",r.id));
+      }catch(e){fail(e)}},
     signOut:async function(){await sb.auth.signOut();location.replace("members.html")}
   };
   return api;
