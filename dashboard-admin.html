@@ -360,7 +360,7 @@ function talksHTML(){var me=DASH.me.name,t=nextTalk(),ev=DASH.events.find(functi
 function confsHTML(limit){var me=DASH.me.name,list=DASH.conferences.filter(function(c){return daysTo(c.start)>=0}).sort(function(a,b){return a.start<b.start?-1:1}).slice(0,limit||99);
   return '<ul class="confs">'+list.map(function(c,i){var mine=c.who.indexOf(me)>=0;
     return '<li><b>'+esc(c.short)+'</b><span class="x">'+esc(c.when)+', '+esc(c.where)+'</span><div class="ppl">'+c.who.map(face).join("")+'<span class="c">'+(c.who.length?c.who.length+' going':'No one yet')+'</span></div>'+
-      '<div><button type="button" class="btn sm'+(mine?' on':'')+'" data-conf="'+esc(c.short)+'">'+(mine?'&#10003; Attending':'I\'m attending')+'</button></div></li>'}).join("")+'</ul>'}
+      '<div><button type="button" class="btn sm'+(mine?' on':'')+'" data-conf="'+esc(c.short)+'">'+(mine?'&#10003; Attending':'I\'m attending')+'</button></div></li>'}).join("")+'</ul>'+(list.length?'':'<p class="empty">No conferences yet. '+(isAdmin()?'Add them in Admin, Lab data.':'Ask the admins to add one.')+'</p>')}
 document.addEventListener("click",function(e){var b=e.target.closest("[data-talk],[data-conf]");if(!b||b.disabled)return;var me=DASH.me.name,arr;
   var t=null,c=null;if(b.hasAttribute("data-talk")){t=nextTalk();arr=t.names}else{c=DASH.conferences.find(function(x){return x.short===b.dataset.conf});arr=c.who}
   var i=arr.indexOf(me);if(i>=0)arr.splice(i,1);else arr.push(me);document.dispatchEvent(new Event("dash:redraw"));
