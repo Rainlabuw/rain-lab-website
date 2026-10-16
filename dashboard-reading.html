@@ -1,4 +1,4 @@
-<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover"></head><body><script src="vendor/supabase-2.117.2.js"></script><script src="lab.js?v=ad19b5ef"></script><style>.lab-loading body{visibility:hidden}.live-hide{display:none!important}</style><!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover"></head><body><title>Reading | RAIN Lab members</title><link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Caveat:wght@500;600&family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:wght@400;500;600&family=Urbanist:wght@500;600;700&display=swap"><style>:root{
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover"></head><body><script src="vendor/supabase-2.117.2.js"></script><script src="lab.js?v=c4051836"></script><style>.lab-loading body{visibility:hidden}.live-hide{display:none!important}</style><!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover"></head><body><title>Reading | RAIN Lab members</title><link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Caveat:wght@500;600&family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:wght@400;500;600&family=Urbanist:wght@500;600;700&display=swap"><style>:root{
   --cloud:#f6f8fb; --white:#ffffff; --ink:#13101d; --muted:#586174; --line:#e1e6ee;
   --blue:#1f6feb; --blue-text:#1a5fcc; --blue-soft:#e7effd;
   --night:#0b0714; --black:#000; --night-ink:#eef1f7; --night-muted:#9aa3b6; --night-line:#231d33;
@@ -648,6 +648,7 @@ select.freq{font:500 .8rem var(--f-body);border:1px solid var(--line);border-rad
 .fgrid label,.fgrid .lbl{display:grid;gap:.3rem;font:500 .66rem var(--f-mono);letter-spacing:.1em;text-transform:uppercase;color:var(--muted)}
 .fgrid input,.fgrid select{font:400 .92rem var(--f-body);color:var(--ink);border:1px solid var(--line);border-radius:7px;padding:.5rem .65rem;text-transform:none;letter-spacing:0;background:#fff}
 .fgrid .full{grid-column:1 / -1}
+.linkbtn.danger{color:#b42318}
 .gseg{display:flex;flex-wrap:wrap;gap:.35rem;text-transform:none;letter-spacing:0}
 .gseg button{font:500 .84rem var(--f-body);background:#fff;border:1px solid var(--line);border-radius:999px;padding:.4rem .85rem;cursor:pointer;color:var(--ink)}
 .gseg button[aria-pressed="true"]{background:var(--ink);border-color:var(--ink);color:#fff}
@@ -808,6 +809,7 @@ select.freq{font:500 .8rem var(--f-body);border:1px solid var(--line);border-rad
     }
     if(!isM&&!isInv)h+='<div class="gfoot">'+(g.open?'<button type="button" class="btn sm dark" data-g="join" data-id="'+g.id+'">Join group</button>':'<span class="wait">Invite only. Ask '+esc(g.owner)+' to add you.</span>')+'</div>';
     else if(isM&&g.owner!==me)h+='<div class="gfoot"><button type="button" class="linkbtn" data-g="leave" data-id="'+g.id+'">Leave group</button></div>';
+    if(g.owner===me||isAdmin())h+='<div class="gfoot"><button type="button" class="linkbtn danger" data-g="delete" data-id="'+g.id+'">Delete group</button></div>';
     return '<article class="card grp">'+h+'</article>'}
   function drawRG(){setTimeout(refreshBell,0);
     var mine=G.filter(function(g){return g.members.indexOf(me)>=0||g.invited.indexOf(me)>=0}),other=G.filter(function(g){return mine.indexOf(g)<0});
@@ -820,6 +822,7 @@ select.freq{font:500 .8rem var(--f-body);border:1px solid var(--line);border-rad
     if(a==="join"){var k=g.invited.indexOf(me);if(k>=0)g.invited.splice(k,1);g.members.push(me);if(window.LAB)LAB.groupPerson(g,k>=0?"accept":"join");toast("You joined "+g.name+".")}
     else if(a==="decline"){g.invited.splice(g.invited.indexOf(me),1);if(window.LAB)LAB.groupPerson(g,"leave")}
     else if(a==="leave"){var li=g.members.indexOf(me);g.members.splice(li,1);var lt=setTimeout(function(){if(window.LAB)LAB.groupPerson(g,"leave")},6500);toast("You left "+g.name+".",function(){clearTimeout(lt);g.members.splice(li,0,me);drawRG()})}
+    else if(a==="delete"){var di=G.indexOf(g);G.splice(di,1);drawRG();var dt=setTimeout(function(){if(window.LAB)LAB.deleteGroup(g)},6500);toast(g.name+" was deleted.",function(){clearTimeout(dt);G.splice(di,0,g);drawRG()});return}
     else if(a==="avail"){var o=g.options[+b.dataset.i],k2=o.v.indexOf(me);if(k2>=0)o.v.splice(k2,1);else o.v.push(me);if(window.LAB)LAB.timeVote(o,k2<0)}
     else if(a==="vote"){var ss=g.sessions[+b.dataset.s];ss.options.forEach(function(o,j){var k3=o.votes.indexOf(me);if(k3>=0)o.votes.splice(k3,1);if(j===+b.dataset.o&&k3<0)o.votes.push(me)})}
     drawRG()});

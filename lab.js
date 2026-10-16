@@ -130,6 +130,7 @@ var LAB=(function(){
         else if(a==="accept")await q(t.update({status:"member"}).eq("group_id",g.id).eq("email",DASH.me.email));
         else await q(t.delete().eq("group_id",g.id).eq("email",DASH.me.email));
       }catch(e){fail(e)}},
+    deleteGroup:async function(g){try{await q(sb.from("reading_groups").update({state:"archived"}).eq("id",g.id))}catch(e){fail(e)}},
     timeVote:async function(o,on){try{
         if(on)await q(sb.from("reading_time_votes").insert({option_id:o.id,email:DASH.me.email}));
         else await q(sb.from("reading_time_votes").delete().eq("option_id",o.id).eq("email",DASH.me.email));
