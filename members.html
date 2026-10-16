@@ -1,0 +1,120 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover"></head><body><!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover"></head><body><title>Members | RAIN Lab</title><link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Caveat:wght@500;600&family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:wght@400;500;600&family=Urbanist:wght@500;600;700&display=swap"><style>:root{
+  --cloud:#f6f8fb; --white:#ffffff; --ink:#13101d; --muted:#586174; --line:#e1e6ee;
+  --blue:#1f6feb; --blue-text:#1a5fcc; --blue-soft:#e7effd;
+  --night:#0b0714; --black:#000; --night-ink:#eef1f7; --night-muted:#9aa3b6; --night-line:#231d33;
+  --f-display:"Urbanist","Avenir Next","Segoe UI",system-ui,sans-serif;
+  --f-body:"IBM Plex Sans",system-ui,-apple-system,"Segoe UI",sans-serif;
+  --f-mono:"IBM Plex Mono",ui-monospace,"SF Mono",Menlo,monospace;
+  color-scheme: light;
+}
+*,*::before,*::after{box-sizing:border-box}
+body{margin:0;background:var(--cloud);color:var(--ink);font:400 1rem/1.6 var(--f-body)}
+img{max-width:100%;height:auto}
+a{color:var(--blue-text);text-underline-offset:.18em;text-decoration-thickness:1px}
+:focus-visible{outline:2px solid var(--blue);outline-offset:2px}
+h1,h2,h3{font-family:var(--f-display);margin:0;line-height:1.15;text-wrap:balance}
+p{margin:0}
+.wrap{width:100%;max-width:72rem;margin-inline:auto;padding-inline:max(16px,4vw)}
+.mono{font-family:var(--f-mono)}
+.vh{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+.logo{display:block;height:1.6rem;width:auto;overflow:visible}
+.logo-flame{fill:#1f6feb}
+/* concept switcher (demo only) */
+.cbar{background:#1a1625;color:#cfd5e2;font:500 .78rem var(--f-mono);border-bottom:1px solid #2c2540}
+.cbar .wrap{display:flex;flex-wrap:wrap;gap:.3rem 1.2rem;align-items:center;padding-block:.45rem}
+.cbar a{color:#cfd5e2;text-decoration:none;opacity:.7}
+.cbar a[aria-current]{opacity:1;color:#fff;text-decoration:underline;text-underline-offset:.3em}
+.cbar span{opacity:.5;margin-right:.4rem}
+/* masthead */
+.mast{position:sticky;top:env(safe-area-inset-top,0px);z-index:20;background:rgba(0,0,0,.86);backdrop-filter:blur(10px);border-bottom:1px solid #1b1726;color:#fff}
+.mast .wrap{display:flex;flex-wrap:wrap;justify-content:space-between;align-items:center;gap:.6rem 2rem;padding-block:.85rem}
+.mast nav{display:flex;flex-wrap:wrap;gap:.2rem 1.5rem}
+.mast nav a{color:#aeb6c7;text-decoration:none;font-weight:500;font-size:.95rem}
+.mast nav a:hover{color:#fff}
+.mast .brand{color:#fff}
+/* approved hero */
+.hero{position:relative;overflow:hidden;isolation:isolate;background:#000;color:#fff;min-height:clamp(22rem,36vw,32rem);display:grid;align-items:center;padding-block:clamp(3rem,6vw,5rem)}
+.hero .hz{position:absolute;inset:0;z-index:-1;pointer-events:none}
+.hero .hz::before{content:"";position:absolute;top:50%;right:50%;width:3000px;height:3000px;margin-top:-1500px;border-radius:50%;background:#000;
+  box-shadow:1px 0 0 0 rgba(205,218,255,.8),3px 0 12px 1px rgba(120,165,255,.35),12px 0 90px 12px rgba(31,111,235,.16)}
+.hero .hz::after{content:"";position:absolute;left:0;right:0;top:57%;height:240px;margin-top:-120px;
+  background:radial-gradient(closest-side,rgba(225,236,255,.5),rgba(110,155,255,.16) 40%,transparent 72%) 50.5% 50%/220px 240px no-repeat,
+  linear-gradient(90deg,transparent 18%,rgba(120,165,255,.28) 50%,transparent 82%) 0 50%/100% 2px no-repeat}
+.hero .in{display:grid;justify-items:center;text-align:center;gap:clamp(.8rem,1.6vw,1.4rem)}
+.hero .logo{height:clamp(2.8rem,1.2rem + 6vw,6.2rem)}
+.hero .sub{font-family:var(--f-display);font-weight:500;font-size:clamp(1rem,.7rem + 1.3vw,1.75rem);color:#d4d8e2}
+.hero .rule{width:clamp(6rem,12vw,9rem);height:3px;border-radius:2px;background:var(--blue);opacity:.8;margin-block:clamp(.4rem,1vw,.9rem)}
+.hero .uw{font-weight:500;font-size:clamp(1rem,.8rem + .8vw,1.5rem);color:#3d82f0}
+@media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+</style><style>
+/* Members sign-in. The hero's black and Earth-limb glow, with one card and one button. */
+body{background:#000}
+.gate{position:relative;isolation:isolate;overflow:hidden;min-height:100vh;display:grid;place-items:center;padding:2rem 1rem;color:#fff}
+.gate .hz{position:absolute;inset:0;z-index:-1;pointer-events:none}
+.gate .hz::before{content:"";position:absolute;top:50%;right:50%;width:3000px;height:3000px;margin-top:-1500px;border-radius:50%;background:#000;
+  box-shadow:1px 0 0 0 rgba(205,218,255,.8),3px 0 12px 1px rgba(120,165,255,.35),12px 0 90px 12px rgba(31,111,235,.16)}
+.box{width:min(26rem,100%);background:rgba(11,7,20,.82);backdrop-filter:blur(8px);border:1px solid #231d33;border-radius:16px;padding:2.2rem 2rem;display:grid;gap:1.1rem;justify-items:center;text-align:center}
+.box .logo{height:2.4rem;color:#fff}
+.box .k{font:500 .66rem var(--f-mono);letter-spacing:.16em;color:#8d97ad}
+.box h1{font:700 1.6rem var(--f-display)}
+.box p{color:#aeb6c7;font-size:.92rem;max-width:20rem}
+.uw{display:flex;align-items:center;justify-content:center;gap:.7rem;width:100%;background:#fff;color:var(--ink);font:600 1rem var(--f-display);border:0;border-radius:9px;padding:.85rem 1rem;text-decoration:none;cursor:pointer}
+.uw:hover{background:var(--blue);color:#fff}
+.uw b{display:grid;place-content:center;width:26px;height:26px;border-radius:5px;background:#4b2e83;color:#fff;font:800 .9rem var(--f-display)}
+.fine{font:500 .7rem var(--f-mono);color:#6f7a92;line-height:1.6}
+.fine a{color:#aeb6c7}
+.back{position:absolute;top:1.2rem;left:1.2rem;font:500 .74rem var(--f-mono);color:#8d97ad;text-decoration:none}
+.back:hover{color:#fff}
+.proto{position:absolute;bottom:1.2rem;left:50%;transform:translateX(-50%);font:500 .68rem var(--f-mono);color:#f1dd9a;background:rgba(122,92,0,.25);border:1px solid rgba(241,221,154,.35);border-radius:7px;padding:.4rem .8rem;width:max-content;max-width:calc(100% - 2rem);text-align:center}
+</style>
+<main class="gate">
+  <div class="hz" aria-hidden="true"></div>
+  <a class="back" href="index.html">&larr; RAIN Lab website</a>
+  <section class="box" aria-labelledby="t">
+    <svg class="logo" viewBox="0 0 397 73" role="img" aria-label="RAIN LAB">
+<path d="M37.1784 25.1829C37.3985 26.9342 34.347 31.0936 33.6517 31.919C32.5575 33.1449 32.0693 33.3025 30.3997 33.4251C23.5557 33.9198 7.55282 30.8025 1.54575 27.418C-1.07852 25.9382 -0.00614198 25.207 2.12554 24.1036C6.14478 22.0152 13.8563 19.9574 18.3856 18.9766C21.6725 18.263 29.2837 17.0414 32.1434 18.7446C32.4263 18.9124 32.9948 19.4845 33.6517 20.2232C34.3086 20.9619 37.1805 24.3072 37.1805 25.1829L37.1784 25.1829Z" class="logo-flame" fill="#1F6FEB"/>
+<path d="M93.3413 72.151H79.6778L66.3906 50.1277H47.0222V71.0132C46.9914 71.0687 45.9877 72.151 45.9092 72.151H34.8728V49.7485C38.7487 46.1363 43.3996 40.6332 46.8129 39.6523C53.3388 37.7691 63.6835 40.934 71.8834 38.1353C74.9828 37.076 84.9613 28.5622 84.9482 25.4366C84.9482 21.984 77.1276 14.9742 74.1459 13.5095C65.0828 9.03686 53.9497 14.4009 46.7999 11.234C43.0157 9.04914 36.6383 1.98785 34.8728 0H66.3906C76.4083 0 89.1463 9.38996 94.4428 17.5114C103.1 30.7724 87.7077 39.8616 78.9716 47.5645C78.7493 48.82 90.342 66.5726 91.8417 69.572C92.282 70.4526 92.901 71.3333 93.3413 72.151Z" fill="currentColor"/>
+<path d="M178.62 15H185.13L203.345 57.2821H194.745L190.803 47.6074H172.469L168.647 57.2821H160.226L178.62 15ZM188.176 41.1576L181.666 23.9581L175.037 41.1576H188.176Z" fill="currentColor"/>
+<path d="M214.431 15C214.483 15.0511 214.929 15.4822 215.052 15.6201V56.6621C214.931 56.7976 214.492 57.2235 214.433 57.2822H207.528V15H214.431Z" fill="currentColor"/>
+<path d="M254.005 46.6523H254.124V15H261.05C261.099 15.0491 261.502 15.4402 261.648 15.5977V56.6846C261.504 56.8397 261.108 57.2261 261.052 57.2822H252.094L232.027 24.6152H231.908V56.668C231.775 56.8096 231.299 57.2253 231.241 57.2822H224.383V15H234.356L254.005 46.6523Z" fill="currentColor"/>
+<path d="M365.567 15.0032H382.05C383.643 15.0032 385.216 15.2023 386.768 15.6004C388.321 15.9587 389.695 16.5759 390.889 17.4518C392.124 18.288 393.119 19.3829 393.876 20.7366C394.632 22.0904 395.01 23.7228 395.01 25.634C395.01 28.0229 394.333 29.9938 392.98 31.5466C391.626 33.0994 389.854 34.2142 387.664 34.8911V35.0105C390.332 35.3689 392.522 36.4041 394.234 38.1162C395.946 39.8282 396.802 42.1176 396.802 44.9844C396.802 47.2937 396.344 49.2447 395.428 50.8373C394.513 52.3901 393.298 53.6443 391.785 54.5999C390.312 55.5554 388.6 56.2522 386.649 56.6902C384.738 57.0883 382.787 57.2874 380.796 57.2874H365.567V15.0032ZM373.092 32.2035H379.781C382.289 32.2035 384.2 31.7058 385.514 30.7105C386.828 29.7151 387.485 28.3016 387.485 26.4701C387.485 24.5589 386.808 23.2052 385.455 22.4089C384.101 21.6126 381.991 21.2144 379.124 21.2144H373.092V32.2035ZM373.092 50.9567H379.841C380.796 50.9567 381.831 50.897 382.946 50.7776C384.061 50.6183 385.076 50.3197 385.992 49.8817C386.948 49.4437 387.724 48.8067 388.321 47.9706C388.958 47.1344 389.277 46.0196 389.277 44.626C389.277 42.3964 388.52 40.8435 387.007 39.9676C385.494 39.0917 383.205 38.6537 380.139 38.6537H373.092V50.9567Z" fill="currentColor"/>
+<path d="M338.093 15.0032H344.602L362.818 57.2874H354.218L350.276 47.6122H331.941L328.119 57.2874H319.698L338.093 15.0032ZM347.648 41.1621L341.138 23.9617L334.509 41.1621H347.648Z" fill="currentColor"/>
+<path d="M291.447 15.0032H298.972V50.5984H316.949V57.2874H291.447V15.0032Z" fill="currentColor"/>
+<path d="M127 15H141.693C143.684 15 145.615 15.219 147.486 15.657C149.358 16.0552 151.01 16.7321 152.444 17.6877C153.917 18.6433 155.091 19.8976 155.967 21.4505C156.843 23.0034 157.281 24.8947 157.281 27.1245C157.281 30.1904 156.405 32.699 154.653 34.65C152.941 36.5613 150.592 37.8553 147.606 38.5322L158.894 57.2864H149.816L140.02 39.3684H134.526V57.2864H127V15ZM140.677 33.2166C141.752 33.2166 142.828 33.137 143.903 32.9777C144.978 32.8184 145.933 32.5198 146.769 32.0818C147.645 31.6438 148.362 31.0266 148.92 30.2303C149.477 29.3941 149.756 28.3389 149.756 27.0648C149.756 25.91 149.497 24.9743 148.979 24.2576C148.462 23.5011 147.805 22.9038 147.008 22.4658C146.212 22.0278 145.296 21.7292 144.261 21.5699C143.266 21.4106 142.29 21.331 141.334 21.331H134.526V33.2166H140.677Z" fill="currentColor"/>
+</svg>
+
+    <span class="k">MEMBERS AREA</span>
+    <h1 id="t">Welcome back</h1>
+    <p>Sign in with your UW Google account to open the lab dashboard.</p>
+    <a class="uw" href="#" id="go"><b>W</b>Sign in with UW Google</a><p class="msg" id="msg" role="alert" hidden></p>
+    <p class="fine">Only RAIN Lab members on the lab list can enter.<br>Not a member yet? See <a href="join.html">how to join</a>.</p>
+  </section>
+  
+</main>
+<style>.msg{margin-top:1rem;font-size:.9rem;color:#ffd4cf;background:rgba(180,35,24,.25);border:1px solid rgba(255,180,170,.35);border-radius:8px;padding:.6rem .8rem}.msg[hidden]{display:none}</style>
+<script src="vendor/supabase-2.117.2.js"></script><script>
+(function(){
+  var sb=supabase.createClient("https://oetcmtyqxsiznjkzpthl.supabase.co","sb_publishable_BFwGDxrQtwCcW3pSZtQ-0A_f661pXMo");
+  var msg=document.getElementById("msg"),go=document.getElementById("go");
+  function say(t){msg.textContent=t;msg.hidden=false}
+  if(/[?&]e=notmember/.test(location.search))say("That account is not on the lab list. Sign in with your @uw.edu account, or ask Shiva to add you.");
+  // already signed in: go straight to the dashboard
+  sb.auth.getSession().then(function(r){if(r.data.session)location.replace("dashboard.html")});
+  go.addEventListener("click",function(e){e.preventDefault();go.setAttribute("aria-busy","true");
+    sb.auth.signInWithOAuth({provider:"google",options:{redirectTo:new URL("dashboard.html",location.href).href,queryParams:{hd:"uw.edu",prompt:"select_account"}}})
+      .then(function(r){if(r.error)say("Sign in did not start. Please try again.")})});
+})();
+</script></body></html><style>.msg{margin-top:1rem;font-size:.9rem;color:#ffd4cf;background:rgba(180,35,24,.25);border:1px solid rgba(255,180,170,.35);border-radius:8px;padding:.6rem .8rem}.msg[hidden]{display:none}</style>
+<script src="vendor/supabase-2.117.2.js"></script><script>
+(function(){
+  var sb=supabase.createClient("https://oetcmtyqxsiznjkzpthl.supabase.co","sb_publishable_BFwGDxrQtwCcW3pSZtQ-0A_f661pXMo");
+  var msg=document.getElementById("msg"),go=document.getElementById("go");
+  function say(t){msg.textContent=t;msg.hidden=false}
+  if(/[?&]e=notmember/.test(location.search))say("That account is not on the lab list. Sign in with your @uw.edu account, or ask Shiva to add you.");
+  // already signed in: go straight to the dashboard
+  sb.auth.getSession().then(function(r){if(r.data.session)location.replace("dashboard.html")});
+  go.addEventListener("click",function(e){e.preventDefault();go.setAttribute("aria-busy","true");
+    sb.auth.signInWithOAuth({provider:"google",options:{redirectTo:new URL("dashboard.html",location.href).href,queryParams:{hd:"uw.edu",prompt:"select_account"}}})
+      .then(function(r){if(r.error)say("Sign in did not start. Please try again.")})});
+})();
+</script></body></html>
