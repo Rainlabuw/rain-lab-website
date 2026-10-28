@@ -1,4 +1,4 @@
-<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover"></head><body><script src="vendor/supabase-2.117.2.js"></script><script src="lab.js?v=da3fd20f"></script><style>.lab-loading body{visibility:hidden}.live-hide{display:none!important}</style><!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover"></head><body><title>Courses | RAIN Lab members</title><link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Caveat:wght@500;600&family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:wght@400;500;600&family=Urbanist:wght@500;600;700&display=swap"><style>:root{
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover"></head><body><script src="vendor/supabase-2.117.2.js"></script><script src="lab.js?v=82d9b729"></script><style>.lab-loading body{visibility:hidden}.live-hide{display:none!important}</style><!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover"></head><body><title>Courses | RAIN Lab members</title><link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Caveat:wght@500;600&family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:wght@400;500;600&family=Urbanist:wght@500;600;700&display=swap"><style>:root{
   --cloud:#f6f8fb; --white:#ffffff; --ink:#13101d; --muted:#586174; --line:#e1e6ee;
   --blue:#1f6feb; --blue-text:#1a5fcc; --blue-soft:#e7effd;
   --night:#0b0714; --black:#000; --night-ink:#eef1f7; --night-muted:#9aa3b6; --night-line:#231d33;
@@ -619,6 +619,11 @@ ooEvents();
 .mats .nt{display:block;font-size:.84rem;color:#3e4657;margin-top:.15rem}
 .mats .ac{display:flex;gap:.5rem;align-items:center}
 @media (max-width:900px){.qgrid2{grid-template-columns:minmax(0,1fr)}}
+.tookf{display:grid;gap:.45rem}
+.tookf label{display:flex;flex-wrap:wrap;align-items:center;gap:.4rem}
+.tookf textarea{font:inherit;font-size:.86rem;border:1px solid var(--line);border-radius:7px;padding:.45rem .6rem;width:100%;resize:vertical}
+.tookf .tb{display:flex;flex-wrap:wrap;gap:.4rem;align-items:center}
+.course .tip .tby{display:block;font:500 .66rem var(--f-mono);color:var(--muted);margin-top:.2rem;letter-spacing:.04em}
 .empty-s{font-size:.86rem;color:var(--muted)}
 @media (max-width:640px){.cform .row2{grid-template-columns:minmax(0,1fr)}}
 .qlist{list-style:none;margin:0;padding:0;display:grid;gap:.5rem;font-size:.9rem}
@@ -691,18 +696,28 @@ ooEvents();
 (function(){
   var me=DASH.me.name,dept="All",q="",C=DASH.courses,tookAt=null;
   function first(n){var k=n.match(/"([^"]*)"/);return k?k[1]:n.split(" ")[0]}
+  // course numbers are always written the same way: letters, a space, then the number (CSE546 becomes CSE 546)
+  function normCode(v){return String(v).toUpperCase().replace(/\s+/g," ").trim().replace(/([A-Z&])\s*(\d)/,"$1 $2")}
   function deptOf(code){var m=String(code).match(/^([A-Za-z& ]+?)\s*\d/);return m?m[1].trim().toUpperCase():"Other"}
   function terms(){var out=[],d=new Date(),y=d.getFullYear(),m=d.getMonth(),Q=["Win","Spr","Sum","Aut"],k=m<3?0:m<6?1:m<9?2:3;
     for(var i=0;i<16;i++){out.push(Q[k]+" "+y);k--;if(k<0){k=3;y--}}return out}
   function sortC(){C.sort(function(a,b){return a.code.localeCompare(b.code,undefined,{numeric:true})})}sortC();
   function drawFlt(){var ds=["All"].concat(C.map(function(c){return c.dept||deptOf(c.code)}).filter(function(d,i,a){return a.indexOf(d)===i}));if(ds.indexOf(dept)<0)dept="All";
     document.getElementById("flt").innerHTML=ds.length>2?ds.map(function(d){return '<button type="button" data-d="'+esc(d)+'" aria-pressed="'+(d===dept)+'">'+esc(d)+'</button>'}).join(""):""}
+  // tips: the one from whoever added the course, then one per person who took it
+  function tipsHTML(c){var out=[];if(c.tip)out.push([c.tip,c.by]);c.took.forEach(function(t){if(t[2])out.push([t[2],t[0]])});
+    return out.map(function(x){return '<p class="tip">'+esc(x[0])+(x[1]?'<small class="tby">'+esc(first(x[1]))+'</small>':'')+'</p>'}).join("")}
+  function tookForm(c,i){var mt=c.took.find(function(t){return t[0]===me})||[me,"",""],ts=terms();if(mt[1]&&ts.indexOf(mt[1])<0)ts.push(mt[1]);
+    return '<div class="tookf"><label>When did you take it? <select aria-label="Quarter">'+ts.map(function(t){return '<option'+(t===mt[1]?' selected':'')+'>'+t+'</option>'}).join("")+'</select></label>'+
+      '<textarea rows="2" placeholder="Your tip for the next person (optional)" aria-label="Your tip">'+esc(mt[2]||"")+'</textarea>'+
+      '<span class="tb"><button type="button" class="btn sm dark" data-tooksave="'+i+'">Save</button><button type="button" class="btn sm" data-tookx>Cancel</button>'+
+      (c.took.some(function(t){return t[0]===me})?'<button type="button" class="linkbtn danger" data-tookrm="'+i+'">I did not take it</button>':'')+'</span></div>'}
   function draw(){drawFlt();
-    var list=C.filter(function(c){return (dept==="All"||(c.dept||deptOf(c.code))===dept)&&(!q||(c.code+" "+c.name+" "+(c.tip||"")).toLowerCase().indexOf(q)>=0)});
+    var list=C.filter(function(c){return (dept==="All"||(c.dept||deptOf(c.code))===dept)&&(!q||(c.code+" "+c.name+" "+(c.tip||"")+" "+c.took.map(function(t){return t[2]||""}).join(" ")).toLowerCase().indexOf(q)>=0)});
     document.getElementById("cgrid").innerHTML=list.map(function(c){var i=C.indexOf(c),mine=c.took.some(function(t){return t[0]===me}),others=c.took.filter(function(t){return t[0]!==me});
-      return '<section class="card course"><div class="code"><span class="k">'+esc(c.code)+'</span>'+(c.quals?'<span class="chip q">Helps for quals</span>':'')+'</div><h3>'+esc(c.name)+'</h3>'+(c.tip?'<p class="tip">'+esc(c.tip)+'</p>':'')+
+      return '<section class="card course"><div class="code"><span class="k">'+esc(c.code)+'</span>'+(c.quals?'<span class="chip q">Helps for quals</span>':'')+'</div><h3>'+esc(c.name)+'</h3>'+tipsHTML(c)+
         (c.took.length?'<div class="ppl">'+c.took.map(function(t){return face(t[0])}).join("")+'<span class="c">'+c.took.map(function(t){return esc(first(t[0]))+(t[1]?' '+esc(t[1]):'')}).join(", ")+'</span></div>':'<p class="took">Nobody has marked this one yet.</p>')+
-        (tookAt===i?'<div class="tookf"><span>When did you take it?</span><select aria-label="Quarter">'+terms().map(function(t){return '<option>'+t+'</option>'}).join("")+'</select><button type="button" class="btn sm dark" data-tooksave="'+i+'">Save</button><button type="button" class="btn sm" data-tookx>Cancel</button></div>':'')+
+        (tookAt===i?tookForm(c,i):'')+
         '<div class="acts"><a class="btn sm" href="'+esc(c.url||"https://www.dropbox.com/home/Rain-general")+'" target="_blank" rel="noopener">'+(c.url?'Course folder':c.uploading?'Making folder...':'Notes in Dropbox')+'</a>'+
         '<button type="button" class="btn sm" data-cup="'+i+'"'+(c.uploading?' disabled':'')+'>'+(c.uploading?'Uploading...':'Add files')+'</button>'+(others.length?'<button type="button" class="btn sm" data-ask="'+i+'">Ask someone</button>':'')+
         ((c.by===me||isAdmin())?'<button type="button" class="btn sm" data-cedit="'+i+'">Edit</button>':(tookAt===i?'':'<button type="button" class="btn sm'+(mine?' on':'')+'" data-took="'+i+'" aria-pressed="'+mine+'">'+(mine?'&#10003; I took this':'I took this')+'</button>'))+
@@ -718,6 +733,7 @@ ooEvents();
   cf.elements.term.innerHTML=terms().map(function(t){return '<option>'+t+'</option>'}).join("");
   function syncTerm(){document.getElementById("termF").hidden=!cf.elements.took.checked}
   cf.elements.took.addEventListener("change",syncTerm);
+  cf.elements.code.addEventListener("blur",function(){if(this.value.trim())this.value=normCode(this.value)});
   function openCF(c){editing=c||null;cf.reset();document.getElementById("cerr").textContent="";
     document.getElementById("cfH").textContent=c?"Edit "+c.code:"Add a course";document.getElementById("cSave").textContent=c?"Save changes":"Add course";
     document.getElementById("filesL").textContent=c?"Add more files (optional)":"Attach files (optional)";document.getElementById("cDel").hidden=!c;
@@ -731,7 +747,7 @@ ooEvents();
   document.getElementById("cDel").onclick=function(){var c=editing,ri=C.indexOf(c);closeCF();
     later(function(){return c.code+" was deleted. Its Dropbox folder and files stay in Dropbox."},function(){C.splice(ri,1);draw()},function(){C.splice(ri,0,c);draw()},function(){if(window.LAB&&c.id)LAB.delCourse(c)})};
   cf.addEventListener("keydown",function(e){if(e.key==="Escape")closeCF()});
-  cf.addEventListener("submit",function(e){e.preventDefault();var code=cf.elements.code.value.trim().replace(/\s+/g," ").toUpperCase(),name=cf.elements.name.value.trim(),err=document.getElementById("cerr");
+  cf.addEventListener("submit",function(e){e.preventDefault();var code=normCode(cf.elements.code.value),name=cf.elements.name.value.trim(),err=document.getElementById("cerr");
     if(!code){err.textContent="Add the course number.";cf.elements.code.focus();return}
     if(!name){err.textContent="Add the course name.";cf.elements.name.focus();return}
     if(C.some(function(c){return c!==editing&&c.code.replace(/\s/g,"")===code.replace(/\s/g,"")})){err.textContent=code+" is already on the list.";return}
@@ -759,9 +775,10 @@ ooEvents();
     var up=e.target.closest("[data-cup]");if(up){upFor=C[+up.dataset.cup];picker.click();return}
     var ed=e.target.closest("[data-cedit]");if(ed){cOpener=ed;openCF(C[+ed.dataset.cedit]);return}
     var t=e.target.closest("[data-took]");if(t){var i=+t.dataset.took,c=C[i],k=c.took.findIndex(function(x){return x[0]===me});
-      if(k>=0){c.took.splice(k,1);if(window.LAB)LAB.took(c,null);draw()}else{tookAt=i;draw();var sl=document.querySelector(".tookf select");if(sl)sl.focus()}return}
-    var ts=e.target.closest("[data-tooksave]");if(ts){var c2=C[+ts.dataset.tooksave],term=ts.parentNode.querySelector("select").value,k2=c2.took.findIndex(function(x){return x[0]===me});
-      if(k2>=0)c2.took[k2][1]=term;else c2.took.push([me,term]);if(window.LAB)LAB.took(c2,term);tookAt=null;draw();return}
+      tookAt=i;draw();var sl=document.querySelector(".tookf select");if(sl)sl.focus();return}
+    var tr=e.target.closest("[data-tookrm]");if(tr){var c3=C[+tr.dataset.tookrm],k3=c3.took.findIndex(function(x){return x[0]===me});if(k3>=0){c3.took.splice(k3,1);if(window.LAB)LAB.took(c3,null)}tookAt=null;draw();return}
+    var ts=e.target.closest("[data-tooksave]");if(ts){var box=ts.closest(".tookf"),c2=C[+ts.dataset.tooksave],term=box.querySelector("select").value,tip=box.querySelector("textarea").value.trim(),k2=c2.took.findIndex(function(x){return x[0]===me});
+      if(k2>=0){c2.took[k2][1]=term;c2.took[k2][2]=tip}else c2.took.push([me,term,tip]);if(window.LAB)LAB.took(c2,term,tip);tookAt=null;draw();toast("Saved.");return}
     if(e.target.closest("[data-tookx]")){tookAt=null;draw();return}
     var a=e.target.closest("[data-ask]");if(!a)return;cur=C[+a.dataset.ask];opener=a;
     document.getElementById("askL").textContent=cur.code+", "+cur.name+". Pick who to ask.";

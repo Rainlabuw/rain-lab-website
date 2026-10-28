@@ -113,7 +113,7 @@ var LAB=(function(){
         if(p.anonymous){var mine=v.indexOf(meRow.name)>=0;v=mine?[meRow.name]:[];for(var k=v.length;k<(cnt[o.id]||0);k++)v.push("anonymous "+o.id+"-"+k)}
         return {id:o.id,t:o.label,v:v}})}});
     DASH.courses=r[22].map(function(c){return {id:c.id,code:c.code,name:c.name,tip:c.tip||"",quals:c.helps_quals,by:nm(c.added_by),url:c.dropbox_url||"",
-      took:r[23].filter(function(t){return t.course_id===c.id}).map(function(t){return [nm(t.email),t.term||""]})}});
+      took:r[23].filter(function(t){return t.course_id===c.id}).map(function(t){return [nm(t.email),t.term||"",t.tip||""]})}});
     DASH.qualsFiles=r[25].map(qrow);
     DASH.quals=r[24].map(function(x){return {id:x.id,by:nm(x.email),when:x.year||"",text:x.body}});
     ["changes","digest"].forEach(function(k){DASH[k]=[]});
@@ -208,9 +208,9 @@ var LAB=(function(){
         var mine=c.took.find(function(t){return t[0]===DASH.me.name});if(mine)await q(sb.from("course_takers").insert({course_id:c.id,email:DASH.me.email,term:mine[1]||null}))}catch(e){fail(e)}})();return c._p},
     updCourse:async function(c){try{await c._p;await q(sb.from("courses").update({code:c.code,name:c.name,tip:c.tip||null,helps_quals:!!c.quals}).eq("id",c.id))}catch(e){fail(e)}},
     delCourse:async function(c){try{await q(sb.from("courses").delete().eq("id",c.id))}catch(e){fail(e)}},
-    took:async function(c,term){try{await c._p;var t=sb.from("course_takers");
+    took:async function(c,term,tip){try{await c._p;var t=sb.from("course_takers");
         if(term===null)await q(t.delete().eq("course_id",c.id).eq("email",DASH.me.email));
-        else await q(t.upsert({course_id:c.id,email:DASH.me.email,term:term||null}))}catch(e){fail(e)}},
+        else{var row={course_id:c.id,email:DASH.me.email,term:term||null};if(tip!==undefined)row.tip=tip||null;await q(t.upsert(row))}}catch(e){fail(e)}},
     courseFiles:async function(c,files){try{await c._p;if(!c.id)return false;
         var fd=new FormData();fd.append("course_id",c.id);files.forEach(function(f){fd.append("files",f)});
         var tok=(await sb.auth.getSession()).data.session.access_token;
