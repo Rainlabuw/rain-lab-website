@@ -19,6 +19,11 @@ var LAB=(function(){
   function iso(d){var z=new Date(d);z.setMinutes(z.getMinutes()-z.getTimezoneOffset());return z.toISOString().slice(0,10)}
   function offset(dateStr){var m=monday(new Date());return Math.round((new Date(dateStr+"T00:00")-m)/864e5)}
   function when(ts){var d=new Date(ts);return MON[d.getMonth()]+" "+d.getDate()}
+  // website changes: news, profiles and papers waiting for an admin
+  var KIND={news:"News",profile:"Profile",paper:"Paper",page:"Page"};
+  function crow(x){var b=x.body||{};return {id:x.id,kind:KIND[x.kind]||x.kind,by:nm(x.author),title:x.title,text:b.text||"",type:b.type,link:b.link,fields:b.fields,venue:b.venue,year:b.year,
+    wantsNews:b.wantsNews,from:b.from,photos:b.photos||[],status:x.status,note:x.admin_note||"",when:when(x.created_at)}}
+  function cbody(c){return {text:c.text||"",type:c.type||null,link:c.link||null,fields:c.fields||null,venue:c.venue||null,year:c.year||null,wantsNews:!!c.wantsNews,from:c.from||null,photos:c.photos||[]}}
   function qrow(x){return {id:x.id,name:x.name,note:x.note||"",by:nm(x.email),when:when(x.created_at),size:x.size_bytes}}
   async function helper(fd){var tok=(await sb.auth.getSession()).data.session.access_token;
     var r=await fetch(LAB_CFG.url+"/functions/v1/dropbox-course",{method:"POST",headers:{Authorization:"Bearer "+tok,apikey:LAB_CFG.key},body:fd});
@@ -64,7 +69,8 @@ var LAB=(function(){
       q(sb.from("courses").select("*").order("code")),
       q(sb.from("course_takers").select("*")),
       q(sb.from("quals_tips").select("*").order("created_at",{ascending:false})),
-      q(sb.from("quals_materials").select("*").order("created_at",{ascending:false}))
+      q(sb.from("quals_materials").select("*").order("created_at",{ascending:false})),
+      q(sb.from("site_changes").select("*").order("created_at",{ascending:false}))
     ]);
     var people=r[0];people.forEach(function(p){N[p.email]=p.name;E[p.name]=p.email});
     var pub=((typeof DATA!=="undefined"&&DATA.members)||[]).find(function(m){return m.name===meRow.name})||{};
@@ -116,7 +122,8 @@ var LAB=(function(){
       took:r[23].filter(function(t){return t.course_id===c.id}).map(function(t){return [nm(t.email),t.term||"",t.tip||""]})}});
     DASH.qualsFiles=r[25].map(qrow);
     DASH.quals=r[24].map(function(x){return {id:x.id,by:nm(x.email),when:x.year||"",text:x.body}});
-    ["changes","digest"].forEach(function(k){DASH[k]=[]});
+    DASH.changes=r[26].map(crow);
+    ["digest"].forEach(function(k){DASH[k]=[]});
   }
 
   // ---- writes
@@ -226,6 +233,17 @@ var LAB=(function(){
     qualsLink:async function(x){try{var fd=new FormData();fd.append("kind","link");fd.append("material_id",x.id);return (await helper(fd)).url}
       catch(e){console.error(e);if(window.toast)toast(e.message||"Download failed.");return null}},
     delQualsFile:async function(x){try{await q(sb.from("quals_materials").delete().eq("id",x.id))}catch(e){fail(e)}},
+    addChange:function(c,files){c._p=(async function(){try{
+        if(files&&files.length){var fd=new FormData();fd.append("kind","site");files.forEach(function(f){fd.append("files",f)});
+          var j=await helper(fd);c.photos=(c.photos||[]).concat(j.saved.map(function(x){return x.url}).filter(Boolean))}
+        var row=(await q(sb.from("site_changes").insert({kind:c.kind.toLowerCase(),title:c.title,body:cbody(c),status:c.status}).select()))[0];c.id=row.id}
+      catch(e){console.error(e);if(window.toast)toast(e.message||"Could not send that. Please try again.")}})();return c._p},
+    resendChange:async function(c,files){try{await c._p;
+        if(files&&files.length){var fd=new FormData();fd.append("kind","site");files.forEach(function(f){fd.append("files",f)});var j=await helper(fd);c.photos=(c.photos||[]).concat(j.saved.map(function(x){return x.url}).filter(Boolean))}
+        await q(sb.from("site_changes").update({title:c.title,body:cbody(c),status:c.status,admin_note:null}).eq("id",c.id))}catch(e){fail(e)}},
+    decideChange:async function(c){try{await q(sb.from("site_changes").update({status:c.status,admin_note:c.status==="back"?c.note:null,decided_at:new Date().toISOString()}).eq("id",c.id))}catch(e){fail(e)}},
+    saveBirthday:async function(m,d,show){try{await q(sb.from("members").update({birthday_month:m,birthday_day:d,show_birthday:!!show}).eq("email",DASH.me.email));
+        Object.assign(DASH.me.row,{birthday_month:m,birthday_day:d,show_birthday:!!show})}catch(e){fail(e)}},
     addQual:async function(x){try{x.id=(await q(sb.from("quals_tips").insert({body:x.text,year:x.when||null}).select()))[0].id}catch(e){fail(e)}},
     delQual:async function(x){try{await q(sb.from("quals_tips").delete().eq("id",x.id))}catch(e){fail(e)}},
     signOut:async function(){await sb.auth.signOut();location.replace("members.html")}
