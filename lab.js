@@ -36,9 +36,9 @@ var LAB=(function(){
     // weekly group meetings from five weeks back to ten weeks ahead
     var c=LAB_CFG.meeting,ev=[],talks=[];
     for(var w=-5;w<=10;w++){var day=w*7+c.weekday,d=sessDate(day),ds=iso(d);
-      var names=talkRows.filter(function(t){return t.meeting_date===ds}).sort(function(a,b){return a.created_at<b.created_at?-1:1}).map(function(t){return nm(t.email)});
+      var rows=talkRows.filter(function(t){return t.meeting_date===ds}).sort(function(a,b){return a.created_at<b.created_at?-1:1}),names=rows.map(function(t){return nm(t.email)});
       ev.push({t:"group",title:"Group meeting",day:day,s:c.start,e:c.end,where:c.where,who:names.length?names.length+(names.length===1?" talk":" talks")+" signed up":"No talks yet"});
-      talks.push({day:day,date:ds,names:names})}
+      talks.push({day:day,date:ds,names:names,titles:rows.map(function(t){return t.title||""})})}
     return {ev:ev,talks:talks}
   }
 
@@ -112,7 +112,7 @@ var LAB=(function(){
     DASH.suggested=r[17].filter(function(x){return x.to_email===meRow.email}).map(function(x){return {id:x.id,q:x.paper,by:nm(x.from_email)}});
     // weekly reading group meetings on the calendar
     DASH.groups.filter(function(g){return g.state==="set"&&g.day!=null}).forEach(function(g){
-      for(var w=-1;w<=10;w++)DASH.events.push({t:"reading",title:g.name+" reading group",day:w*7+g.day,s:(g.start||"15:00").slice(0,5),e:(g.end||"16:00").slice(0,5),where:g.where,who:g.members.length+" members"})});
+      for(var w=-1;w<=10;w++)DASH.events.push({t:"reading",gid:g.id,title:g.name+" reading group",day:w*7+g.day,s:(g.start||"15:00").slice(0,5),e:(g.end||"16:00").slice(0,5),where:g.where,who:g.members.length+" members"})});
     // polls: names for normal polls; anonymous polls get counts only (plus your own vote)
     var cnt={};(r[21]||[]).forEach(function(c){cnt[c.option_id]=+c.n});
     DASH.polls=r[18].map(function(p){return {id:p.id,q:p.question,by:nm(p.created_by),kind:p.kind,anon:p.anonymous,closes:p.closes_on,
@@ -130,10 +130,10 @@ var LAB=(function(){
   // ---- writes
   var api={
     load:load,nm:nm,
-    talk:async function(t,on){try{
-        if(on)await q(sb.from("talks").insert({meeting_date:t.date,email:DASH.me.email}));
+    talk:async function(t,on,title){try{
+        if(on)await q(sb.from("talks").insert(title?{meeting_date:t.date,email:DASH.me.email,title:title}:{meeting_date:t.date,email:DASH.me.email}));
         else await q(sb.from("talks").delete().eq("meeting_date",t.date).eq("email",DASH.me.email));
-      }catch(e){var i=t.names.indexOf(DASH.me.name);if(on&&i>=0)t.names.splice(i,1);if(!on&&i<0)t.names.push(DASH.me.name);document.dispatchEvent(new Event("dash:redraw"));fail(e)}},
+      }catch(e){var i=t.names.indexOf(DASH.me.name);if(on&&i>=0){t.names.splice(i,1);if(t.titles)t.titles.splice(i,1)}if(!on&&i<0){t.names.push(DASH.me.name);if(t.titles)t.titles.push("")}document.dispatchEvent(new Event("dash:redraw"));fail(e)}},
     conf:async function(c,on){try{
         if(on)await q(sb.from("conference_attendance").insert({conference_id:c.id,email:DASH.me.email}));
         else await q(sb.from("conference_attendance").delete().eq("conference_id",c.id).eq("email",DASH.me.email));
