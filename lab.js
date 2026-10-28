@@ -95,7 +95,7 @@ var LAB=(function(){
       var d=new Date(today.getFullYear(),p.birthday_month-1,p.birthday_day);if(d<today)d.setFullYear(d.getFullYear()+1);
       return {n:p.name,inDays:Math.round((d-today)/864e5)}}).filter(function(b){return b.inDays<=7});
     // parts of the dashboard that are not connected yet start empty
-    DASH.reviews=r[7].map(function(x){return {id:x.id,title:x.title,author:nm(x.author),venue:x.venue||"Venue to add",need:x.needed_by,link:x.link||"",kinds:x.kinds||[],open:x.open_to_volunteers,
+    DASH.reviews=r[7].map(function(x){return {id:x.id,title:x.title,author:nm(x.author),venue:x.venue||"Venue to add",need:x.needed_by,link:x.link||"",kinds:x.kinds||[],open:x.open_to_volunteers,focus:x.focus||"",
       reviewers:r[8].filter(function(v){return v.request_id===x.id}).map(function(v){return {n:nm(v.email),st:v.status}})}});
     DASH.groups=r[9].map(function(g){var ppl=r[10].filter(function(x){return x.group_id===g.id});
       return {id:g.id,name:g.name,area:g.area||"learning",desc:g.description||"",owner:nm(g.owner),open:g.open_to_all,state:g.state,time:g.weekly_time,day:g.weekday,where:g.location||"To decide",
@@ -157,8 +157,10 @@ var LAB=(function(){
       catch(e){var i=DASH.oneone.indexOf(b);if(i>=0)DASH.oneone.splice(i,1);ooEvents();document.dispatchEvent(new Event("dash:redraw"));if(window.toast)toast("Someone just took that slot. Please pick another.");console.error(e)}},
     cancelOO:async function(b){try{await q(sb.from("office_hours").delete().eq("slot_start",b.start).eq("email",DASH.me.email))}catch(e){fail(e)}},
     addReview:async function(r){try{
-        var x=(await q(sb.from("review_requests").insert({title:r.title,author:DASH.me.email,venue:r.venue,link:r.link||null,needed_by:r.need,kinds:r.kinds,open_to_volunteers:!!r.open}).select()))[0];
+        var row={title:r.title,author:DASH.me.email,venue:r.venue,link:r.link||null,needed_by:r.need,kinds:r.kinds,open_to_volunteers:!!r.open};if(r.focus)row.focus=r.focus;
+        var x=(await q(sb.from("review_requests").insert(row).select()))[0];
         await q(sb.from("reviewers").insert(r.reviewers.map(function(v){return {request_id:x.id,email:E[v.n],status:"invited"}})));return x.id}catch(e){fail(e)}},
+    addReviewers:async function(r,names){try{await q(sb.from("reviewers").insert(names.map(function(n){return {request_id:r.id,email:E[n],status:"invited"}})))}catch(e){fail(e)}},
     review:async function(a,r){try{var me=DASH.me.email,t=sb.from("reviewers");
         if(a==="accept")await q(t.update({status:"accepted"}).eq("request_id",r.id).eq("email",me));
         else if(a==="done")await q(t.update({status:"done"}).eq("request_id",r.id).eq("email",me));

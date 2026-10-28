@@ -1,4 +1,4 @@
-<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover"></head><body><script src="vendor/supabase-2.117.2.js"></script><script src="lab.js?v=1e1e607d"></script><style>.lab-loading body{visibility:hidden}.live-hide{display:none!important}</style><!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover"></head><body><title>Reviews | RAIN Lab members</title><link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Caveat:wght@500;600&family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:wght@400;500;600&family=Urbanist:wght@500;600;700&display=swap"><style>:root{
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover"></head><body><script src="vendor/supabase-2.117.2.js"></script><script src="lab.js?v=343c0b45"></script><style>.lab-loading body{visibility:hidden}.live-hide{display:none!important}</style><!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover"></head><body><title>Reviews | RAIN Lab members</title><link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Caveat:wght@500;600&family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:wght@400;500;600&family=Urbanist:wght@500;600;700&display=swap"><style>:root{
   --cloud:#f6f8fb; --white:#ffffff; --ink:#13101d; --muted:#586174; --line:#e1e6ee;
   --blue:#1f6feb; --blue-text:#1a5fcc; --blue-soft:#e7effd;
   --night:#0b0714; --black:#000; --night-ink:#eef1f7; --night-muted:#9aa3b6; --night-line:#231d33;
@@ -455,7 +455,7 @@ function refreshBell(){document.dispatchEvent(new Event("bell:refresh"))}
 function isAdmin(){return DASH.me.role==="Admin"}
 // things that need you: invitations, votes, review requests, and for admins the approval inbox
 function needsMe(){var me=DASH.me.name,out=[],fmt=function(iso){var d=new Date(iso+"T12:00");return MON[d.getMonth()]+" "+d.getDate()};
-  DASH.reviews.forEach(function(r){if(r.reviewers.some(function(x){return x.n===me&&x.st==="invited"}))out.push({id:"rev"+r.id,who:r.author,t:r.author+" asked you to review a draft",s:r.title+", feedback by "+fmt(r.need),go:"Accept or decline",href:"dashboard-reviews.html"})});
+  DASH.reviews.forEach(function(r){if(r.reviewers.some(function(x){return x.n===me&&x.st==="invited"}))out.push({id:"rev"+r.id,who:r.author,t:r.author+" asked you to review a draft",s:r.title+", feedback by "+fmt(r.need),go:"Accept or decline",href:"dashboard-reviews.html#r"+r.id})});
   DASH.groups.forEach(function(g){
     if(g.invited.indexOf(me)>=0)out.push({id:"inv"+g.id,who:g.owner,t:g.owner+" invited you to a reading group",s:g.name,go:"Join or decline",href:"dashboard-reading.html#g"+g.id});
     if(g.members.indexOf(me)<0)return;
@@ -830,45 +830,30 @@ var V2={};
 </script>
 
 <style>
-.filters{display:flex;flex-wrap:wrap;gap:.35rem;margin-bottom:1rem}
-.filters button{font:500 .7rem var(--f-mono);letter-spacing:.06em;background:#fff;border:1px solid var(--line);border-radius:999px;padding:.35rem .8rem;cursor:pointer;color:var(--muted)}
-.filters button[aria-pressed="true"]{background:var(--ink);border-color:var(--ink);color:#fff}
-.filters button span{opacity:.7;margin-left:.25rem}
-.rlist{list-style:none;margin:0;padding:0;display:grid;gap:.8rem}
-.rv{display:grid;grid-template-columns:minmax(0,1fr) 17rem;gap:1.4rem;background:#fff;border:1px solid var(--line);border-radius:12px;padding:1.1rem 1.2rem}
-.rv h3{font:700 1.08rem/1.3 var(--f-display);margin:.25rem 0 .3rem}
-.rv .au{display:flex;align-items:center;gap:.45rem;font-size:.85rem;color:#3e4657}
-.rv .au img,.rv .au .ini{width:24px;height:24px;border-radius:50%;object-fit:cover}
-.rv .au .ini{display:grid;place-content:center;background:var(--blue-soft);color:var(--blue-text);font:600 .55rem var(--f-mono)}
-.rv .meta{display:flex;flex-wrap:wrap;gap:.35rem;margin-top:.65rem}
-.rv .meta .chip{background:#f1f3f7;color:#3e4657}
-.rv .side{display:grid;gap:.55rem;align-content:start;border-left:1px solid var(--line);padding-left:1.2rem}
-.due{font:600 .9rem var(--f-display)}
-.due small{display:block;font:500 .64rem var(--f-mono);letter-spacing:.08em;color:var(--muted);text-transform:uppercase}
-.due.soon{color:#b4530d}
-.revs{list-style:none;margin:0;padding:0;display:grid;gap:.35rem}
-.revs li{display:grid;grid-template-columns:auto minmax(0,1fr) auto;align-items:center;gap:.45rem;font-size:.84rem}
-.revs img,.revs .ini{width:22px;height:22px;border-radius:50%;object-fit:cover}
-.revs .ini{display:grid;place-content:center;background:var(--blue-soft);color:var(--blue-text);font:600 .5rem var(--f-mono)}
-.st{white-space:nowrap;margin-left:auto;font:500 .58rem var(--f-mono);letter-spacing:.06em;text-transform:uppercase;border-radius:999px;padding:.12rem .45rem}
-.st.invited{background:#fff4e0;color:#9a5b00}.st.accepted{background:var(--blue-soft);color:var(--blue-text)}.st.done{background:#e3f6ee;color:#0b7a4b}
-.ra{display:flex;flex-wrap:wrap;gap:.4rem;margin-top:.3rem}
-/* request form */
-.form{display:none;margin-bottom:1.4rem}
-.form.open{display:block}
-.form .grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:.9rem 1.2rem}
-.form label,.form .lbl{display:grid;gap:.3rem;font:500 .66rem var(--f-mono);letter-spacing:.1em;text-transform:uppercase;color:var(--muted)}
-.form input,.form select{font:400 .92rem var(--f-body);color:var(--ink);border:1px solid var(--line);border-radius:7px;padding:.5rem .65rem;text-transform:none;letter-spacing:0;background:#fff}
-.form .full{grid-column:1 / -1}
-.pick{display:flex;flex-wrap:wrap;gap:.35rem}
-.pick button{display:inline-flex;align-items:center;gap:.4rem;font:500 .82rem var(--f-body);background:#fff;border:1px solid var(--line);border-radius:999px;padding:.25rem .65rem .25rem .3rem;cursor:pointer;text-transform:none;letter-spacing:0;color:var(--ink)}
-.pick button img,.pick button .ini{width:22px;height:22px;border-radius:50%;object-fit:cover}
-.pick button .ini{display:grid;place-content:center;background:var(--blue-soft);color:var(--blue-text);font:600 .5rem var(--f-mono)}
-.pick button[aria-pressed="true"]{background:var(--blue-soft);border-color:var(--blue);color:var(--blue-text)}
-.pick.kinds button{padding:.3rem .75rem}
-.err{color:#b42318;font:500 .78rem var(--f-body);text-transform:none;letter-spacing:0;min-height:1.1em}
-.form .foot{display:flex;align-items:center;gap:.6rem;margin-top:1.1rem}
-@media (max-width:760px){.rv{grid-template-columns:minmax(0,1fr)}.rv .side{border-left:0;padding-left:0;border-top:1px solid var(--line);padding-top:.8rem}.form .grid{grid-template-columns:minmax(0,1fr)}}
+/* Reviews, redesigned */
+.v2 .rvrow{display:grid;grid-template-columns:auto minmax(0,1fr) auto auto;gap:14px;align-items:center;padding:14px 18px;border-top:1px solid var(--line-soft);cursor:pointer}
+.v2 .rvrow:first-child{border-top:0}
+.v2 .rvrow:hover{background:#fafbfe}
+.v2 .rvrow>img,.v2 .rvrow>.ini{width:34px;height:34px;border-radius:50%;object-fit:cover;font-size:12px}
+.v2 .rvrow b{display:block;font:600 15.5px/1.3 var(--f-display)}
+.v2 .rvrow .m{display:block;font-size:13px;color:var(--muted);margin-top:2px}
+.v2 .rvrow .m.fx{color:var(--ink);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.v2 .rvrow .acts2{display:flex;gap:6px;align-items:center}
+.v2 .st{font:600 12px var(--f-body);text-transform:none;letter-spacing:0;border-radius:999px;padding:3px 9px;white-space:nowrap}
+.v2 .st.amber{background:var(--amber-soft);color:var(--amber)}.v2 .st.green{background:var(--green-soft);color:var(--green)}.v2 .st.blue{background:var(--blue-soft);color:var(--blue-ink)}.v2 .st.gray{background:var(--line-soft);color:var(--muted)}
+.v2 .kv{display:grid;grid-template-columns:max-content minmax(0,1fr);gap:8px 16px;font-size:14.5px;margin:0}
+.v2 .kv dt{color:var(--muted)}
+.v2 .kv dd{margin:0;overflow-wrap:anywhere}
+.v2 .chips2{display:flex;flex-wrap:wrap;gap:8px}
+.v2 .chips2 button{border:1px solid var(--line);background:var(--surface);border-radius:999px;padding:7px 13px;font-size:14px}
+.v2 .chips2 button[aria-pressed="true"]{border-color:var(--blue);background:var(--blue-soft);color:var(--blue-ink)}
+.v2 .picks{display:flex;flex-wrap:wrap;gap:8px}
+.v2 .picks button{display:inline-flex;align-items:center;gap:8px;border:1px solid var(--line);background:var(--surface);border-radius:999px;padding:4px 12px 4px 4px;font-size:14px}
+.v2 .picks button img,.v2 .picks .ini{width:26px;height:26px;border-radius:50%;object-fit:cover;font-size:11px}
+.v2 .picks button[aria-pressed="true"]{border-color:var(--blue);background:var(--blue-soft);color:var(--blue-ink)}
+.v2 .person .ini{width:30px;height:30px;font-size:12px}
+.v2 .late{color:var(--red)}
+@media (max-width:860px){.v2 .rvrow{grid-template-columns:auto minmax(0,1fr) auto}.v2 .rvrow .acts2{display:none}}
 </style>
 <div class="dash">
   <aside class="rail r2" aria-label="Dashboard"><div class="brand2"><a class="brand" href="dashboard.html" aria-label="RAIN Lab dashboard"><svg class="logo" viewBox="0 0 397 73" role="img" aria-label="RAIN LAB">
@@ -883,80 +868,85 @@ var V2={};
 <path d="M127 15H141.693C143.684 15 145.615 15.219 147.486 15.657C149.358 16.0552 151.01 16.7321 152.444 17.6877C153.917 18.6433 155.091 19.8976 155.967 21.4505C156.843 23.0034 157.281 24.8947 157.281 27.1245C157.281 30.1904 156.405 32.699 154.653 34.65C152.941 36.5613 150.592 37.8553 147.606 38.5322L158.894 57.2864H149.816L140.02 39.3684H134.526V57.2864H127V15ZM140.677 33.2166C141.752 33.2166 142.828 33.137 143.903 32.9777C144.978 32.8184 145.933 32.5198 146.769 32.0818C147.645 31.6438 148.362 31.0266 148.92 30.2303C149.477 29.3941 149.756 28.3389 149.756 27.0648C149.756 25.91 149.497 24.9743 148.979 24.2576C148.462 23.5011 147.805 22.9038 147.008 22.4658C146.212 22.0278 145.296 21.7292 144.261 21.5699C143.266 21.4106 142.29 21.331 141.334 21.331H134.526V33.2166H140.677Z" fill="currentColor"/>
 </svg>
 </a><button type="button" class="bell" id="bell" aria-label="Notifications" aria-expanded="false"><svg viewBox="0 0 18 18" aria-hidden="true"><path d="M4.5 12.5V8a4.5 4.5 0 0 1 9 0v4.5l1.3 1.5H3.2zM7.3 15.5a1.8 1.8 0 0 0 3.4 0" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linejoin="round"/></svg><span class="bdot" hidden></span></button></div><nav class="nav2" aria-label="Dashboard pages"><a href="dashboard.html"><svg viewBox="0 0 20 20" aria-hidden="true"><path d="M3.5 9.2L10 3.8l6.5 5.4V16a.8.8 0 0 1-.8.8H12v-4.6H8v4.6H4.3a.8.8 0 0 1-.8-.8z" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"/></svg><span>Today</span></a><a href="dashboard-calendar.html"><svg viewBox="0 0 20 20" aria-hidden="true"><rect x="3" y="4.5" width="14" height="12.5" rx="2" fill="none" stroke="currentColor" stroke-width="1.5"/><path d="M3 8.5h14M7 2.8v3.4M13 2.8v3.4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg><span>Calendar</span></a><a href="dashboard-reading.html"><svg viewBox="0 0 20 20" aria-hidden="true"><path d="M10 5.5C8.3 4.3 6 3.8 3 4v11.5c3-.2 5.3.3 7 1.5 1.7-1.2 4-1.7 7-1.5V4c-3-.2-5.3.3-7 1.5zM10 5.5V17" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"/></svg><span>Reading</span></a><a href="dashboard-reviews.html" aria-current="page"><svg viewBox="0 0 20 20" aria-hidden="true"><path d="M5 2.8h7l3.5 3.5V17.2H5z" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"/><path d="M7.5 11.5l2 2 3.5-4" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg><span>Reviews</span></a><a href="dashboard-courses.html"><svg viewBox="0 0 20 20" aria-hidden="true"><path d="M1.8 7.5L10 3.5l8.2 4L10 11.5zM5 9.2v4.3c1.8 1.9 8.2 1.9 10 0V9.2" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"/></svg><span>Courses</span></a><span class="sep" aria-hidden="true"></span><a class="adm-only adm" href="dashboard-admin.html"><svg viewBox="0 0 20 20" aria-hidden="true"><path d="M10 2.5l6.5 2.7v4.6c0 3.9-2.7 6.5-6.5 7.9-3.8-1.4-6.5-4-6.5-7.9V5.2z" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"/></svg><span>Admin</span></a><button type="button" class="meTab" data-me aria-haspopup="true" aria-expanded="false" aria-label="Your menu"><img alt="" src="shiva-shakeri.jpg"><span>You</span></button></nav><button type="button" class="me" data-me aria-haspopup="true" aria-expanded="false"><img alt="" src="shiva-shakeri.jpg"><div><b>Shiva Shakeri</b><span id="roleLbl">Admin</span></div><svg class="chev" width="16" height="16" viewBox="0 0 16 16" aria-hidden="true"><path d="M4 10l4-4 4 4" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg></button><div class="memenu" id="memenu" role="menu" hidden><a role="menuitem" href="dashboard-website.html#profile"><svg viewBox="0 0 18 18" aria-hidden="true"><circle cx="9" cy="6.5" r="3" fill="none" stroke="currentColor" stroke-width="1.5"/><path d="M3.5 15.5c.7-3 2.8-4.5 5.5-4.5s4.8 1.5 5.5 4.5" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>My profile</a><a role="menuitem" href="dashboard-website.html#share"><svg viewBox="0 0 18 18" aria-hidden="true"><path d="M3 4h9v10H4.5A1.5 1.5 0 0 1 3 12.5zM12 7h3v5.5a1.5 1.5 0 0 1-3 0M5.5 7h4M5.5 10h4" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"/></svg>Share news</a><a role="menuitem" href="dashboard-website.html#addpub"><svg viewBox="0 0 18 18" aria-hidden="true"><path d="M5 2.5h6l3 3v10H5zM8 9.5h4M10 7.5v4" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round" stroke-linecap="round"/></svg>Add a publication</a><a role="menuitem" href="dashboard-polls.html"><svg viewBox="0 0 18 18" aria-hidden="true"><path d="M4 15V9M9 15V4M14 15v-4" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/></svg>Polls</a><a role="menuitem" href="dashboard-resources.html"><svg viewBox="0 0 18 18" aria-hidden="true"><path d="M7.5 10.5l3-3M6 8L4.5 9.5a2.5 2.5 0 0 0 3.5 3.5L9.5 11.5M12 10l1.5-1.5A2.5 2.5 0 0 0 10 5L8.5 6.5" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>Lab links</a><button type="button" role="menuitem" id="reqOpen"><svg viewBox="0 0 18 18" aria-hidden="true"><path d="M3 4h12v8H8l-3.5 3v-3H3z" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"/></svg>Ask the admins</button><span class="adm-only m-only"><a role="menuitem" href="dashboard-admin.html"><svg viewBox="0 0 18 18" aria-hidden="true"><path d="M9 2l6 2.5v4.2c0 3.6-2.5 6-6 7.3-3.5-1.3-6-3.7-6-7.3V4.5z" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"/></svg>Admin</a></span><hr><a role="menuitem" href="index.html"><svg viewBox="0 0 18 18" aria-hidden="true"><circle cx="9" cy="9" r="6.5" fill="none" stroke="currentColor" stroke-width="1.4"/><path d="M2.5 9h13M9 2.5c2 2 2 11 0 13M9 2.5c-2 2-2 11 0 13" fill="none" stroke="currentColor" stroke-width="1.2"/></svg>Public website</a><a role="menuitem" href="members.html" data-signout><svg viewBox="0 0 18 18" aria-hidden="true"><path d="M10.5 3H14v12h-3.5M8 5.5L4.5 9 8 12.5M4.5 9h7" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>Sign out</a></div></aside>
-  <main class="main">
-    
-    <header class="top"><div><h1>Reviews</h1><p class="sub">Feedback on drafts before they go out</p></div>
-      <button type="button" class="btn dark" id="openForm"><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M8 3v10M3 8h10" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>Request a review</button></header>
-
-    <form class="card form" id="form" novalidate>
-      <h2>Request a review</h2>
-      <div class="grid">
-        <label class="full">Draft title<input name="title" placeholder="Working title" required></label>
-        <label>Link to the draft<input name="link" placeholder="Overleaf or Dropbox link"></label>
-        <label>Going to<input name="venue" placeholder="For example, IEEE CDC 2027"></label>
-        <label>Feedback needed by<input name="need" type="date" required></label>
-        <div class="lbl" role="group" aria-labelledby="kindsL"><span id="kindsL">Kind of feedback</span><div class="pick kinds" id="kinds"><button type="button" aria-pressed="true">Big picture</button><button type="button" aria-pressed="false">Math check</button><button type="button" aria-pressed="false">Writing</button></div></div>
-        <div class="full lbl" role="group" aria-labelledby="pickL"><span id="pickL">Reviewers (choose at least one)</span><div class="pick" id="pick"></div></div>
-        <label class="full" style="flex-direction:row;display:flex;align-items:center;gap:.5rem;text-transform:none;letter-spacing:0;font:400 .88rem var(--f-body);color:var(--ink)"><input type="checkbox" name="open" checked style="width:auto"> Also let others volunteer</label>
-      </div>
-      <p class="err" id="err" role="alert"></p>
-      <div class="foot"><button type="submit" class="btn dark">Send request</button><button type="button" class="btn" id="cancel">Cancel</button></div>
-    </form>
-
-    <div class="filters" id="filters"><button type="button" data-f="all" aria-pressed="true">All</button><button type="button" data-f="needs" aria-pressed="false">Needs reviewers</button><button type="button" data-f="me" aria-pressed="false">I'm reviewing</button><button type="button" data-f="mine" aria-pressed="false">My drafts</button></div>
-    <ul class="rlist" id="list"></ul>
+  <main class="main v2">
+  <div class="wrap">
+    <header class="head">
+      <div><h1>Reviews</h1><p>Get feedback on your drafts, and help with others'.</p></div>
+      <button type="button" class="btn primary" id="rvAdd"><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M8 3v10M3 8h10" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>Ask for a review</button>
+    </header>
+    <div id="rvBody" style="display:grid;gap:22px"></div>
+  </div>
   </main>
 </div>
 <script>labReady(function(){
 
 (function(){
-  var me=DASH.me.name,f="all",R=DASH.reviews;
-  var LABEL={invited:"Invited",accepted:"Reviewing",done:"Feedback sent"};
-  function needs(r){return r.open||r.reviewers.every(function(x){return x.st==="invited"})}
-  function card(r){
-    var n=daysTo(r.need),dt=new Date(r.need+"T12:00"),mine=r.author===me,myRev=r.reviewers.find(function(x){return x.n===me});
-    var acts="";
-    if(myRev&&myRev.st==="invited")acts='<button type="button" class="btn sm dark" data-a="accept" data-id="'+r.id+'">Accept</button><button type="button" class="btn sm" data-a="decline" data-id="'+r.id+'">Decline</button>';
-    else if(myRev&&myRev.st==="accepted")acts='<button type="button" class="btn sm" data-a="done" data-id="'+r.id+'">Mark feedback sent</button>';
-    else if(!myRev&&!mine&&r.open)acts='<button type="button" class="btn sm" data-a="volunteer" data-id="'+r.id+'">Volunteer to review</button>';
-    if(mine)acts+='<button type="button" class="btn sm" data-a="withdraw" data-id="'+r.id+'">Withdraw request</button>';
-    return '<li class="rv"><div><span class="k">'+esc(r.venue)+'</span><h3>'+esc(r.title)+'</h3><p class="au">'+face(r.author)+esc(r.author)+(mine?' (you)':'')+'</p>'+
-      '<div class="meta">'+r.kinds.map(function(k){return '<span class="chip">'+esc(k)+'</span>'}).join("")+(r.open?'<span class="chip">Open to volunteers</span>':'')+'</div>'+
-      '<div class="ra">'+(/^https?:\/\//.test(r.link||"")?'<a class="btn sm" href="'+esc(r.link)+'" target="_blank" rel="noopener">Open draft</a>':r.link?'<a class="btn sm" href="#" data-soon>Open draft in '+esc(r.link)+'</a>':'')+acts+'</div></div>'+
-      '<div class="side"><p class="due'+(n>=0&&n<=10?' soon':'')+'"><small>Feedback by</small>'+dt.toLocaleDateString("en-US",{month:"short",day:"numeric"})+(n>=0?', '+n+(n===1?' day':' days')+' left':'')+'</p>'+
-      '<ul class="revs">'+r.reviewers.map(function(x){return '<li>'+face(x.n)+esc(x.n)+'<span class="st '+x.st+'">'+LABEL[x.st]+'</span></li>'}).join("")+'</ul></div></li>'}
-  function draw(){setTimeout(refreshBell,0);
-    var list=R.filter(function(r){return f==="all"||(f==="needs"?needs(r):f==="me"?r.reviewers.some(function(x){return x.n===me}):r.author===me)});
-    document.getElementById("list").innerHTML=list.map(card).join("")||'<li class="empty">Nothing here.</li>';
-  }
-  document.getElementById("filters").addEventListener("click",function(e){var b=e.target.closest("button");if(!b)return;f=b.dataset.f;this.querySelectorAll("button").forEach(function(x){x.setAttribute("aria-pressed",String(x===b))});draw()});
-  document.getElementById("list").addEventListener("click",function(e){var b=e.target.closest("[data-a]");if(!b)return;var r=R.find(function(x){return x.id===+b.dataset.id});if(!r)return;var a=b.dataset.a,me_=r.reviewers.find(function(x){return x.n===me});
-    if(a==="withdraw"){var wi=R.indexOf(r);R.splice(wi,1);draw();var wt=setTimeout(function(){if(window.LAB)LAB.review("withdraw",r)},6500);toast("Request withdrawn.",function(){clearTimeout(wt);R.splice(wi,0,r);draw()});return}
-    if(a==="accept")me_.st="accepted";else if(a==="decline")r.reviewers.splice(r.reviewers.indexOf(me_),1);else if(a==="done")me_.st="done";else if(a==="volunteer")r.reviewers.push({n:me,st:"accepted"});draw();
-    if(window.LAB)LAB.review(a,r);
-    toast({accept:"You are reviewing \u201c"+r.title+"\u201d.",decline:"You declined.",done:"Marked as feedback sent.",volunteer:"You are reviewing \u201c"+r.title+"\u201d."}[a])});
-  // request form
-  var form=document.getElementById("form"),picked=[];
-  var PEOPLE=DASH.people?DASH.people.filter(function(p){return p.role!=="alumni"}).map(function(p){return {name:p.name}}):DATA.members;
-  document.getElementById("pick").innerHTML=PEOPLE.filter(function(m){return m.name!==me}).map(function(m){return '<button type="button" aria-pressed="false" data-n="'+esc(m.name)+'">'+face(m.name)+esc(m.name)+'</button>'}).join("");
-  document.getElementById("pick").addEventListener("click",function(e){var b=e.target.closest("button");if(!b)return;var on=b.getAttribute("aria-pressed")!=="true";b.setAttribute("aria-pressed",String(on));
-    if(on)picked.push(b.dataset.n);else picked.splice(picked.indexOf(b.dataset.n),1);if(picked.length)document.getElementById("err").textContent=""});
-  document.getElementById("kinds").addEventListener("click",function(e){var b=e.target.closest("button");if(!b)return;var on=b.getAttribute("aria-pressed")!=="true";if(!on&&this.querySelectorAll('[aria-pressed="true"]').length===1)return;b.setAttribute("aria-pressed",String(on))});
-  document.getElementById("openForm").onclick=function(){form.classList.add("open");form.querySelector("input").focus()};
-  document.getElementById("cancel").onclick=function(){form.classList.remove("open")};
-  function alertMsg(t){document.getElementById("err").textContent=t}
-  form.addEventListener("submit",function(e){e.preventDefault();
-    var d=new FormData(form),t0=new Date().toISOString().slice(0,10);
-    if(!String(d.get("title")).trim()){alertMsg("Add a title for your draft.");form.title.focus();return}
-    if(d.get("need")&&d.get("need")<t0){alertMsg("Pick a feedback date in the future.");form.need.focus();return}
-    if(!picked.length){alertMsg("Choose at least one reviewer.");return}
-    alertMsg("");
-    R.unshift({id:Date.now(),title:d.get("title")||"Untitled draft",author:me,venue:d.get("venue")||"Venue to add",need:d.get("need")||new Date(Date.now()+12096e5).toISOString().slice(0,10),link:String(d.get("link")||"").trim(),
-      kinds:[].map.call(document.querySelectorAll('#kinds [aria-pressed="true"]'),function(b){return b.textContent}),reviewers:picked.map(function(n){return {n:n,st:"invited"}}),open:!!d.get("open")});
-    if(window.LAB){var nr=R[0];LAB.addReview(nr).then(function(id){if(id){nr.id=id;draw()}})}toast("Request sent to "+picked.length+(picked.length===1?" reviewer.":" reviewers."));
-    form.reset();picked=[];document.querySelectorAll("#pick button").forEach(function(b){b.setAttribute("aria-pressed","false")});form.classList.remove("open");f="mine";
-    document.querySelectorAll("#filters button").forEach(function(x){x.setAttribute("aria-pressed",String(x.dataset.f==="mine"))});draw()});
-  draw();
+  var ME=DASH.me.name,R=DASH.reviews,KINDS=["Big picture","Math check","Writing","Figures"];
+  var ST={invited:["Asked","amber"],accepted:["Reviewing","blue"],done:["Done","green"]};
+  function first(n){var k=String(n).match(/"([^"]*)"/);return k?k[1]:String(n).split(" ")[0]}
+  function fd(isoD){if(!isoD)return "";var d=new Date(isoD+"T12:00");return MON[d.getMonth()]+" "+d.getDate()}
+  function past(isoD){return isoD&&daysTo(isoD)<0}
+  function people(){return (DASH.people||[]).filter(function(p){return p.role!=="alumni"&&p.name!==ME}).map(function(p){return p.name}).sort()}
+  function myRole(r){var x=r.reviewers.find(function(v){return v.n===ME});return x?x.st:null}
+  function href(l){return /^https?:\/\//i.test(l)?l:"https://"+l}
+  function row(r,acts){var mine=r.author===ME;
+    return '<div class="rvrow" data-rv="'+r.id+'" tabindex="0" role="button">'+face(r.author)+'<span style="min-width:0"><b>'+esc(r.title)+'</b><span class="m">'+(mine?'Yours':esc(first(r.author)))+', '+esc(r.venue)+', feedback by <span'+(past(r.need)?' class="late"':'')+'>'+esc(fd(r.need))+'</span></span>'+(r.focus?'<span class="m fx">Focus: '+esc(r.focus)+'</span>':'')+'</span>'+
+      '<span class="faces">'+r.reviewers.slice(0,4).map(function(v){return face(v.n)}).join("")+(r.reviewers.length>4?'<span class="more">+'+(r.reviewers.length-4)+'</span>':'')+'</span>'+(acts||'<span></span>')+'</div>'}
+  function draw(){var mine=R.filter(function(r){return r.author===ME}),asked=R.filter(function(r){return myRole(r)}),open=R.filter(function(r){return r.open&&r.author!==ME&&!myRole(r)&&!past(r.need)});
+    function sec(t,rows,empty){return '<div style="display:grid;gap:10px"><div class="sechead"><h2>'+t+'</h2></div><div class="list" style="margin-top:6px">'+(rows||'<div class="empty">'+empty+'</div>')+'</div></div>'}
+    var ord=function(a,b){return a.need<b.need?-1:1};
+    document.getElementById("rvBody").innerHTML=
+      sec("Asked of you",asked.sort(function(a,b){var o={invited:0,accepted:1,done:2};return o[myRole(a)]-o[myRole(b)]||ord(a,b)}).map(function(r){var m=myRole(r);return row(r,'<span class="acts2">'+(m==="invited"?'<button type="button" class="btn quiet sm" data-rva="decline|'+r.id+'">Decline</button><button type="button" class="btn primary sm" data-rva="accept|'+r.id+'">Accept</button>':m==="accepted"?'<button type="button" class="btn secondary sm" data-rva="done|'+r.id+'">Mark done</button>':'<span class="st green">Done</span>')+'</span>')}).join(""),"Nobody has asked you yet.")+
+      sec("Your drafts",mine.sort(ord).map(function(r){var d=r.reviewers.filter(function(v){return v.st==="done"}).length,n=r.reviewers.length;return row(r,'<span class="st '+(n&&d===n?'green':'gray')+'">'+(n?d+' of '+n+' done':'No reviewers yet')+'</span>')}).join(""),"Ask for a review when you have a draft.")+
+      (open.length?sec("Open to volunteers",open.sort(ord).map(function(r){return row(r,'<span class="acts2"><button type="button" class="btn secondary sm" data-rva="vol|'+r.id+'">Volunteer</button></span>')}).join(""),""):"")}
+  function byId(id){return R.find(function(r){return r.id===+id})}
+  function act(a,r){var k=r.reviewers.findIndex(function(v){return v.n===ME});
+    if(a==="accept"){r.reviewers[k].st="accepted";LAB.review("accept",r);toast("Accepted. "+first(r.author)+" sees it on Reviews.")}
+    if(a==="done"){r.reviewers[k].st="done";LAB.review("done",r);toast("Marked done. Thanks for reviewing.")}
+    if(a==="decline"){var old=r.reviewers[k];later(function(){return "Declined."},function(){r.reviewers.splice(k,1);draw()},function(){r.reviewers.splice(k,0,old);draw()},function(){LAB.review("decline",r)});document.dispatchEvent(new Event("bell:refresh"));return}
+    if(a==="vol"){r.reviewers.push({n:ME,st:"accepted"});LAB.review("volunteer",r);toast("You are reviewing it now.")}
+    draw();document.dispatchEvent(new Event("bell:refresh"))}
+  function panel(r){var m=myRole(r),own=r.author===ME;
+    V2.open(r.title,(own?"Your draft":"By "+r.author)+", "+r.venue,
+      '<div class="actions">'+(r.link?'<a class="btn primary" href="'+esc(href(r.link))+'" target="_blank" rel="noopener">Open the draft</a>':'<span class="meta" style="margin:0">No link to the draft yet.</span>')+'</div>'+
+      '<dl class="kv"><dt>Feedback by</dt><dd'+(past(r.need)?' class="late"':'')+'>'+esc(fd(r.need))+'</dd><dt>Looking for</dt><dd>'+esc(r.kinds.join(", ")||"Any feedback")+'</dd>'+(r.focus?'<dt>Focus on</dt><dd>'+esc(r.focus)+'</dd>':'')+'<dt>Volunteers</dt><dd>'+(r.open?'Welcome':'Not open')+'</dd></dl>'+
+      '<p class="sec">Reviewers</p><div class="people">'+(r.reviewers.map(function(v){return '<div class="person">'+face(v.n)+esc(v.n)+'<span><span class="st '+ST[v.st][1]+'">'+ST[v.st][0]+'</span></span></div>'}).join("")||'<p class="meta" style="margin:0">No reviewers yet.</p>')+'</div>',
+      own?'<button type="button" class="btn quiet" data-wd style="margin-right:auto">Withdraw</button><button type="button" class="btn secondary" data-addrev>Add reviewers</button>':
+      m==="invited"?'<button type="button" class="btn quiet" data-rva="decline">Decline</button><button type="button" class="btn primary" data-rva="accept">Accept</button>':m==="accepted"?'<button type="button" class="btn primary" data-rva="done">Mark done</button>':!m&&r.open?'<button type="button" class="btn primary" data-rva="vol">Volunteer</button>':'',
+      function(b){if(b.dataset.rva){act(b.dataset.rva,r);V2.close();return}
+        if(b.dataset.wd!=null){var i=R.indexOf(r);V2.close();later(function(){return "Request withdrawn."},function(){R.splice(i,1);draw()},function(){R.splice(i,0,r);draw()},function(){LAB.review("withdraw",r)});return}
+        if(b.dataset.addrev!=null)addRev(r)});
+    try{history.replaceState(null,"","#r"+r.id)}catch(e){}}
+  function addRev(r){var who=[],have=r.reviewers.map(function(v){return v.n}),list=people().filter(function(n){return have.indexOf(n)<0});
+    V2.open("Add reviewers",r.title,list.length?'<div class="picks">'+list.map(function(n){return '<button type="button" data-rw="'+esc(n)+'" aria-pressed="false">'+face(n)+esc(first(n))+'</button>'}).join("")+'</div>':'<p class="meta" style="margin:0">Everyone in the lab is already on it.</p>',
+      '<button type="button" class="btn quiet" data-back>Cancel</button><button type="button" class="btn primary" data-addsend>Ask them</button>',
+      function(b){if(b.dataset.back!=null){panel(r);return}
+        if(b.dataset.rw){var k=who.indexOf(b.dataset.rw);if(k>=0)who.splice(k,1);else who.push(b.dataset.rw);b.setAttribute("aria-pressed",String(k<0));return}
+        if(b.dataset.addsend!=null){if(!who.length){toast("Pick at least one person.");return}who.forEach(function(n){r.reviewers.push({n:n,st:"invited"})});LAB.addReviewers(r,who);draw();panel(r);toast("Asked "+who.map(first).join(", ")+".")}})}
+  function ask(){var kinds=["Big picture"],who=[],d=new Date();d.setDate(d.getDate()+14);var def=d.getFullYear()+"-"+("0"+(d.getMonth()+1)).slice(-2)+"-"+("0"+d.getDate()).slice(-2);
+    V2.open("Ask for a review","The people you pick see it on Today and can accept or decline.",
+      '<div class="field"><label for="rv-t">Draft title</label><input id="rv-t" placeholder="For example, CDC 2027 draft"></div>'+
+      '<div class="two"><div class="field"><label for="rv-v">Venue</label><input id="rv-v" placeholder="IEEE CDC 2027"></div><div class="field"><label for="rv-d">Feedback by</label><input id="rv-d" type="date" value="'+def+'"></div></div>'+
+      '<div class="field"><label for="rv-l">Link to the draft</label><input id="rv-l" placeholder="Overleaf, Google Docs or Dropbox"></div>'+
+      '<div class="field"><span class="lab">What kind of feedback?</span><div class="chips2">'+KINDS.map(function(k){return '<button type="button" data-kd="'+k+'" aria-pressed="'+(kinds.indexOf(k)>=0)+'">'+k+'</button>'}).join("")+'</div></div>'+
+      '<div class="field"><span class="lab">Who do you want to ask?</span><div class="picks">'+people().map(function(n){return '<button type="button" data-rw="'+esc(n)+'" aria-pressed="false">'+face(n)+esc(first(n))+'</button>'}).join("")+'</div></div>'+
+      '<div class="field"><label for="rv-f">What should they focus on? <span class="opt">optional</span></label><textarea id="rv-f" placeholder="For example, check the proof in Section 2, or only read the introduction"></textarea></div>'+
+      '<label class="check"><input type="checkbox" id="rv-o"> Others in the lab can volunteer too</label>',
+      '<button type="button" class="btn quiet" data-close>Cancel</button><button type="button" class="btn primary" data-rvsend>Send request</button>',function(b){
+      if(b.dataset.kd){var k=kinds.indexOf(b.dataset.kd);if(k>=0)kinds.splice(k,1);else kinds.push(b.dataset.kd);b.setAttribute("aria-pressed",String(k<0));return}
+      if(b.dataset.rw){var k2=who.indexOf(b.dataset.rw);if(k2>=0)who.splice(k2,1);else who.push(b.dataset.rw);b.setAttribute("aria-pressed",String(k2<0));return}
+      if(b.dataset.rvsend==null)return;var t=document.getElementById("rv-t").value.trim(),need=document.getElementById("rv-d").value,open=document.getElementById("rv-o").checked;
+      if(!t){toast("Add the draft title.");document.getElementById("rv-t").focus();return}
+      if(!need){toast("Pick the date you need feedback by.");document.getElementById("rv-d").focus();return}
+      if(!who.length&&!open){toast("Pick at least one reviewer, or let others volunteer.");return}
+      var r={id:null,title:t,author:ME,venue:document.getElementById("rv-v").value.trim()||"Venue to add",need:need,link:document.getElementById("rv-l").value.trim(),kinds:kinds.slice(),focus:document.getElementById("rv-f").value.trim(),open:open,reviewers:who.map(function(n){return {n:n,st:"invited"}})};
+      b.disabled=true;LAB.addReview(r).then(function(id){b.disabled=false;if(!id)return;r.id=id;R.unshift(r);V2.close();draw();toast(who.length?"Sent to "+who.map(first).join(", ")+".":"Posted. Others in the lab can volunteer.")})})}
+  document.getElementById("rvAdd").onclick=ask;
+  var body=document.getElementById("rvBody");
+  body.addEventListener("click",function(e){var b=e.target.closest("[data-rva]");if(b){e.stopPropagation();var p=b.dataset.rva.split("|");act(p[0],byId(p[1]));return}var r=e.target.closest("[data-rv]");if(r)panel(byId(r.dataset.rv))});
+  body.addEventListener("keydown",function(e){if((e.key==="Enter"||e.key===" ")&&e.target.matches(".rvrow")){e.preventDefault();panel(byId(e.target.dataset.rv))}});
+  draw();var mh=location.hash.match(/^#r(\d+)$/);if(mh&&byId(mh[1]))panel(byId(mh[1]));
+  document.addEventListener("dash:redraw",draw);
 })();
 
 });</script>
