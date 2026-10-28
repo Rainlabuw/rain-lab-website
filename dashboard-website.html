@@ -1,4 +1,4 @@
-<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover"></head><body><script src="vendor/supabase-2.117.2.js"></script><script src="lab.js?v=211d4a4f"></script><style>.lab-loading body{visibility:hidden}.live-hide{display:none!important}</style><!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover"></head><body><title>Website | RAIN Lab members</title><link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Caveat:wght@500;600&family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:wght@400;500;600&family=Urbanist:wght@500;600;700&display=swap"><style>:root{
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover"></head><body><script src="vendor/supabase-2.117.2.js"></script><script src="lab.js?v=d66f10e8"></script><style>.lab-loading body{visibility:hidden}.live-hide{display:none!important}</style><!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover"></head><body><title>Website | RAIN Lab members</title><link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Caveat:wght@500;600&family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:wght@400;500;600&family=Urbanist:wght@500;600;700&display=swap"><style>:root{
   --cloud:#f6f8fb; --white:#ffffff; --ink:#13101d; --muted:#586174; --line:#e1e6ee;
   --blue:#1f6feb; --blue-text:#1a5fcc; --blue-soft:#e7effd;
   --night:#0b0714; --black:#000; --night-ink:#eef1f7; --night-muted:#9aa3b6; --night-line:#231d33;
@@ -607,7 +607,14 @@ ooEvents();
 .plist li:last-child{border-bottom:0}
 .plist b{display:block;font:600 .9rem/1.35 var(--f-display)}
 .plist span{color:var(--muted);font-size:.8rem}
-#nform[hidden]{display:none}
+#pform[hidden],#pview[hidden]{display:none}
+.pdl{display:grid;grid-template-columns:max-content minmax(0,1fr);gap:.55rem 1rem;margin:0;font-size:.9rem}
+.pdl dt{font:500 .64rem var(--f-mono);letter-spacing:.1em;text-transform:uppercase;color:var(--muted);padding-top:.2rem}
+.pdl dd{margin:0;overflow-wrap:anywhere}
+.newsbar{display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:.8rem}
+.mine .rm{background:none;border:0;padding:0;font:500 .7rem var(--f-mono);color:#b42318;cursor:pointer;justify-self:start}
+.pubn li{grid-template-columns:minmax(0,1fr) auto;align-items:center}
+.pubn li>span:first-child{display:grid;gap:.12rem}
 @media (max-width:1000px){.wcols{grid-template-columns:minmax(0,1fr)}}
 @media (max-width:640px){.row2,.row3,.prof{grid-template-columns:minmax(0,1fr)}}
 </style>
@@ -637,26 +644,14 @@ ooEvents();
         <p class="done" id="wok" role="status" hidden></p>
         <section class="pane col" id="p-news">
           <div class="col" id="drafts"></div>
-          <form class="card" id="nform" novalidate>
-            <h2 id="nh">Share news</h2>
-            <p class="bnote" id="nnote" hidden></p>
-            <div class="row2">
-              <label class="fld"><span>Type</span><select name="type" id="ntype"></select></label>
-              <label class="fld"><span>Headline</span><input name="title" placeholder="Best paper award at ACC"></label>
-            </div>
-            <p class="err" id="nerr" hidden>Add a headline.</p>
-            <label class="fld"><span>A line or two</span><textarea name="text" placeholder="What happened, in plain words. Name the people involved."></textarea></label>
-            <div class="row2">
-              <label class="fld"><span>Link (optional)</span><input name="link" placeholder="Paper, article or event page"></label>
-              <label class="fld"><span>Photo (optional)</span><input type="file" name="photo" accept="image/*"></label>
-            </div>
-            <div class="mfoot"><button type="button" class="btn" id="ncancel" hidden>Cancel</button><button class="btn dark" data-send></button></div>
-          </form>
+          <div class="newsbar"><p class="about" style="margin:0">Share lab news: papers, awards, talks, defenses, new people. An admin checks it, then it goes on the News page.</p><button type="button" class="btn dark" id="nopen">Share news</button></div>
           <section class="card"><h2>On the News page <a href="news.html">Open</a></h2><ul class="pubn" id="pubn"></ul></section>
         </section>
 
         <section class="pane" id="p-profile" hidden>
-          <form class="card" id="pform" novalidate><h2>My profile on the People page</h2>
+          <section class="card" id="pview"><h2>My profile on the People page <button type="button" class="btn sm" id="pedit">Edit</button></h2>
+            <div class="prof"><dl class="pdl" id="pdl"></dl><div class="pcard" id="pprev2"></div></div></section>
+          <form class="card" id="pform" novalidate hidden><h2>Edit my profile</h2>
             <div class="prof"><div>
               <label class="fld"><span>Name</span><input name="name"></label>
               <label class="fld"><span>Research topic</span><textarea name="topic" style="min-height:4rem"></textarea></label>
@@ -670,19 +665,12 @@ ooEvents();
               <label class="chk"><input type="checkbox" name="bshow" checked> Announce my birthday on the Today page</label>
             </div>
             <div><p class="k" style="margin-bottom:.5rem">Preview</p><div class="pcard" id="pprev"></div></div></div>
-            <div class="mfoot"><button class="btn dark" data-send></button></div>
+            <div class="mfoot"><button type="button" class="btn" id="pcancel">Cancel</button><button class="btn dark" data-send></button></div>
           </form>
         </section>
 
         <section class="pane col" id="p-papers" hidden>
-          <form class="card" id="aform" novalidate><h2>Add a paper</h2>
-            <label class="fld"><span>Title</span><input name="t"></label>
-            <div class="row2"><label class="fld"><span>Year</span><input name="y" inputmode="numeric" placeholder="2027"></label><label class="fld"><span>Venue</span><input name="v" placeholder="IEEE Conference on Decision and Control"></label></div>
-            <div class="row2"><label class="fld"><span>Authors</span><input name="a" placeholder="In order, separated by commas"></label><label class="fld"><span>Link</span><input name="l" placeholder="arXiv or DOI"></label></div>
-            <label class="chk"><input type="checkbox" name="news" checked> Also share it as lab news (we make a draft for you)</label>
-            <p class="err" id="aerr" hidden>Add the title, year and venue.</p>
-            <div class="mfoot"><button class="btn dark" data-send></button></div>
-          </form>
+          <div class="newsbar"><p class="about" style="margin:0">Add a paper of yours. An admin checks it, then it goes on the Publications page.</p><button type="button" class="btn dark" id="aopen">Add a publication</button></div>
           <section class="card"><h2>My papers on the site <a href="publications.html">Publications</a></h2><ul class="plist" id="plist"></ul></section>
         </section>
 
@@ -694,6 +682,33 @@ ooEvents();
     </div>
   </main>
 </div>
+<div class="modal" id="amodal" hidden role="dialog" aria-modal="true" aria-labelledby="ah"><div class="box" style="width:min(36rem,100%)">
+          <form id="aform" novalidate><h2 id="ah">Add a publication</h2>
+            <label class="fld"><span>Title</span><input name="t"></label>
+            <div class="row2"><label class="fld"><span>Year</span><input name="y" inputmode="numeric" placeholder="2027"></label><label class="fld"><span>Venue</span><input name="v" placeholder="IEEE Conference on Decision and Control"></label></div>
+            <div class="row2"><label class="fld"><span>Authors</span><input name="a" placeholder="In order, separated by commas"></label><label class="fld"><span>Link</span><input name="l" placeholder="arXiv or DOI"></label></div>
+            <label class="chk"><input type="checkbox" name="news" checked> Also share it as lab news (we make a draft for you)</label>
+            <p class="err" id="aerr" hidden>Add the title, year and venue.</p>
+            <div class="mfoot"><button type="button" class="btn" id="acancel">Cancel</button><button class="btn dark" data-send></button></div>
+          </form>
+</div></div>
+<div class="modal" id="nmodal" hidden role="dialog" aria-modal="true" aria-labelledby="nh"><div class="box" style="width:min(36rem,100%)">
+          <form id="nform" novalidate>
+            <h2 id="nh">Share news</h2>
+            <p class="bnote" id="nnote" hidden></p>
+            <div class="row2">
+              <label class="fld"><span>Type</span><select name="type" id="ntype"></select></label>
+              <label class="fld"><span>Headline</span><input name="title" placeholder="Best paper award at ACC"></label>
+            </div>
+            <p class="err" id="nerr" hidden>Add a headline.</p>
+            <label class="fld"><span>A line or two</span><textarea name="text" placeholder="What happened, in plain words. Name the people involved."></textarea></label>
+            <div class="row2">
+              <label class="fld"><span>Link (optional)</span><input name="link" placeholder="Paper, article or event page"></label>
+              <label class="fld"><span>Photo (optional)</span><input type="file" name="photo" accept="image/*"></label>
+            </div>
+            <div class="mfoot"><button type="button" class="btn" id="ncancel">Cancel</button><button class="btn dark" data-send></button></div>
+          </form>
+</div></div>
 <script>labReady(function(){
 
 (function(){
@@ -701,61 +716,88 @@ ooEvents();
   var meP=(DATA.members||[]).find(function(m){return m.name===me})||{};
   function admin(){return role==="Admin"}
   function first(n){var k=n.match(/"([^"]*)"/);return k?k[1]:n.split(" ")[0]}
-  var STAT={waiting:['wait','Waiting for approval'],published:['ok',window.LAB?'Approved':'Live on the site'],back:['back','Sent back']};
-  function add(c,files){c=Object.assign({id:Date.now()+Math.random(),by:me,when:"Today",status:admin()?"published":"waiting"},c);DASH.changes.unshift(c);if(window.LAB)LAB.addChange(c,files);return c}
+  var STAT={waiting:['wait','Waiting for approval'],published:['ok','Live on the site'],back:['back','Sent back']};
+  function add(c,files){c=Object.assign({_k:"k"+Date.now()+Math.random(),by:me,when:"Today",status:admin()?"published":"waiting"},c);DASH.changes.unshift(c);if(window.LAB)LAB.addChange(c,files);return c}
   function pics(input){return [].slice.call((input&&input.files)||[])}
   document.getElementById("ntype").innerHTML=DASH.newsTypes.map(function(t){return '<option'+(t==="Other"?' selected':'')+'>'+esc(t)+'</option>'}).join("");
   // papers added with "also share as news" turn into news drafts
-  function autos(){return DASH.changes.filter(function(c){return c.kind==="Paper"&&c.by===me&&c.wantsNews&&dismissed.indexOf(c.id)<0&&!DASH.changes.some(function(n){return n.from===c.id})})}
+  function autos(){return DASH.changes.filter(function(c){return c.kind==="Paper"&&c.by===me&&c.wantsNews&&dismissed.indexOf(c.title)<0&&!DASH.changes.some(function(n){return n.from===c.title})})}
   function draw(){
     var send=admin()?"Publish":"Send for approval";
     document.querySelectorAll("[data-send]").forEach(function(b){b.textContent=send});
     document.getElementById("how").innerHTML=admin()?
-      (window.LAB?'<li><b>As an admin</b>, what you send is approved right away.</li><li>Members’ changes wait in the Admin inbox for you or Prof. Mesbahi.</li><li>Approved changes are added to the public site by hand for now. Publishing them automatically comes next.</li>':'<li><b>As an admin</b>, what you publish goes on the site right away.</li><li>Members’ changes wait in the Admin inbox for you or Prof. Mesbahi.</li><li>To edit page text and photos directly, go to Admin, Pages.</li>'):
+      (window.LAB?'<li><b>As an admin</b>, what you send goes on the site right away.</li><li>Members’ changes wait in the Admin inbox for you or Prof. Mesbahi.</li><li>Approved news, papers and profile updates show on the public site within a minute. Remove one here to take it down.</li>':'<li><b>As an admin</b>, what you publish goes on the site right away.</li><li>Members’ changes wait in the Admin inbox for you or Prof. Mesbahi.</li><li>To edit page text and photos directly, go to Admin, Pages.</li>'):
       '<li><b>As a member</b>, you can share news, update your profile and add papers.</li><li>An admin approves each change, or sends it back with a note.</li><li>Once approved, it goes on the public site. For other changes to a page, use Ask the admins.</li>';
     document.getElementById("drafts").innerHTML=autos().map(function(c){var p=(DATA.pubs||[]).find(function(x){return x.t===c.title})||{a:[me]},co=p.a.filter(function(a){return a!==me&&a!=="Mehran Mesbahi"});
-      return '<form class="card draft" data-k="'+c.id+'" novalidate><h2>News draft for your new paper</h2><p class="why">You added a paper and asked to share it. Edit anything, then '+(admin()?'publish it':'send it for approval')+'.</p>'+
+      return '<form class="card draft" data-k="'+esc(c.title)+'" novalidate><h2>News draft for your new paper</h2><p class="why">You added a paper and asked to share it. Edit anything, then '+(admin()?'publish it':'send it for approval')+'.</p>'+
         '<label class="fld"><span>Headline</span><input name="title" value="'+esc('Paper accepted to '+(c.venue?c.venue+' '+c.year:c.text.replace(", "," ")))+'"></label>'+
         '<label class="fld"><span>A line or two</span><textarea name="text">'+esc(first(me)+(co.length?' and '+co.map(first).join(" and "):'')+'’s paper “'+c.title+'”, with Prof. Mesbahi, will appear at '+(c.venue?c.venue+' '+c.year:c.text.replace(", "," "))+'.')+'</textarea></label>'+
         '<div class="mfoot"><button type="button" class="btn" data-dismiss>Not now</button><button class="btn dark">'+send+'</button></div></form>'}).join("");
     var mine=DASH.changes.filter(function(n){return n.by===me});
     document.getElementById("mine").innerHTML=mine.map(function(n){var s=STAT[n.status];
       return '<li><div class="h"><b>'+esc(n.title)+'</b><span class="st '+s[0]+'">'+s[1]+'</span></div><span class="x">'+esc(n.kind)+', '+esc(n.when)+'</span>'+
-        (n.status==="back"?'<p class="bnote"><b>Note from the admin</b>'+esc(n.note)+'</p><div><button type="button" class="btn sm" data-edit="'+n.id+'">Edit and send again</button></div>':'')+'</li>'}).join("")||'<li class="empty">Nothing yet.</li>';
-    var pub=DASH.changes.filter(function(n){return n.kind==="News"&&n.status==="published"}).map(function(n){return {h:n.title,d:"New"}}).concat((DATA.news||[]).slice(0,4).map(function(n){var p=n.date.split("-");return {h:n.headline,d:MON[+p[1]-1]+' '+p[0]}}));
-    document.getElementById("pubn").innerHTML=pub.slice(0,5).map(function(n){return '<li><b>'+esc(n.h)+'</b><span class="x">'+esc(n.d)+'</span></li>'}).join("");
+        '<button type="button" class="rm" data-rmc="'+(n._k||n.id)+'">'+(n.status==="published"?'Remove from the site':'Withdraw')+'</button>'+
+        (n.status==="back"?'<p class="bnote"><b>Note from the admin</b>'+esc(n.note)+'</p><div><button type="button" class="btn sm" data-edit="'+(n._k||n.id)+'">Edit and send again</button></div>':'')+'</li>'}).join("")||'<li class="empty">Nothing yet.</li>';
+    var pub=DASH.changes.filter(function(n){return n.kind==="News"&&n.status==="published"}).map(function(n){return {h:n.title,d:n.when||"New",id:(admin()||n.by===me)?(n._k||n.id):null}}).concat((DATA.news||[]).slice(0,4).map(function(n){var p=n.date.split("-");return {h:n.headline,d:MON[+p[1]-1]+' '+p[0]}}));
+    document.getElementById("pubn").innerHTML=pub.slice(0,6).map(function(n){return '<li><span><b>'+esc(n.h)+'</b><span class="x">'+esc(n.d)+'</span></span>'+(n.id!=null?'<button type="button" class="rm" data-rmc="'+(n._k||n.id)+'" style="background:none;border:0;font:500 .7rem var(--f-mono);color:#b42318;cursor:pointer">Remove</button>':'')+'</li>'}).join("");
     document.getElementById("plist").innerHTML=(DATA.pubs||[]).filter(function(p){return p.a.indexOf(me)>=0}).slice(0,6).map(function(p){return '<li><b>'+esc(p.t)+'</b><span>'+esc(p.v)+', '+p.y+'</span></li>'}).join("");
     prev();
   }
   // news form
   var nf=document.getElementById("nform");
   function ok(t){var w=document.getElementById("wok");w.textContent=t;w.hidden=false;clearTimeout(ok.t);ok.t=setTimeout(function(){w.hidden=true},5000)}
-  function done(what){ok(admin()?(window.LAB?what+' is approved.':what+' is live on the website.'):what+' was sent to the admins for approval.')}
-  function setEditing(n){editing=n;document.getElementById("nh").textContent=n?'Edit: '+n.title:'Share news';var nn=document.getElementById("nnote");nn.hidden=!(n&&n.note);if(n&&n.note)nn.innerHTML='<b>Note from the admin</b>'+esc(n.note);document.getElementById("ncancel").hidden=!n;
+  function done(what){ok(admin()?what+' is live on the website.':what+' was sent to the admins for approval.')}
+  var nm=document.getElementById("nmodal"),nOpener=null;
+  function openN(n,from){nOpener=from||document.getElementById("nopen");setEditing(n||null);nm.hidden=false;nf.elements.title.focus()}
+  function closeN(){nm.hidden=true;setEditing(null);if(nOpener&&document.body.contains(nOpener))nOpener.focus()}
+  document.getElementById("nopen").onclick=function(){openN(null,this)};
+  nm.addEventListener("mousedown",function(e){if(e.target===nm)closeN()});
+  nm.addEventListener("keydown",function(e){if(e.key==="Escape")closeN()});
+  function setEditing(n){editing=n;document.getElementById("nh").textContent=n?'Edit: '+n.title:'Share news';var nn=document.getElementById("nnote");nn.hidden=!(n&&n.note);if(n&&n.note)nn.innerHTML='<b>Note from the admin</b>'+esc(n.note);
     if(n){nf.type.value=n.type||"Other";nf.elements.title.value=n.title;nf.text.value=n.text;nf.link.value=n.link||""}else nf.reset()}
-  document.getElementById("ncancel").onclick=function(){setEditing(null)};
+  document.getElementById("ncancel").onclick=closeN;
   nf.addEventListener("submit",function(e){e.preventDefault();var t=nf.elements.title.value.trim();if(!t){document.getElementById("nerr").hidden=false;nf.elements.title.focus();return}document.getElementById("nerr").hidden=true;
     var v={kind:"News",type:nf.type.value,title:t,text:nf.text.value.trim(),link:nf.link.value.trim()},ph=pics(nf.photo);
     if(ph.some(function(f){return f.size>20*1024*1024})){toast("The photo is over 20 MB.");return}
-    if(editing){Object.assign(editing,v,{status:admin()?"published":"waiting",when:"Today"});delete editing.note;if(window.LAB)LAB.resendChange(editing,ph)}else add(v,ph);setEditing(null);draw();done("Your news")});
-  document.getElementById("drafts").addEventListener("submit",function(e){e.preventDefault();var f=e.target;add({kind:"News",type:"Paper accepted",title:f.elements.title.value.trim()||"Paper accepted",text:f.text.value.trim(),from:+f.dataset.k});draw();done("Your news")});
-  document.getElementById("drafts").addEventListener("click",function(e){var b=e.target.closest("[data-dismiss]");if(b){dismissed.push(+b.closest("form").dataset.k);draw()}});
-  document.getElementById("mine").addEventListener("click",function(e){var b=e.target.closest("[data-edit]");if(!b)return;var n=DASH.changes.find(function(x){return String(x.id)===b.dataset.edit});
-    if(n.kind==="News"){tab("news");setEditing(n);nf.scrollIntoView({block:"start",behavior:"smooth"});nf.elements.title.focus()}
-    else if(n.kind==="Profile"){tab("profile");var fl=n.fields||{};if(fl.name)pf.elements.name.value=fl.name;if(fl.topic!=null)pf.topic.value=fl.topic;pf.web.value=fl.web||"";pf.li.value=fl.li||"";pf.gs.value=fl.gs||"";prev();pf.topic.focus()}
+    if(editing){Object.assign(editing,v,{status:admin()?"published":"waiting",when:"Today"});delete editing.note;if(window.LAB)LAB.resendChange(editing,ph)}else add(v,ph);closeN();draw();done("Your news")});
+  document.getElementById("drafts").addEventListener("submit",function(e){e.preventDefault();var f=e.target;add({kind:"News",type:"Paper accepted",title:f.elements.title.value.trim()||"Paper accepted",text:f.text.value.trim(),from:f.dataset.k});draw();done("Your news")});
+  document.getElementById("drafts").addEventListener("click",function(e){var b=e.target.closest("[data-dismiss]");if(b){dismissed.push(b.closest("form").dataset.k);draw()}});
+  function removeChange(id){var i=DASH.changes.findIndex(function(x){return String(x._k||x.id)===String(id)}),x;if(i<0)return;
+    later(function(){return '"'+x.title+'" was removed.'},function(){x=DASH.changes.splice(i,1)[0];draw()},function(){DASH.changes.splice(i,0,x);draw()},function(){if(window.LAB)LAB.delChange(x)})}
+  document.getElementById("pubn").addEventListener("click",function(e){var b=e.target.closest("[data-rmc]");if(b)removeChange(b.dataset.rmc)});
+  document.getElementById("mine").addEventListener("click",function(e){var r=e.target.closest("[data-rmc]");if(r){removeChange(r.dataset.rmc);return}var b=e.target.closest("[data-edit]");if(!b)return;var n=DASH.changes.find(function(x){return String(x._k||x.id)===b.dataset.edit});
+    if(n.kind==="News"){tab("news");openN(n,b)}
+    else if(n.kind==="Profile"){tab("profile");editP(true);var fl=n.fields||{};if(fl.name)pf.elements.name.value=fl.name;if(fl.topic!=null)pf.topic.value=fl.topic;pf.web.value=fl.web||"";pf.li.value=fl.li||"";pf.gs.value=fl.gs||"";prev();pf.topic.focus()}
     else if(n.kind==="Paper"){tab("papers");paperEdit=n;var lines=(n.text||"").split("\n");af.t.value=n.title;af.v.value=n.venue||"";af.y.value=n.year||"";
-      af.a.value=(lines.find(function(x){return x.indexOf("Authors: ")===0})||"").slice(9);af.l.value=(lines.find(function(x){return x.indexOf("Link: ")===0})||"").slice(6);af.news.checked=false;af.t.focus()}});
-  var paperEdit=null;
+      af.a.value=(lines.find(function(x){return x.indexOf("Authors: ")===0})||"").slice(9);af.l.value=(lines.find(function(x){return x.indexOf("Link: ")===0})||"").slice(6);af.news.checked=false;openA(b)}});
+  var paperEdit=null,am=document.getElementById("amodal"),aOpener=null;
+  function openA(from){aOpener=from||document.getElementById("aopen");document.getElementById("ah").textContent=paperEdit?"Edit: "+paperEdit.title:"Add a publication";am.hidden=false;af.t.focus()}
+  function closeA(){am.hidden=true;paperEdit=null;af.reset();af.news.checked=true;document.getElementById("aerr").hidden=true;if(aOpener&&document.body.contains(aOpener))aOpener.focus()}
+  document.getElementById("aopen").onclick=function(){paperEdit=null;af.reset();af.news.checked=true;openA(this)};
+  document.getElementById("acancel").onclick=closeA;
+  am.addEventListener("mousedown",function(e){if(e.target===am)closeA()});
+  am.addEventListener("keydown",function(e){if(e.key==="Escape")closeA()});
   // a change that was sent back is updated and sent again, instead of starting a new one
   function backOne(kind){return DASH.changes.find(function(c){return c.by===me&&c.kind===kind&&c.status==="back"})}
   function resend(c,v,files){Object.assign(c,v,{status:admin()?"published":"waiting",when:"Today"});c.note="";if(window.LAB)LAB.resendChange(c,files)}
   // profile
   var pf=document.getElementById("pform");pf.elements.name.value=me;pf.topic.value=meP.topic||"";pf.web.value=meP.url||"";
+  var FULLM0=["January","February","March","April","May","June","July","August","September","October","November","December"];
+  function view(){var r=DASH.me.row||{},pend=DASH.changes.find(function(c){return c.by===me&&c.kind==="Profile"&&c.status!=="published"});
+    var f={name:pf.elements.name.value,topic:pf.topic.value,web:pf.web.value,li:pf.li.value,gs:pf.gs.value};
+    var row=function(k,v){return '<dt>'+k+'</dt><dd>'+(v||'<span style="color:var(--muted)">Not set</span>')+'</dd>'},lk=function(u){return u?'<a href="'+esc(u)+'" target="_blank" rel="noopener">'+esc(u.replace(/^https?:\/\//,""))+'</a>':""};
+    document.getElementById("pdl").innerHTML=row("Name",esc(f.name))+row("Research topic",esc(f.topic))+row("Website",lk(f.web))+row("LinkedIn",lk(f.li))+row("Scholar",lk(f.gs))+
+      row("Birthday",r.birthday_month?esc(FULLM0[r.birthday_month-1]+" "+r.birthday_day)+(r.show_birthday===false?' (not announced)':' (announced on Today)'):"")+
+      (pend?row("Status",pend.status==="back"?'<span class="st back">Sent back</span> '+esc(pend.note||""):'<span class="st wait">Changes waiting for approval</span>'):"");
+    document.getElementById("pprev2").innerHTML=document.getElementById("pprev").innerHTML}
+  function editP(on){document.getElementById("pview").hidden=on;pf.hidden=!on;if(on)pf.topic.focus();else{view();document.getElementById("pedit").focus()}}
   function prev(){document.getElementById("pprev").innerHTML='<img src="'+esc((meP.photo||"").split("/").pop())+'" alt=""><b>'+esc(pf.elements.name.value)+'</b><p>'+esc(pf.topic.value)+'</p><div class="lk">'+(pf.web.value?'<span>Website</span>':'')+(pf.li.value?'<span>LinkedIn</span>':'')+(pf.gs.value?'<span>Scholar</span>':'')+'</div>'}
   var FULLM=["January","February","March","April","May","June","July","August","September","October","November","December"];
   pf.bm.innerHTML+=FULLM.map(function(m,i){return '<option value="'+(i+1)+'">'+m+'</option>'}).join("");
   pf.bd.innerHTML+=Array.from({length:31},function(_,i){return '<option>'+(i+1)+'</option>'}).join("");
   pf.addEventListener("input",prev);
+  document.getElementById("pedit").onclick=function(){editP(true)};
+  document.getElementById("pcancel").onclick=function(){editP(false)};
   // birthday: saved right away (no approval), shown on Today for people who choose to
   var row=DASH.me.row||{};if(row.birthday_month){pf.bm.value=row.birthday_month;pf.bd.value=row.birthday_day;pf.bshow.checked=row.show_birthday!==false}
   var b0=[pf.bm.value,pf.bd.value,pf.bshow.checked].join();
@@ -764,17 +806,17 @@ ooEvents();
     if(bChanged){DASH.me.birthday={m:+pf.bm.value,d:+pf.bd.value,show:pf.bshow.checked};if(window.LAB)LAB.saveBirthday(+pf.bm.value||null,+pf.bd.value||null,pf.bshow.checked);b0=bNow}
     var ph=pics(pf.photo),f={name:pf.elements.name.value.trim(),topic:pf.topic.value.trim(),web:pf.web.value.trim(),li:pf.li.value.trim(),gs:pf.gs.value.trim()};
     var same=f.name===me&&f.topic===(meP.topic||"")&&f.web===(meP.url||"")&&!f.li&&!f.gs&&!ph.length;
-    if(same){if(bChanged)ok("Your birthday is saved.");else ok("Nothing changed yet.");return}
+    if(same){editP(false);if(bChanged)ok("Your birthday is saved.");else ok("Nothing changed.");return}
     var lines=[];if(f.name!==me)lines.push("Name: "+f.name);if(f.topic!==(meP.topic||""))lines.push("Research topic: "+f.topic);if(f.web!==(meP.url||""))lines.push("Website: "+f.web);if(f.li)lines.push("LinkedIn: "+f.li);if(f.gs)lines.push("Scholar: "+f.gs);if(ph.length)lines.push("New photo attached");
-    var pb=backOne("Profile"),pv={kind:"Profile",title:"Updated profile",text:lines.join("\n"),fields:f};if(pb)resend(pb,pv,ph);else add(pv,ph);pf.photo.value="";draw();tab("profile");done("Your profile")});
+    var pb=backOne("Profile"),pv={kind:"Profile",title:"Updated profile",text:lines.join("\n"),fields:f};if(pb)resend(pb,pv,ph);else add(pv,ph);pf.photo.value="";draw();editP(false);tab("profile");done("Your profile")});
   // papers
   var af=document.getElementById("aform");
   af.addEventListener("submit",function(e){e.preventDefault();if(!af.t.value.trim()||!af.y.value.trim()||!af.v.value.trim()){document.getElementById("aerr").hidden=false;return}document.getElementById("aerr").hidden=true;
-    (paperEdit&&paperEdit.status==="back"?function(v){resend(paperEdit,v)}:add)({kind:"Paper",title:af.t.value.trim(),text:af.v.value.trim()+", "+af.y.value.trim()+(af.a.value.trim()?"\nAuthors: "+af.a.value.trim():"")+(af.l.value.trim()?"\nLink: "+af.l.value.trim():""),venue:af.v.value.trim(),year:af.y.value.trim(),wantsNews:af.news.checked});var n=af.news.checked;paperEdit=null;af.reset();af.news.checked=true;draw();if(n){tab("news");ok((admin()?'The paper is live. ':'The paper was sent for approval. ')+'Your news draft is ready below.')}else done("The paper")});
+    (paperEdit&&paperEdit.status==="back"?function(v){resend(paperEdit,v)}:add)({kind:"Paper",title:af.t.value.trim(),text:af.v.value.trim()+", "+af.y.value.trim()+(af.a.value.trim()?"\nAuthors: "+af.a.value.trim():"")+(af.l.value.trim()?"\nLink: "+af.l.value.trim():""),venue:af.v.value.trim(),year:af.y.value.trim(),fields:{authors:af.a.value.trim(),link:af.l.value.trim()},wantsNews:af.news.checked});var n=af.news.checked;closeA();draw();if(n){tab("news");ok((admin()?'The paper is live. ':'The paper was sent for approval. ')+'Your news draft is ready below.')}else done("The paper")});
   function tab(id){document.querySelectorAll("[data-tab]").forEach(function(b){b.setAttribute("aria-selected",String(b.dataset.tab===id))});
     document.querySelectorAll(".pane").forEach(function(p){p.hidden=p.id!=="p-"+id});try{history.replaceState(null,"","#"+id)}catch(e){}}
   document.querySelector(".tabbar").addEventListener("click",function(e){var b=e.target.closest("[data-tab]");if(b)tab(b.dataset.tab)});
-  draw();var h=location.hash.slice(1);if(document.getElementById("p-"+h))tab(h);
+  draw();view();var h=location.hash.slice(1);if(document.getElementById("p-"+h))tab(h);
 })();
 
 });</script>

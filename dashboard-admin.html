@@ -1,4 +1,4 @@
-<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover"></head><body><script src="vendor/supabase-2.117.2.js"></script><script src="lab.js?v=211d4a4f"></script><style>.lab-loading body{visibility:hidden}.live-hide{display:none!important}</style><!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover"></head><body><title>Admin | RAIN Lab members</title><link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Caveat:wght@500;600&family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:wght@400;500;600&family=Urbanist:wght@500;600;700&display=swap"><style>:root{
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover"></head><body><script src="vendor/supabase-2.117.2.js"></script><script src="lab.js?v=d66f10e8"></script><style>.lab-loading body{visibility:hidden}.live-hide{display:none!important}</style><!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover"></head><body><title>Admin | RAIN Lab members</title><link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Caveat:wght@500;600&family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:wght@400;500;600&family=Urbanist:wght@500;600;700&display=swap"><style>:root{
   --cloud:#f6f8fb; --white:#ffffff; --ink:#13101d; --muted:#586174; --line:#e1e6ee;
   --blue:#1f6feb; --blue-text:#1a5fcc; --blue-soft:#e7effd;
   --night:#0b0714; --black:#000; --night-ink:#eef1f7; --night-muted:#9aa3b6; --night-line:#231d33;
@@ -641,7 +641,7 @@ td select{font:inherit;font-size:.85rem;border:1px solid var(--line);border-radi
     </div>
 
     <section class="pane" id="p-inbox">
-      <h2 class="sec-h">Website changes to approve</h2><p class="lead">News, profiles, papers and page edits from members. Approving marks a change ready for the public website (for now an admin adds it to the site by hand). Send one back with a note if it needs work.</p>
+      <h2 class="sec-h">Website changes to approve</h2><p class="lead">News, profiles, papers and page edits from members. Approved changes go on the public website. Send one back with a note if it needs work.</p>
       <div class="stack" id="newsq"></div>
       <h2 class="sec-h">Requests</h2><p class="lead">From "Ask the admins" in the sidebar.</p>
       <div class="stack" id="reqs"></div>
@@ -705,7 +705,7 @@ if(!isAdmin()){labReady(function(){document.querySelector(".main").innerHTML='<h
   }
   var P=document.getElementById("p-inbox");
   P.addEventListener("click",function(e){var b=e.target.closest("button");if(!b)return;var d=b.dataset;
-    if(d.ok){var c0=DASH.changes.find(function(n){return n.id===+d.ok});c0.status="published";sendBack=null;if(window.LAB)LAB.decideChange(c0);toast("Approved. "+c0.by.split(" ")[0]+" sees it as approved.")}
+    if(d.ok){var c0=DASH.changes.find(function(n){return n.id===+d.ok});c0.status="published";sendBack=null;if(window.LAB)LAB.decideChange(c0);toast("Approved. It is on the public site within a minute.")}
     else if(d.back){sendBack=sendBack===+d.back?null:+d.back}
     else if(d.done){DASH.requests.find(function(r){return r.id===+d.done}).status="done";replyTo=null;if(window.LAB)LAB.updRequest(+d.done,{status:"done"})}
     else if(d.reply){replyTo=replyTo===+d.reply?null:+d.reply}
