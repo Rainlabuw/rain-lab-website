@@ -265,7 +265,8 @@ var LAB=(function(){
   // rail: the person who is signed in
   var r=document.querySelector(".rail .me");
   if(r){var img=r.querySelector("img");if(img){if(DASH.me.photo)img.src=DASH.me.photo;else img.remove()}r.querySelector("b").textContent=DASH.me.name;
-    var so=r.querySelector('a[href="members.html"]');if(so)so.addEventListener("click",function(e){e.preventDefault();LAB.signOut()})}
+    var so=document.querySelector('[data-signout]');if(so)so.addEventListener("click",function(e){e.preventDefault();LAB.signOut()})
+    var tm=document.querySelector(".rail .meTab img");if(tm){if(DASH.me.photo)tm.src=DASH.me.photo;else tm.replaceWith(Object.assign(document.createElement("span"),{className:"ini",textContent:(DASH.me.name||"?")[0]}))}}
   _labOK=true;_labQ.splice(0).forEach(function(f){try{f()}catch(e){console.error(e)}});
   document.documentElement.classList.remove("lab-loading");
   document.dispatchEvent(new Event("dash:redraw"));document.dispatchEvent(new Event("bell:refresh"));
