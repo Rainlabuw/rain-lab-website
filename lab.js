@@ -71,7 +71,10 @@ var LAB=(function(){
       q(sb.from("course_takers").select("*")),
       q(sb.from("quals_tips").select("*").order("created_at",{ascending:false})),
       q(sb.from("quals_materials").select("*").order("created_at",{ascending:false})),
-      q(sb.from("site_changes").select("*").order("created_at",{ascending:false}))
+      q(sb.from("site_changes").select("*").order("created_at",{ascending:false})),
+      // added in update 11 (Reading); empty until that update is run
+      q(sb.from("reading_plan").select("*").order("pos")).catch(function(){return []}),
+      q(sb.from("library_saves").select("*").eq("email",meRow.email)).catch(function(){return []})
     ]);
     var people=r[0];people.forEach(function(p){N[p.email]=p.name;E[p.name]=p.email});
     var pub=((typeof DATA!=="undefined"&&DATA.members)||[]).find(function(m){return m.name===meRow.name})||{};
@@ -105,11 +108,14 @@ var LAB=(function(){
           options:r[14].filter(function(o){return o.session_id===x.id}).map(function(o){return {id:o.id,q:o.paper,by:nm(o.suggested_by),
             votes:r[15].filter(function(v){return v.option_id===o.id}).map(function(v){return nm(v.email)})}})}}),
         sugs:r[17].filter(function(x){return x.to_group===g.id}).map(function(x){return {id:x.id,q:x.paper,by:nm(x.from_email)}}),
+        takeTurns:!!g.take_turns,leadOrder:(g.lead_order||[]).map(nm),rotStart:g.rotation_start||null,
+        plan:r[27].filter(function(x){return x.group_id===g.id}).map(function(x){return {id:x.id,kind:x.kind,body:x.body,by:nm(x.added_by),pos:x.pos}}),
         past:[]}});
     var now=Date.now();
-    DASH.library=r[16].map(function(x){return {id:x.id,p:{t:x.title,a:x.authors?[x.authors]:[],v:"",y:"",l:x.link?[["Link",x.link]]:[],ar:x.area?[x.area]:[]},
-      by:nm(x.added_by),ago:Math.max(0,Math.floor((now-new Date(x.added_at))/864e5)),note:x.note||""}});
-    DASH.suggested=r[17].filter(function(x){return x.to_email===meRow.email}).map(function(x){return {id:x.id,q:x.paper,by:nm(x.from_email)}});
+    var saved=r[28].map(function(x){return x.library_id});
+    DASH.library=r[16].map(function(x){var d=new Date(x.added_at);return {id:x.id,t:x.title,a:x.authors||"",ar:x.area||"",link:x.link||"",note:x.note||"",by:nm(x.added_by),mine:x.added_by===meRow.email,
+      when:MON[d.getMonth()]+" "+d.getDate()+(d.getFullYear()!==new Date().getFullYear()?", "+d.getFullYear():""),t0:d.getTime(),pdf:x.pdf_path||"",pdfName:x.pdf_name||"",pdfSize:x.pdf_size||0,saved:saved.indexOf(x.id)>=0}});
+    DASH.suggested=r[17].filter(function(x){return x.to_email===meRow.email}).map(function(x){return {id:x.id,q:x.paper,by:nm(x.from_email),seen:!!x.seen}});
     // weekly reading group meetings on the calendar
     DASH.groups.filter(function(g){return g.state==="set"&&g.day!=null}).forEach(function(g){
       for(var w=-1;w<=10;w++)DASH.events.push({t:"reading",gid:g.id,title:g.name+" reading group",day:w*7+g.day,s:(g.start||"15:00").slice(0,5),e:(g.end||"16:00").slice(0,5),where:g.where,who:g.members.length+" members"})});
@@ -162,6 +168,7 @@ var LAB=(function(){
       }catch(e){fail(e)}},
     addGroup:async function(g){try{
         var pad=function(x){return ("0"+x).slice(-2)+":00"},set=g.state==="set",gr={name:g.name,area:g.area,description:g.desc||null,owner:DASH.me.email,open_to_all:!!g.open,state:set?"set":"scheduling"};
+        if(g.takeTurns)Object.assign(gr,{take_turns:true,lead_order:[DASH.me.email].concat(g.invited.map(function(n){return E[n]})),rotation_start:g.rotStart||null});
         if(set)Object.assign(gr,{weekly_time:g.time,weekday:g.day,start_time:pad(g.hour||15),end_time:pad((g.hour||15)+1)});
         var row=(await q(sb.from("reading_groups").insert(gr).select()))[0];
         await q(sb.from("reading_group_people").insert([{group_id:row.id,email:DASH.me.email,status:"member"}].concat(g.invited.map(function(n){return {group_id:row.id,email:E[n],status:"invited"}}))));
@@ -194,8 +201,28 @@ var LAB=(function(){
         if(ids.length)await q(sb.from("reading_paper_votes").delete().eq("email",me).in("option_id",ids));
         if(o){await o._p;await q(sb.from("reading_paper_votes").insert({option_id:o.id,email:me}))}}catch(e){fail(e)}},
     // the lab library and suggestions
-    addLib:async function(x){try{var l=x.p.l.length?x.p.l[0][1]:null;
-        x.id=(await q(sb.from("library").insert({title:x.p.t,authors:x.p.a[0]||null,link:l,area:x.p.ar[0]||null,note:x.note||null}).select()))[0].id}catch(e){fail(e)}},
+    addLib:function(x,file){x._p=(async function(){try{var row={title:x.t,authors:x.a||null,link:x.link||null,area:x.ar||null,note:x.note||null};
+        if(file){var fd=new FormData();fd.append("kind","library");fd.append("files",file);try{var j=await helper(fd);var f=j.saved[0];row.pdf_path=f.path;row.pdf_name=f.name;row.pdf_size=f.size||null;x.pdf=f.path;x.pdfName=f.name;x.pdfSize=f.size}
+          catch(e){console.error(e);if(window.toast)toast("The PDF did not upload: "+e.message+" The paper is saved without it.")}}
+        x.id=(await q(sb.from("library").insert(row).select()))[0].id;document.dispatchEvent(new Event("dash:redraw"))}catch(e){fail(e)}})();return x._p},
+    updLib:async function(x){try{await x._p;await q(sb.from("library").update({title:x.t,authors:x.a||null,link:x.link||null,area:x.ar||null,note:x.note||null}).eq("id",x.id))}catch(e){fail(e)}},
+    libSave:async function(x,on){try{await x._p;var t=sb.from("library_saves");if(on)await q(t.upsert({library_id:x.id,email:DASH.me.email}));else await q(t.delete().eq("library_id",x.id).eq("email",DASH.me.email))}catch(e){fail(e)}},
+    libLink:async function(x){try{await x._p;var fd=new FormData();fd.append("kind","libpdf");fd.append("library_id",x.id);return (await helper(fd)).url}
+      catch(e){console.error(e);if(window.toast)toast(e.message||"Download failed.");return null}},
+    arxiv:async function(id){var fd=new FormData();fd.append("kind","arxiv");fd.append("id",id);return await helper(fd)},
+    seenSug:async function(ids){try{if(ids.length)await q(sb.from("suggestions").update({seen:true}).in("id",ids))}catch(e){console.error(e)}},
+    // reading plans, meeting papers and group settings
+    planAdd:function(g,it){it._p=(async function(){try{it.id=(await q(sb.from("reading_plan").insert({group_id:g.id,pos:it.pos,kind:it.kind,body:it.body}).select()))[0].id}catch(e){fail(e)}})();return it._p},
+    planUpd:async function(it){try{await it._p;await q(sb.from("reading_plan").update({pos:it.pos,body:it.body}).eq("id",it.id))}catch(e){fail(e)}},
+    planDel:async function(it){try{await it._p;await q(sb.from("reading_plan").delete().eq("id",it.id))}catch(e){fail(e)}},
+    setMeeting:async function(g,day,paper){try{var r=await sb.rpc("set_meeting_paper",{gid:g.id,day:iso(sessDate(day)),paper:paper||null});if(r.error)throw r.error;return r.data}catch(e){fail(e);return null}},
+    startVote:async function(g,day,papers){try{var r=await sb.rpc("start_paper_vote",{gid:g.id,day:iso(sessDate(day)),papers:papers});if(r.error)throw r.error;
+        var os=await q(sb.from("reading_paper_options").select("*").eq("session_id",r.data).order("id"));return {id:r.data,options:os.map(function(o){return {id:o.id,q:o.paper,by:nm(o.suggested_by),votes:[]}})}}catch(e){fail(e);return null}},
+    proposeTimes:async function(g,opts){try{var r=await sb.rpc("propose_times",{gid:g.id,opts:opts});if(r.error)throw r.error;
+        var os=await q(sb.from("reading_time_options").select("*").eq("group_id",g.id).order("id"));return os.map(function(o){return {id:o.id,d:o.label,day:o.weekday,v:[]}})}catch(e){fail(e);return null}},
+    updGroup:async function(g,f){try{await q(sb.from("reading_groups").update(f).eq("id",g.id));return true}catch(e){fail(e);return false}},
+    invite:async function(g,names){try{await q(sb.from("reading_group_people").insert(names.map(function(n){return {group_id:g.id,email:E[n],status:"invited"}})))}catch(e){fail(e)}},
+    removePerson:async function(g,name){try{await q(sb.from("reading_group_people").delete().eq("group_id",g.id).eq("email",E[name]))}catch(e){fail(e)}},
     delLib:async function(x){try{await q(sb.from("library").delete().eq("id",x.id))}catch(e){fail(e)}},
     suggest:function(x,to){x._p=(async function(){try{var row={paper:x.q};if(to.to_group)row.to_group=to.to_group;else row.to_email=E[to.to_email];
         x.id=(await q(sb.from("suggestions").insert(row).select()))[0].id}catch(e){fail(e)}})();return x._p},

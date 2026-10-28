@@ -1,4 +1,4 @@
-<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover"></head><body><script src="vendor/supabase-2.117.2.js"></script><script src="lab.js?v=f5c294e5"></script><style>.lab-loading body{visibility:hidden}.live-hide{display:none!important}</style><!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover"></head><body><title>Website | RAIN Lab members</title><link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Caveat:wght@500;600&family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:wght@400;500;600&family=Urbanist:wght@500;600;700&display=swap"><style>:root{
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover"></head><body><script src="vendor/supabase-2.117.2.js"></script><script src="lab.js?v=1e1e607d"></script><style>.lab-loading body{visibility:hidden}.live-hide{display:none!important}</style><!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover"></head><body><title>Website | RAIN Lab members</title><link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Caveat:wght@500;600&family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:wght@400;500;600&family=Urbanist:wght@500;600;700&display=swap"><style>:root{
   --cloud:#f6f8fb; --white:#ffffff; --ink:#13101d; --muted:#586174; --line:#e1e6ee;
   --blue:#1f6feb; --blue-text:#1a5fcc; --blue-soft:#e7effd;
   --night:#0b0714; --black:#000; --night-ink:#eef1f7; --night-muted:#9aa3b6; --night-line:#231d33;
@@ -401,6 +401,12 @@ function ppr(q){q=String(q||"").trim();var i=q.indexOf("\n"),t=i>=0?q.slice(0,i)
   if(!l&&/^https?:\/\//i.test(t)){l=t;t=t.replace(/^https?:\/\/(www\.)?/i,"").replace(/\/$/,"");if(t.length>60)t=t.slice(0,57)+"..."}
   if(!l){var p=pub(t);return {t:p.t,l:pubLink(p)}}return {t:t,l:/^https?:\/\//i.test(l)?l:null}}
 // reading group meetings: the next meeting day (days from this Monday) and the paper for a session
+function rawTitle(q){q=String(q||"").trim();var t=q.split("\n")[0].trim();return /^https?:\/\//i.test(t)?t.replace(/^https?:\/\/(www\.)?/i,""):t}
+function todayOffset(){var n=new Date();return Math.round((new Date(n.getFullYear(),n.getMonth(),n.getDate())-monday(n))/864e5)}
+// taking turns leading: the saved order (people still in the group), then everyone else by name; turns move one person each week
+function leadOrder(g){var o=(g.leadOrder||[]).filter(function(n,i,a){return g.members.indexOf(n)>=0&&a.indexOf(n)===i});return o.concat(g.members.filter(function(n){return o.indexOf(n)<0}).sort())}
+function leadFor(g,day){if(!g.takeTurns||g.day==null)return null;var o=leadOrder(g);if(!o.length)return null;
+  var base=g.rotStart?Math.round((new Date(g.rotStart+"T00:00")-monday(new Date()))/864e5):Math.round((new Date("2026-09-28T00:00")-monday(new Date()))/864e5)+g.day,w=Math.round((day-base)/7);return o[((w%o.length)+o.length)%o.length]}
 function nextMeet(g){var d=g.day;if(d==null)return null;while(!isUpcoming(d))d+=7;return d}
 function sessFor(g,day){return (g.sessions||[]).find(function(s){return s.day===day})}
 function sessPaper(s){if(!s)return null;if(s.mode==="pick")return s.q||null;var b=null;(s.options||[]).forEach(function(o){if(!b||o.votes.length>b.votes.length)b=o});return b?b.q:null}
@@ -451,14 +457,17 @@ function isAdmin(){return DASH.me.role==="Admin"}
 function needsMe(){var me=DASH.me.name,out=[],fmt=function(iso){var d=new Date(iso+"T12:00");return MON[d.getMonth()]+" "+d.getDate()};
   DASH.reviews.forEach(function(r){if(r.reviewers.some(function(x){return x.n===me&&x.st==="invited"}))out.push({id:"rev"+r.id,who:r.author,t:r.author+" asked you to review a draft",s:r.title+", feedback by "+fmt(r.need),go:"Accept or decline",href:"dashboard-reviews.html"})});
   DASH.groups.forEach(function(g){
-    if(g.invited.indexOf(me)>=0)out.push({id:"inv"+g.id,who:g.owner,t:g.owner+" invited you to a reading group",s:g.name,go:"Join or decline",href:"dashboard-reading.html#rg"});
+    if(g.invited.indexOf(me)>=0)out.push({id:"inv"+g.id,who:g.owner,t:g.owner+" invited you to a reading group",s:g.name,go:"Join or decline",href:"dashboard-reading.html#g"+g.id});
     if(g.members.indexOf(me)<0)return;
-    if(g.state==="scheduling"&&!g.options.some(function(o){return o.v.indexOf(me)>=0}))out.push({id:"time"+g.id,ic:"vote",t:"Vote on a weekly time",s:g.name+" reading group",go:"Vote",href:"dashboard-reading.html#rg"});
+    if(g.options.length&&!g.options.some(function(o){return o.v.indexOf(me)>=0}))out.push({id:"time"+g.id,ic:"vote",t:g.state==="set"?"Vote on a new weekly time":"Vote on a weekly time",s:g.name+" reading group",go:"Vote",href:"dashboard-reading.html#g"+g.id});
+    if(g.state==="set"&&g.takeTurns){var n0=nextMeet(g);if(n0!=null)[n0,n0+7].forEach(function(nd){if(nd-todayOffset()>8||leadFor(g,nd)!==me)return;var ss0=sessFor(g,nd);if(ss0&&(ss0.q||ss0.mode==="vote"))return;
+      var dd=sessDate(nd),top=(g.plan||[]).slice().sort(function(a,b){return a.pos-b.pos}).find(function(x){return x.kind==="paper"});
+      out.push({id:"lead"+g.id+"-"+nd,ic:"vote",t:"You lead "+g.name+" on "+["Sun","Mon","Tue","Wed","Thu","Fri","Sat"][dd.getDay()]+" "+MON[dd.getMonth()]+" "+dd.getDate(),s:top?"Next in the plan: "+rawTitle(top.body):"Pick the paper for the meeting",go:"See plan",href:"dashboard-reading.html#g"+g.id})})}
     if(g.state==="set")(g.sessions||[]).forEach(function(ss){if(!isUpcoming(ss.day))return;var d=sessDate(ss.day),ds=MON[d.getMonth()]+" "+d.getDate();
-      if(ss.mode==="vote"&&ss.options.length&&!ss.options.some(function(o){return o.votes.indexOf(me)>=0}))out.push({id:"pap"+g.id+"-"+ss.day,ic:"vote",t:"Vote on a paper",s:g.name+", "+ds,go:"Vote",href:"dashboard-reading.html#rg"});
-      if(ss.mode==="pick"&&ss.by===me&&!ss.q)out.push({id:"pick"+g.id+"-"+ss.day,ic:"vote",t:"Pick the paper",s:g.name+", "+ds,go:"Pick",href:"dashboard-reading.html#rg"})});
+      if(ss.mode==="vote"&&ss.options.length&&!ss.options.some(function(o){return o.votes.indexOf(me)>=0}))out.push({id:"pap"+g.id+"-"+ss.day,ic:"vote",t:"Vote on a paper",s:g.name+", "+ds,go:"Vote",href:"dashboard-reading.html#g"+g.id});
+      if(ss.mode==="pick"&&ss.by===me&&!ss.q)out.push({id:"pick"+g.id+"-"+ss.day,ic:"vote",t:"Pick the paper",s:g.name+", "+ds,go:"Pick",href:"dashboard-reading.html#g"+g.id})});
   });
-  (DASH.suggested||[]).forEach(function(x){out.push({id:"sug"+(x.id||x.q),who:x.by,t:x.by+" suggested a paper to you",s:ppr(x.q).t,go:"See it",href:"dashboard-reading.html#rg"})});
+  (DASH.suggested||[]).forEach(function(x){if(x.seen)return;out.push({id:"sug"+(x.id||x.q),who:x.by,t:x.by+" suggested a paper to you",s:rawTitle(x.q),go:"See it",href:"dashboard-reading.html#lib"})});
   DASH.changes.forEach(function(c){if(c.by===me&&c.status==="back")out.push({id:"back"+c.id,ic:"back",t:"Your "+c.kind.toLowerCase()+" was sent back",s:c.title,go:"Edit and send again",href:"dashboard-website.html"})});
   if(isAdmin()){var w=DASH.changes.filter(function(c){return c.status==="waiting"}),q=DASH.requests.filter(function(r){return r.status==="open"});
     if(w.length)out.push({id:"adm-w"+w.length,ic:"admin",t:"Website changes to approve",s:w.map(function(c){return (c.by.match(/"([^"]*)"/)||[0,c.by.split(" ")[0]])[1]}).join(", "),go:"Review",href:"dashboard-admin.html"});
