@@ -7,7 +7,7 @@ var LAB_CFG={
   key:"sb_publishable_BFwGDxrQtwCcW3pSZtQ-0A_f661pXMo",
   meeting:{weekday:3,start:"10:30",end:"12:30",where:"GUG 211D"} // group meeting: Thursdays (0 = Monday)
 };
-var LAB_CARDS=["needs","pinned","week","oneone","talks","reading","reviews","confs","library"]; // Today cards that are connected so far
+var LAB_CARDS=["needs","pinned","week","oneone","talks","reading","reviews","confs","library","polls","courses"]; // Today cards that are connected so far
 var sb=supabase.createClient(LAB_CFG.url,LAB_CFG.key);
 var _labQ=[],_labOK=false;
 function labReady(f){if(_labOK)f();else _labQ.push(f)}
@@ -52,7 +52,14 @@ var LAB=(function(){
       q(sb.from("reading_paper_options").select("*").order("id")),
       q(sb.from("reading_paper_votes").select("*")),
       q(sb.from("library").select("*").order("added_at",{ascending:false})),
-      q(sb.from("suggestions").select("*").order("created_at",{ascending:false}))
+      q(sb.from("suggestions").select("*").order("created_at",{ascending:false})),
+      q(sb.from("polls").select("*").order("created_at",{ascending:false})),
+      q(sb.from("poll_options").select("*").order("id")),
+      q(sb.from("poll_votes").select("*")),
+      q(sb.rpc("poll_counts")),
+      q(sb.from("courses").select("*").order("code")),
+      q(sb.from("course_takers").select("*")),
+      q(sb.from("quals_tips").select("*").order("created_at",{ascending:false}))
     ]);
     var people=r[0];people.forEach(function(p){N[p.email]=p.name;E[p.name]=p.email});
     var pub=((typeof DATA!=="undefined"&&DATA.members)||[]).find(function(m){return m.name===meRow.name})||{};
@@ -94,7 +101,16 @@ var LAB=(function(){
     // weekly reading group meetings on the calendar
     DASH.groups.filter(function(g){return g.state==="set"&&g.day!=null}).forEach(function(g){
       for(var w=-1;w<=10;w++)DASH.events.push({t:"reading",title:g.name+" reading group",day:w*7+g.day,s:(g.start||"15:00").slice(0,5),e:(g.end||"16:00").slice(0,5),where:g.where,who:g.members.length+" members"})});
-    ["changes","polls","digest","courses","quals"].forEach(function(k){DASH[k]=[]});
+    // polls: names for normal polls; anonymous polls get counts only (plus your own vote)
+    var cnt={};(r[21]||[]).forEach(function(c){cnt[c.option_id]=+c.n});
+    DASH.polls=r[18].map(function(p){return {id:p.id,q:p.question,by:nm(p.created_by),kind:p.kind,anon:p.anonymous,closes:p.closes_on,
+      options:r[19].filter(function(o){return o.poll_id===p.id}).map(function(o){var v=r[20].filter(function(x){return x.option_id===o.id}).map(function(x){return nm(x.email)});
+        if(p.anonymous){var mine=v.indexOf(meRow.name)>=0;v=mine?[meRow.name]:[];for(var k=v.length;k<(cnt[o.id]||0);k++)v.push("anonymous "+o.id+"-"+k)}
+        return {id:o.id,t:o.label,v:v}})}});
+    DASH.courses=r[22].map(function(c){return {id:c.id,code:c.code,name:c.name,tip:c.tip||"",quals:c.helps_quals,by:nm(c.added_by),
+      took:r[23].filter(function(t){return t.course_id===c.id}).map(function(t){return [nm(t.email),t.term||""]})}});
+    DASH.quals=r[24].map(function(x){return {id:x.id,by:nm(x.email),when:x.year||"",text:x.body}});
+    ["changes","digest"].forEach(function(k){DASH[k]=[]});
   }
 
   // ---- writes
@@ -170,6 +186,26 @@ var LAB=(function(){
     suggest:function(x,to){x._p=(async function(){try{var row={paper:x.q};if(to.to_group)row.to_group=to.to_group;else row.to_email=E[to.to_email];
         x.id=(await q(sb.from("suggestions").insert(row).select()))[0].id}catch(e){fail(e)}})();return x._p},
     delSug:async function(x){try{await x._p;if(x.id)await q(sb.from("suggestions").delete().eq("id",x.id))}catch(e){fail(e)}},
+    // polls
+    addPoll:function(p){p._p=(async function(){try{
+        var row=(await q(sb.from("polls").insert({question:p.q,kind:p.kind,anonymous:!!p.anon,closes_on:p.closes}).select()))[0];
+        var os=await q(sb.from("poll_options").insert(p.options.map(function(o){return {poll_id:row.id,label:o.t}})).select());
+        p.id=row.id;os.forEach(function(o,i){p.options[i].id=o.id});document.dispatchEvent(new Event("dash:redraw"))}catch(e){fail(e)}})();return p._p},
+    delPoll:async function(p){try{await q(sb.from("polls").delete().eq("id",p.id))}catch(e){fail(e)}},
+    pollVote:async function(p,o,on){try{await p._p;var me=DASH.me.email,t=sb.from("poll_votes");
+        if(on&&p.kind==="one"){var ids=p.options.map(function(x){return x.id}).filter(Boolean);await q(sb.from("poll_votes").delete().eq("email",me).in("option_id",ids))}
+        if(on)await q(t.insert({option_id:o.id,email:me}));else await q(t.delete().eq("option_id",o.id).eq("email",me))}
+      catch(e){fail(e)}},
+    // courses and quals
+    addCourse:function(c){c._p=(async function(){try{
+        c.id=(await q(sb.from("courses").insert({code:c.code,name:c.name,tip:c.tip||null,helps_quals:!!c.quals}).select()))[0].id;
+        var mine=c.took.find(function(t){return t[0]===DASH.me.name});if(mine)await q(sb.from("course_takers").insert({course_id:c.id,email:DASH.me.email,term:mine[1]||null}))}catch(e){fail(e)}})();return c._p},
+    delCourse:async function(c){try{await q(sb.from("courses").delete().eq("id",c.id))}catch(e){fail(e)}},
+    took:async function(c,term){try{await c._p;var t=sb.from("course_takers");
+        if(term===null)await q(t.delete().eq("course_id",c.id).eq("email",DASH.me.email));
+        else await q(t.upsert({course_id:c.id,email:DASH.me.email,term:term||null}))}catch(e){fail(e)}},
+    addQual:async function(x){try{x.id=(await q(sb.from("quals_tips").insert({body:x.text,year:x.when||null}).select()))[0].id}catch(e){fail(e)}},
+    delQual:async function(x){try{await q(sb.from("quals_tips").delete().eq("id",x.id))}catch(e){fail(e)}},
     signOut:async function(){await sb.auth.signOut();location.replace("members.html")}
   };
   return api;
