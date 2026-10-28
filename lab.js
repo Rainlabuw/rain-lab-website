@@ -84,7 +84,7 @@ var LAB=(function(){
     DASH.announcements=r[1].map(function(a){return {id:a.id,by:nm(a.created_by),when:when(a.created_at),text:a.body}});
     var m=meetings(r[2]);DASH.events=m.ev;DASH.talks=m.talks;
     DASH.conferences=r[3].map(function(c){var s=c.starts_on,e=c.ends_on,ds=s?new Date(s+"T12:00"):null,de=e?new Date(e+"T12:00"):null;
-      return {id:c.id,name:c.name,short:c.short_name||c.name,start:s||"2999-01-01",where:c.location||"Location to add",
+      return {id:c.id,name:c.name,short:c.short_name||c.name,start:s||"2999-01-01",end:e||s||"2999-01-01",link:c.link||"",where:c.location||"Location to add",
         when:ds?(MON[ds.getMonth()]+" "+ds.getDate()+(de&&e!==s?(de.getMonth()===ds.getMonth()?" to "+de.getDate():" to "+MON[de.getMonth()]+" "+de.getDate()):"")+", "+ds.getFullYear()):"Dates to add",
         who:r[4].filter(function(a){return a.conference_id===c.id}).map(function(a){return nm(a.email)})}});
     DASH.requests=r[5].map(function(x){return {id:x.id,by:nm(x.author),email:x.author,type:x.kind,text:x.body,when:when(x.created_at),status:x.status,reply:x.reply}});
