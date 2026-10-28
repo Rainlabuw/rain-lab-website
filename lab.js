@@ -19,6 +19,10 @@ var LAB=(function(){
   function iso(d){var z=new Date(d);z.setMinutes(z.getMinutes()-z.getTimezoneOffset());return z.toISOString().slice(0,10)}
   function offset(dateStr){var m=monday(new Date());return Math.round((new Date(dateStr+"T00:00")-m)/864e5)}
   function when(ts){var d=new Date(ts);return MON[d.getMonth()]+" "+d.getDate()}
+  function qrow(x){return {id:x.id,name:x.name,note:x.note||"",by:nm(x.email),when:when(x.created_at),size:x.size_bytes}}
+  async function helper(fd){var tok=(await sb.auth.getSession()).data.session.access_token;
+    var r=await fetch(LAB_CFG.url+"/functions/v1/dropbox-course",{method:"POST",headers:{Authorization:"Bearer "+tok,apikey:LAB_CFG.key},body:fd});
+    var j=await r.json().catch(function(){return {}});if(!r.ok)throw new Error(j.error||"Something went wrong. Please try again.");return j}
   function fail(e){console.error(e);if(window.toast)toast("Could not save that. Please try again.")}
   async function q(p){var r=await p;if(r.error)throw r.error;return r.data}
 
@@ -59,7 +63,8 @@ var LAB=(function(){
       q(sb.rpc("poll_counts")),
       q(sb.from("courses").select("*").order("code")),
       q(sb.from("course_takers").select("*")),
-      q(sb.from("quals_tips").select("*").order("created_at",{ascending:false}))
+      q(sb.from("quals_tips").select("*").order("created_at",{ascending:false})),
+      q(sb.from("quals_materials").select("*").order("created_at",{ascending:false}))
     ]);
     var people=r[0];people.forEach(function(p){N[p.email]=p.name;E[p.name]=p.email});
     var pub=((typeof DATA!=="undefined"&&DATA.members)||[]).find(function(m){return m.name===meRow.name})||{};
@@ -109,6 +114,7 @@ var LAB=(function(){
         return {id:o.id,t:o.label,v:v}})}});
     DASH.courses=r[22].map(function(c){return {id:c.id,code:c.code,name:c.name,tip:c.tip||"",quals:c.helps_quals,by:nm(c.added_by),url:c.dropbox_url||"",
       took:r[23].filter(function(t){return t.course_id===c.id}).map(function(t){return [nm(t.email),t.term||""]})}});
+    DASH.qualsFiles=r[25].map(qrow);
     DASH.quals=r[24].map(function(x){return {id:x.id,by:nm(x.email),when:x.year||"",text:x.body}});
     ["changes","digest"].forEach(function(k){DASH[k]=[]});
   }
@@ -213,6 +219,13 @@ var LAB=(function(){
         if(!r.ok){if(window.toast)toast(j.error||"Upload failed. Please try again.");return false}
         if(j.url&&!c.url){c.url=j.url;if(c.by===DASH.me.name||DASH.me.role==="Admin")sb.from("courses").update({dropbox_url:j.url}).eq("id",c.id).then(function(){})}
         return true}catch(e){console.error(e);if(window.toast)toast("Upload failed. Please try again.");return false}},
+    qualsUpload:async function(files,note){try{var fd=new FormData();fd.append("kind","quals");files.forEach(function(f){fd.append("files",f)});
+        var j=await helper(fd);
+        var rows=await q(sb.from("quals_materials").insert(j.saved.map(function(x){return {name:x.name,path:x.path,size_bytes:x.size||null,note:note||null}})).select());
+        return rows.map(qrow)}catch(e){console.error(e);if(window.toast)toast(e.message||"Upload failed.");return null}},
+    qualsLink:async function(x){try{var fd=new FormData();fd.append("kind","link");fd.append("material_id",x.id);return (await helper(fd)).url}
+      catch(e){console.error(e);if(window.toast)toast(e.message||"Download failed.");return null}},
+    delQualsFile:async function(x){try{await q(sb.from("quals_materials").delete().eq("id",x.id))}catch(e){fail(e)}},
     addQual:async function(x){try{x.id=(await q(sb.from("quals_tips").insert({body:x.text,year:x.when||null}).select()))[0].id}catch(e){fail(e)}},
     delQual:async function(x){try{await q(sb.from("quals_tips").delete().eq("id",x.id))}catch(e){fail(e)}},
     signOut:async function(){await sb.auth.signOut();location.replace("members.html")}

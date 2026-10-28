@@ -1,4 +1,4 @@
-<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover"></head><body><script src="vendor/supabase-2.117.2.js"></script><script src="lab.js?v=3d332294"></script><style>.lab-loading body{visibility:hidden}.live-hide{display:none!important}</style><!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover"></head><body><title>Courses | RAIN Lab members</title><link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Caveat:wght@500;600&family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:wght@400;500;600&family=Urbanist:wght@500;600;700&display=swap"><style>:root{
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover"></head><body><script src="vendor/supabase-2.117.2.js"></script><script src="lab.js?v=da3fd20f"></script><style>.lab-loading body{visibility:hidden}.live-hide{display:none!important}</style><!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover"></head><body><title>Courses | RAIN Lab members</title><link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Caveat:wght@500;600&family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:wght@400;500;600&family=Urbanist:wght@500;600;700&display=swap"><style>:root{
   --cloud:#f6f8fb; --white:#ffffff; --ink:#13101d; --muted:#586174; --line:#e1e6ee;
   --blue:#1f6feb; --blue-text:#1a5fcc; --blue-soft:#e7effd;
   --night:#0b0714; --black:#000; --night-ink:#eef1f7; --night-muted:#9aa3b6; --night-line:#231d33;
@@ -362,6 +362,8 @@ var DASH={
     {code:"CSE 535",dept:"CSE",name:"Theory of Optimization and Continuous Algorithms",took:[["Ruiqi Li","Aut 2025"]],tip:"Theory heavy. Take it after AMATH 515.",quals:false},
     {code:"AMATH 584",dept:"AMATH",name:"Applied Linear Algebra and Numerical Analysis",took:[["Qishi \"Jackson\" Zhou","Aut 2024"],["Justin Ganiban","Aut 2024"]],tip:"Fast paced. Good if your undergrad linear algebra is rusty.",quals:false}
   ],
+  // quals prep materials: files in the lab Dropbox (samples)
+  qualsFiles:[{name:"Linear systems quals questions 2019-2024.pdf",note:"Questions people remembered after their exams",by:"Cheng \"Justin\" Chang",when:"Sep 2025",size:2400000},{name:"Optimization summary sheet.pdf",note:"Two pages, the facts that keep coming up",by:"Ruiqi Li",when:"Mar 2025",size:640000}],
   quals:[
     {by:"Cheng \"Justin\" Chang",when:"2024",text:"Started three months out. One topic per week, then a full mock exam with two lab members."},
     {by:"Ruiqi Li",when:"2025",text:"Linear systems and optimization came up most. Practice explaining proofs out loud."}
@@ -606,6 +608,17 @@ ooEvents();
 .btn[disabled]{opacity:.55;cursor:default}
 #termF select{font:inherit;font-size:.92rem;border:1px solid var(--line);border-radius:8px;padding:.5rem .6rem;background:#fff;width:auto}
 #termF[hidden]{display:none}
+.qgrid2{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,2fr);gap:1rem;align-items:start}
+.mats{list-style:none;margin:0;padding:0;display:grid}
+.mats li{display:grid;grid-template-columns:auto minmax(0,1fr) auto;gap:.75rem;align-items:center;padding:.65rem 0;border-top:1px solid var(--line)}
+.mats li:first-child{border-top:0;padding-top:0}
+.mats .fi{width:34px;height:40px;border-radius:6px;background:var(--blue-soft);color:var(--blue-text);display:grid;place-content:center;font:600 .55rem var(--f-mono);text-transform:uppercase}
+.mats .nm{background:none;border:0;padding:0;font:600 .92rem/1.3 var(--f-display);color:var(--ink);text-align:left;cursor:pointer;overflow-wrap:anywhere}
+.mats .nm:hover{color:var(--blue-text);text-decoration:underline}
+.mats small{display:block;font-size:.76rem;color:var(--muted);margin-top:.15rem}
+.mats .nt{display:block;font-size:.84rem;color:#3e4657;margin-top:.15rem}
+.mats .ac{display:flex;gap:.5rem;align-items:center}
+@media (max-width:900px){.qgrid2{grid-template-columns:minmax(0,1fr)}}
 .empty-s{font-size:.86rem;color:var(--muted)}
 @media (max-width:640px){.cform .row2{grid-template-columns:minmax(0,1fr)}}
 .qlist{list-style:none;margin:0;padding:0;display:grid;gap:.5rem;font-size:.9rem}
@@ -633,7 +646,10 @@ ooEvents();
     <div class="cgrid" id="cgrid"></div>
 
     <h2 class="sec-h">Quals prep</h2>
-    <section class="card"><h2>Courses that help most <a href="https://www.dropbox.com/home/Rain-general" target="_blank" rel="noopener">Study folder</a></h2><ul class="qlist" id="qc"></ul></section>
+    <div class="qgrid2">
+      <section class="card"><h2>Courses that help most</h2><ul class="qlist" id="qc"></ul></section>
+      <section class="card"><h2>Materials <button type="button" class="btn sm" id="qUp">Upload</button></h2><ul class="mats" id="mats"></ul></section>
+    </div>
   </main>
 </div>
 <div class="modal" id="cmodal" hidden role="dialog" aria-modal="true" aria-labelledby="cfH"><div class="box" style="width:min(38rem,100%)">
@@ -652,6 +668,16 @@ ooEvents();
       <p class="err" id="cerr" role="alert"></p>
       <div class="mfoot"><button type="button" class="linkbtn danger" id="cDel" hidden style="margin-right:auto">Delete course</button><button type="button" class="btn" id="cCancel">Cancel</button><button class="btn dark" id="cSave">Add course</button></div>
     </form>
+</div></div>
+<div class="modal" id="qmodal" hidden role="dialog" aria-modal="true" aria-labelledby="qmH"><div class="box">
+  <form id="qform2" novalidate>
+    <h2 id="qmH">Upload quals materials</h2><p class="lead">Past exams, problem sets, summaries, anything that helped. Files go to Rain-general &gt; Quals prep in Dropbox and are listed here for everyone in the lab to download.</p>
+    <label class="fld"><span>Files</span><input type="file" name="files" multiple></label>
+    <label class="fld"><span>What is it? (optional)</span><input name="note" placeholder="For example, linear systems questions from 2023"></label>
+    <p class="hint">Up to 20 MB each.</p>
+    <p class="err" id="qerr" role="alert"></p>
+    <div class="mfoot"><button type="button" class="btn" data-qclose>Cancel</button><button class="btn dark" id="qSend">Upload</button></div>
+  </form>
 </div></div>
 <div class="modal" id="ask" hidden role="dialog" aria-modal="true" aria-labelledby="askH"><div class="box">
   <h2 id="askH">Ask someone</h2><p class="lead" id="askL"></p>
@@ -747,6 +773,31 @@ ooEvents();
   function close(){m.hidden=true;if(opener)opener.focus()}
   m.addEventListener("click",function(e){if(e.target===m||e.target.closest("[data-close]"))close()});
   document.addEventListener("keydown",function(e){if(e.key==="Escape"&&!m.hidden)close()});
+  // quals materials: files in Dropbox, listed here to download
+  var Q=DASH.qualsFiles||(DASH.qualsFiles=[]),qm=document.getElementById("qmodal"),qf2=document.getElementById("qform2");
+  function fsize(b){return !b?"":b<1024*1024?Math.max(1,Math.round(b/1024))+" KB":(b/1048576).toFixed(1)+" MB"}
+  function drawMats(){document.getElementById("mats").innerHTML=Q.map(function(x,i){var ext=(x.name.match(/\.([a-z0-9]{1,4})$/i)||[0,"file"])[1];
+      return '<li><span class="fi">'+esc(ext)+'</span><span><button type="button" class="nm" data-qdl="'+i+'">'+esc(x.name)+'</button>'+(x.note?'<span class="nt">'+esc(x.note)+'</span>':'')+
+        '<small>'+esc(x.by)+(x.when?', '+esc(x.when):'')+(x.size?', '+fsize(x.size):'')+'</small></span><span class="ac"><button type="button" class="btn sm" data-qdl="'+i+'">Download</button>'+
+        ((x.by===me||isAdmin())?'<button type="button" class="linkbtn danger" data-qrm2="'+i+'">Remove</button>':'')+'</span></li>'}).join("")||'<li class="empty-s">Nothing yet. Upload past exams, notes or summaries that helped you.</li>'}
+  document.getElementById("qUp").onclick=function(){qf2.reset();document.getElementById("qerr").textContent="";qm.hidden=false;qf2.elements.files.focus()};
+  function closeQ(){qm.hidden=true;document.getElementById("qUp").focus()}
+  qm.addEventListener("mousedown",function(e){if(e.target===qm)closeQ()});
+  qm.addEventListener("click",function(e){if(e.target.closest("[data-qclose]"))closeQ()});
+  qm.addEventListener("keydown",function(e){if(e.key==="Escape")closeQ()});
+  qf2.addEventListener("submit",function(e){e.preventDefault();var fl=[].slice.call(qf2.elements.files.files||[]),note=qf2.elements.note.value.trim(),err=document.getElementById("qerr");
+    if(!fl.length){err.textContent="Pick at least one file.";return}
+    var big=fl.find(function(f){return f.size>20*1024*1024});if(big){err.textContent=big.name+" is over 20 MB. Put it in Dropbox directly.";return}
+    closeQ();
+    if(!window.LAB){fl.forEach(function(f){Q.unshift({name:f.name,note:note,by:me,when:"today",size:f.size})});drawMats();toast("Added. On the live dashboard the files go to Dropbox.");return}
+    var b=document.getElementById("qUp");b.disabled=true;b.textContent="Uploading...";toast("Uploading "+fl.length+(fl.length===1?" file":" files")+" to Dropbox...");
+    LAB.qualsUpload(fl,note).then(function(rows){b.disabled=false;b.textContent="Upload";if(rows){rows.forEach(function(r){Q.unshift(r)});drawMats();toast("Uploaded. Everyone in the lab can download "+(rows.length===1?"it":"them")+" now.")}})});
+  document.getElementById("mats").addEventListener("click",function(e){
+    var d=e.target.closest("[data-qdl]");if(d){var x=Q[+d.dataset.qdl];if(!window.LAB){toast("Downloads work on the live dashboard.");return}
+      var w=window.open("","_blank");LAB.qualsLink(x).then(function(u){if(u&&w)w.location.href=u;else if(u)location.href=u;else if(w)w.close()});return}
+    var r=e.target.closest("[data-qrm2]");if(r){var i=+r.dataset.qrm2,x2;
+      later(function(){return x2.name+" was removed from the list. The file stays in Dropbox."},function(){x2=Q.splice(i,1)[0];drawMats()},function(){Q.splice(i,0,x2);drawMats()},function(){if(window.LAB&&x2.id)LAB.delQualsFile(x2)})}});
+  drawMats();
   draw();
 })();
 
