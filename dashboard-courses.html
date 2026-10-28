@@ -1,4 +1,4 @@
-<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover"></head><body><script src="vendor/supabase-2.117.2.js"></script><script src="lab.js?v=c0d61043"></script><style>.lab-loading body{visibility:hidden}.live-hide{display:none!important}</style><!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover"></head><body><title>Courses | RAIN Lab members</title><link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Caveat:wght@500;600&family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:wght@400;500;600&family=Urbanist:wght@500;600;700&display=swap"><style>:root{
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover"></head><body><script src="vendor/supabase-2.117.2.js"></script><script src="lab.js?v=3d332294"></script><style>.lab-loading body{visibility:hidden}.live-hide{display:none!important}</style><!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover"></head><body><title>Courses | RAIN Lab members</title><link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Caveat:wght@500;600&family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:wght@400;500;600&family=Urbanist:wght@500;600;700&display=swap"><style>:root{
   --cloud:#f6f8fb; --white:#ffffff; --ink:#13101d; --muted:#586174; --line:#e1e6ee;
   --blue:#1f6feb; --blue-text:#1a5fcc; --blue-soft:#e7effd;
   --night:#0b0714; --black:#000; --night-ink:#eef1f7; --night-muted:#9aa3b6; --night-line:#231d33;
@@ -604,6 +604,8 @@ ooEvents();
 .qadd .r input{width:6rem}
 .hint{font-size:.78rem;color:var(--muted);margin:-.4rem 0 .7rem}
 .btn[disabled]{opacity:.55;cursor:default}
+#termF select{font:inherit;font-size:.92rem;border:1px solid var(--line);border-radius:8px;padding:.5rem .6rem;background:#fff;width:auto}
+#termF[hidden]{display:none}
 .empty-s{font-size:.86rem;color:var(--muted)}
 @media (max-width:640px){.cform .row2{grid-template-columns:minmax(0,1fr)}}
 .qlist{list-style:none;margin:0;padding:0;display:grid;gap:.5rem;font-size:.9rem}
@@ -628,18 +630,19 @@ ooEvents();
     <header class="top"><div><h1>Courses</h1><p class="sub">What we took, tips, and where the notes are</p></div>
       <button type="button" class="btn dark" id="cAdd"><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M8 3v10M3 8h10" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>Add a course</button></header>
     <form class="card cform" id="cform" novalidate>
-      <h2>Add a course</h2>
+      <h2 id="cfH">Add a course</h2>
       <div class="row2">
         <label class="fld"><span>Course number</span><input name="code" placeholder="A A 547"></label>
         <label class="fld"><span>Name</span><input name="name" placeholder="Linear Systems Theory"></label>
       </div>
       <label class="fld"><span>Tip for the next person</span><textarea name="tip" placeholder="What to know before taking it"></textarea></label>
-      <label class="fld"><span>Attach files (optional)</span><input type="file" name="files" multiple></label>
-      <p class="hint">Notes, homework or old exams. They are saved to Rain-general &gt; Courses in Dropbox, in a folder for this course. Up to 20 MB each.</p>
-      <label class="chk"><input type="checkbox" name="quals"> Helps for quals</label>
       <label class="chk"><input type="checkbox" name="took" checked> I took this course</label>
+      <label class="fld" id="termF"><span>When did you take it?</span><select name="term"></select></label>
+      <label class="chk"><input type="checkbox" name="quals"> Helps for quals</label>
+      <label class="fld"><span id="filesL">Attach files (optional)</span><input type="file" name="files" multiple></label>
+      <p class="hint">Notes, homework or old exams. Every course gets its own folder in Rain-general &gt; Courses in Dropbox. Up to 20 MB each.</p>
       <p class="err" id="cerr" role="alert"></p>
-      <div class="mfoot"><button type="button" class="btn" id="cCancel">Cancel</button><button class="btn dark">Add course</button></div>
+      <div class="mfoot"><button type="button" class="linkbtn danger" id="cDel" hidden style="margin-right:auto">Delete course</button><button type="button" class="btn" id="cCancel">Cancel</button><button class="btn dark" id="cSave">Add course</button></div>
     </form>
     <div class="bar1"><input id="cq" type="search" placeholder="Search courses" aria-label="Search courses"><div class="flt" id="flt"></div></div>
     <div class="cgrid" id="cgrid"></div>
@@ -671,48 +674,65 @@ ooEvents();
       return '<section class="card course"><div class="code"><span class="k">'+esc(c.code)+'</span>'+(c.quals?'<span class="chip q">Helps for quals</span>':'')+'</div><h3>'+esc(c.name)+'</h3>'+(c.tip?'<p class="tip">'+esc(c.tip)+'</p>':'')+
         (c.took.length?'<div class="ppl">'+c.took.map(function(t){return face(t[0])}).join("")+'<span class="c">'+c.took.map(function(t){return esc(first(t[0]))+(t[1]?' '+esc(t[1]):'')}).join(", ")+'</span></div>':'<p class="took">Nobody has marked this one yet.</p>')+
         (tookAt===i?'<div class="tookf"><span>When did you take it?</span><select aria-label="Quarter">'+terms().map(function(t){return '<option>'+t+'</option>'}).join("")+'</select><button type="button" class="btn sm dark" data-tooksave="'+i+'">Save</button><button type="button" class="btn sm" data-tookx>Cancel</button></div>':'')+
-        '<div class="acts"><a class="btn sm" href="'+esc(c.url||"https://www.dropbox.com/home/Rain-general")+'" target="_blank" rel="noopener">'+(c.url?'Course folder':'Notes in Dropbox')+'</a>'+
+        '<div class="acts"><a class="btn sm" href="'+esc(c.url||"https://www.dropbox.com/home/Rain-general")+'" target="_blank" rel="noopener">'+(c.url?'Course folder':c.uploading?'Making folder...':'Notes in Dropbox')+'</a>'+
         '<button type="button" class="btn sm" data-cup="'+i+'"'+(c.uploading?' disabled':'')+'>'+(c.uploading?'Uploading...':'Add files')+'</button>'+(others.length?'<button type="button" class="btn sm" data-ask="'+i+'">Ask someone</button>':'')+
-        (tookAt===i?'':'<button type="button" class="btn sm'+(mine?' on':'')+'" data-took="'+i+'" aria-pressed="'+mine+'">'+(mine?'&#10003; I took this':'I took this')+'</button>')+
-        ((c.by===me||isAdmin())?'<button type="button" class="linkbtn danger" data-crm="'+i+'">Remove</button>':'')+'</div></section>'}).join("")||
+        ((c.by===me||isAdmin())?'<button type="button" class="btn sm" data-cedit="'+i+'">Edit</button>':(tookAt===i?'':'<button type="button" class="btn sm'+(mine?' on':'')+'" data-took="'+i+'" aria-pressed="'+mine+'">'+(mine?'&#10003; I took this':'I took this')+'</button>'))+
+        '</div></section>'}).join("")||
       (C.length?'<p class="empty">No courses match.</p>':'<p class="empty">No courses yet. Add the ones you took, with a tip for whoever takes them next.</p>');
     var qc=C.filter(function(c){return c.quals});
     document.getElementById("qc").innerHTML=qc.map(function(c){return '<li><b>'+esc(c.code)+'</b> '+esc(c.name)+'</li>'}).join("")||'<li class="empty-s">Mark a course as "Helps for quals" when you add it.</li>';
   }
   document.getElementById("flt").addEventListener("click",function(e){var b=e.target.closest("[data-d]");if(!b)return;dept=b.dataset.d;draw()});
   document.getElementById("cq").addEventListener("input",function(){q=this.value.trim().toLowerCase();draw()});
-  // add a course
-  var cf=document.getElementById("cform");
-  document.getElementById("cAdd").onclick=function(){cf.classList.add("open");cf.elements.code.focus()};
-  function closeCF(){cf.classList.remove("open");cf.reset();document.getElementById("cerr").textContent=""}
+  // add or edit a course
+  var cf=document.getElementById("cform"),editing=null;
+  cf.elements.term.innerHTML=terms().map(function(t){return '<option>'+t+'</option>'}).join("");
+  function syncTerm(){document.getElementById("termF").hidden=!cf.elements.took.checked}
+  cf.elements.took.addEventListener("change",syncTerm);
+  function openCF(c){editing=c||null;cf.reset();document.getElementById("cerr").textContent="";
+    document.getElementById("cfH").textContent=c?"Edit "+c.code:"Add a course";document.getElementById("cSave").textContent=c?"Save changes":"Add course";
+    document.getElementById("filesL").textContent=c?"Add more files (optional)":"Attach files (optional)";document.getElementById("cDel").hidden=!c;
+    if(c){var mt=c.took.find(function(t){return t[0]===me});cf.elements.code.value=c.code;cf.elements.name.value=c.name;cf.elements.tip.value=c.tip||"";cf.elements.quals.checked=!!c.quals;cf.elements.took.checked=!!mt;
+      if(mt&&mt[1]){if(![].some.call(cf.elements.term.options,function(o){return o.value===mt[1]}))cf.elements.term.insertAdjacentHTML("beforeend",'<option>'+esc(mt[1])+'</option>');cf.elements.term.value=mt[1]}}
+    syncTerm();cf.classList.add("open");cf.scrollIntoView({behavior:"smooth",block:"start"});cf.elements.code.focus({preventScroll:true})}
+  document.getElementById("cAdd").onclick=function(){openCF(null)};
+  function closeCF(){cf.classList.remove("open");cf.reset();editing=null;document.getElementById("cerr").textContent=""}
   document.getElementById("cCancel").onclick=closeCF;
+  document.getElementById("cDel").onclick=function(){var c=editing,ri=C.indexOf(c);closeCF();
+    later(function(){return c.code+" was deleted."},function(){C.splice(ri,1);draw()},function(){C.splice(ri,0,c);draw()},function(){if(window.LAB&&c.id)LAB.delCourse(c)})};
   cf.addEventListener("keydown",function(e){if(e.key==="Escape"){closeCF();document.getElementById("cAdd").focus()}});
   cf.addEventListener("submit",function(e){e.preventDefault();var code=cf.elements.code.value.trim().replace(/\s+/g," ").toUpperCase(),name=cf.elements.name.value.trim(),err=document.getElementById("cerr");
     if(!code){err.textContent="Add the course number.";cf.elements.code.focus();return}
     if(!name){err.textContent="Add the course name.";cf.elements.name.focus();return}
-    if(C.some(function(c){return c.code.replace(/\s/g,"")===code.replace(/\s/g,"")})){err.textContent=code+" is already on the list.";return}
-    var c={code:code,dept:deptOf(code),name:name,tip:cf.elements.tip.value.trim(),quals:cf.elements.quals.checked,by:me,took:cf.elements.took.checked?[[me,""]]:[]};
-    var fl=[].slice.call(cf.elements.files.files||[]);
-    C.unshift(c);if(window.LAB)LAB.addCourse(c);if(fl.length)upload(c,fl);closeCF();dept="All";draw();toast(code+" added.");
-    if(c.took.length){tookAt=0;draw()}});
+    if(C.some(function(c){return c!==editing&&c.code.replace(/\s/g,"")===code.replace(/\s/g,"")})){err.textContent=code+" is already on the list.";return}
+    var fl=[].slice.call(cf.elements.files.files||[]),big=fl.find(function(f){return f.size>20*1024*1024});
+    if(big){err.textContent=big.name+" is over 20 MB. Put it in Dropbox directly.";return}
+    var took=cf.elements.took.checked,term=cf.elements.term.value,c=editing;
+    if(c){var wasTook=c.took.findIndex(function(t){return t[0]===me});
+      Object.assign(c,{code:code,dept:deptOf(code),name:name,tip:cf.elements.tip.value.trim(),quals:cf.elements.quals.checked});if(window.LAB)LAB.updCourse(c);
+      if(took){if(wasTook>=0)c.took[wasTook][1]=term;else c.took.push([me,term]);if(window.LAB)LAB.took(c,term)}
+      else if(wasTook>=0){c.took.splice(wasTook,1);if(window.LAB)LAB.took(c,null)}
+      closeCF();draw();toast("Saved.");if(fl.length)upload(c,fl);return}
+    c={code:code,dept:deptOf(code),name:name,tip:cf.elements.tip.value.trim(),quals:cf.elements.quals.checked,by:me,took:took?[[me,term]]:[],url:""};
+    C.unshift(c);if(window.LAB)LAB.addCourse(c);closeCF();dept="All";draw();upload(c,fl,true)});
   // course files go to the lab Dropbox
   var picker=document.createElement("input");picker.type="file";picker.multiple=true;picker.hidden=true;document.body.appendChild(picker);var upFor=null;
-  function upload(c,files){files=[].slice.call(files||[]);if(!files.length)return;
+  function upload(c,files,makeFolder){files=[].slice.call(files||[]);if(!files.length&&!makeFolder)return;
     var big=files.find(function(f){return f.size>20*1024*1024});if(big){toast(big.name+" is over 20 MB. Put it in Dropbox directly.");return}
-    if(!window.LAB){toast("Uploads to Dropbox work on the live dashboard.");return}
-    c.uploading=true;draw();toast("Uploading "+files.length+(files.length===1?" file":" files")+" to Dropbox...");
-    LAB.courseFiles(c,files).then(function(ok){c.uploading=false;draw();if(ok)toast("Saved to Dropbox, in the "+c.code+" folder.")})}
+    if(!window.LAB){if(files.length)toast("Uploads to Dropbox work on the live dashboard.");else toast(c.code+" added.");return}
+    c.uploading=true;draw();toast(files.length?"Uploading "+files.length+(files.length===1?" file":" files")+" to Dropbox...":c.code+" added. Making its Dropbox folder...");
+    LAB.courseFiles(c,files).then(function(ok){c.uploading=false;draw();if(ok)toast(files.length?"Saved to Dropbox, in the "+c.code+" folder.":c.code+" is ready, with its own Dropbox folder.")})}
   picker.addEventListener("change",function(){if(upFor)upload(upFor,picker.files);picker.value=""});
   var m=document.getElementById("ask"),cur=null,opener=null;
   function msg(){var p=m.querySelector("input:checked");return 'Hi '+(p?first(p.value):'')+', I am thinking about taking '+cur.code+' ('+cur.name+'). Since you took it, do you have 15 minutes sometime this week to tell me how it went?'}
   document.getElementById("cgrid").addEventListener("click",function(e){
     var up=e.target.closest("[data-cup]");if(up){upFor=C[+up.dataset.cup];picker.click();return}
+    var ed=e.target.closest("[data-cedit]");if(ed){openCF(C[+ed.dataset.cedit]);return}
     var t=e.target.closest("[data-took]");if(t){var i=+t.dataset.took,c=C[i],k=c.took.findIndex(function(x){return x[0]===me});
       if(k>=0){c.took.splice(k,1);if(window.LAB)LAB.took(c,null);draw()}else{tookAt=i;draw();var sl=document.querySelector(".tookf select");if(sl)sl.focus()}return}
     var ts=e.target.closest("[data-tooksave]");if(ts){var c2=C[+ts.dataset.tooksave],term=ts.parentNode.querySelector("select").value,k2=c2.took.findIndex(function(x){return x[0]===me});
       if(k2>=0)c2.took[k2][1]=term;else c2.took.push([me,term]);if(window.LAB)LAB.took(c2,term);tookAt=null;draw();return}
     if(e.target.closest("[data-tookx]")){tookAt=null;draw();return}
-    var r=e.target.closest("[data-crm]");if(r){var ri=+r.dataset.crm,x;later(function(){return x.code+" was removed."},function(){x=C.splice(ri,1)[0];draw()},function(){C.splice(ri,0,x);draw()},function(){if(window.LAB&&x.id)LAB.delCourse(x)});return}
     var a=e.target.closest("[data-ask]");if(!a)return;cur=C[+a.dataset.ask];opener=a;
     document.getElementById("askL").textContent=cur.code+", "+cur.name+". Pick who to ask.";
     document.getElementById("askP").innerHTML=cur.took.filter(function(x){return x[0]!==me}).map(function(x,i){return '<label><input type="radio" name="who" value="'+esc(x[0])+'"'+(i?'':' checked')+'>'+face(x[0])+esc(x[0])+'<small>'+esc(x[1])+'</small></label>'}).join("");

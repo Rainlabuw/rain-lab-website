@@ -200,6 +200,7 @@ var LAB=(function(){
     addCourse:function(c){c._p=(async function(){try{
         c.id=(await q(sb.from("courses").insert({code:c.code,name:c.name,tip:c.tip||null,helps_quals:!!c.quals}).select()))[0].id;
         var mine=c.took.find(function(t){return t[0]===DASH.me.name});if(mine)await q(sb.from("course_takers").insert({course_id:c.id,email:DASH.me.email,term:mine[1]||null}))}catch(e){fail(e)}})();return c._p},
+    updCourse:async function(c){try{await c._p;await q(sb.from("courses").update({code:c.code,name:c.name,tip:c.tip||null,helps_quals:!!c.quals}).eq("id",c.id))}catch(e){fail(e)}},
     delCourse:async function(c){try{await q(sb.from("courses").delete().eq("id",c.id))}catch(e){fail(e)}},
     took:async function(c,term){try{await c._p;var t=sb.from("course_takers");
         if(term===null)await q(t.delete().eq("course_id",c.id).eq("email",DASH.me.email));
