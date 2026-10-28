@@ -107,7 +107,7 @@ var LAB=(function(){
       options:r[19].filter(function(o){return o.poll_id===p.id}).map(function(o){var v=r[20].filter(function(x){return x.option_id===o.id}).map(function(x){return nm(x.email)});
         if(p.anonymous){var mine=v.indexOf(meRow.name)>=0;v=mine?[meRow.name]:[];for(var k=v.length;k<(cnt[o.id]||0);k++)v.push("anonymous "+o.id+"-"+k)}
         return {id:o.id,t:o.label,v:v}})}});
-    DASH.courses=r[22].map(function(c){return {id:c.id,code:c.code,name:c.name,tip:c.tip||"",quals:c.helps_quals,by:nm(c.added_by),
+    DASH.courses=r[22].map(function(c){return {id:c.id,code:c.code,name:c.name,tip:c.tip||"",quals:c.helps_quals,by:nm(c.added_by),url:c.dropbox_url||"",
       took:r[23].filter(function(t){return t.course_id===c.id}).map(function(t){return [nm(t.email),t.term||""]})}});
     DASH.quals=r[24].map(function(x){return {id:x.id,by:nm(x.email),when:x.year||"",text:x.body}});
     ["changes","digest"].forEach(function(k){DASH[k]=[]});
@@ -204,6 +204,14 @@ var LAB=(function(){
     took:async function(c,term){try{await c._p;var t=sb.from("course_takers");
         if(term===null)await q(t.delete().eq("course_id",c.id).eq("email",DASH.me.email));
         else await q(t.upsert({course_id:c.id,email:DASH.me.email,term:term||null}))}catch(e){fail(e)}},
+    courseFiles:async function(c,files){try{await c._p;if(!c.id)return false;
+        var fd=new FormData();fd.append("course_id",c.id);files.forEach(function(f){fd.append("files",f)});
+        var tok=(await sb.auth.getSession()).data.session.access_token;
+        var r=await fetch(LAB_CFG.url+"/functions/v1/dropbox-course",{method:"POST",headers:{Authorization:"Bearer "+tok,apikey:LAB_CFG.key},body:fd});
+        var j=await r.json().catch(function(){return {}});
+        if(!r.ok){if(window.toast)toast(j.error||"Upload failed. Please try again.");return false}
+        if(j.url&&!c.url){c.url=j.url;if(c.by===DASH.me.name||DASH.me.role==="Admin")sb.from("courses").update({dropbox_url:j.url}).eq("id",c.id).then(function(){})}
+        return true}catch(e){console.error(e);if(window.toast)toast("Upload failed. Please try again.");return false}},
     addQual:async function(x){try{x.id=(await q(sb.from("quals_tips").insert({body:x.text,year:x.when||null}).select()))[0].id}catch(e){fail(e)}},
     delQual:async function(x){try{await q(sb.from("quals_tips").delete().eq("id",x.id))}catch(e){fail(e)}},
     signOut:async function(){await sb.auth.signOut();location.replace("members.html")}
