@@ -468,7 +468,7 @@ function needsMe(){var me=DASH.me.name,out=[],fmt=function(iso){var d=new Date(i
       if(ss.mode==="pick"&&ss.by===me&&!ss.q)out.push({id:"pick"+g.id+"-"+ss.day,ic:"vote",t:"Pick the paper",s:g.name+", "+ds,go:"Pick",href:"dashboard-reading.html#g"+g.id})});
   });
   (DASH.suggested||[]).forEach(function(x){if(x.seen)return;out.push({id:"sug"+(x.id||x.q),who:x.by,t:x.by+" suggested a paper to you",s:rawTitle(x.q),go:"See it",href:"dashboard-reading.html#lib"})});
-  DASH.changes.forEach(function(c){if(c.by===me&&c.status==="back")out.push({id:"back"+c.id,ic:"back",t:"Your "+c.kind.toLowerCase()+" was sent back",s:c.title,go:"Edit and send again",href:"dashboard-website.html"})});
+  DASH.changes.forEach(function(c){if(c.by===me&&c.status==="back")out.push({id:"back"+c.id,ic:"back",t:"Your "+c.kind.toLowerCase()+" was sent back",s:c.title,go:"Edit and send again",href:"#p-profile"})});
   if(isAdmin()){var w=DASH.changes.filter(function(c){return c.status==="waiting"}),q=DASH.requests.filter(function(r){return r.status==="open"});
     if(w.length)out.push({id:"adm-w"+w.length,ic:"admin",t:"Website changes to approve",s:w.map(function(c){return (c.by.match(/"([^"]*)"/)||[0,c.by.split(" ")[0]])[1]}).join(", "),go:"Review",href:"dashboard-admin.html"});
     if(q.length)out.push({id:"adm-q"+q.length,ic:"admin",t:"Requests from members",s:q.map(function(r){return r.type}).join(", "),go:"Open inbox",href:"dashboard-admin.html"})}
@@ -828,6 +828,211 @@ var V2={};
   document.addEventListener("keydown",function(e){if(e.key==="Escape"&&mEl&&!V2.isOpen()){var f=mFor;V2.menu.close();if(f)f.focus()}});
 })();
 </script>
+<style>
+/* the name menu as side panels: profile, news, publications, polls, lab links, ask the admins */
+.sheet.v2 .kv{display:grid;grid-template-columns:max-content minmax(0,1fr);gap:8px 16px;font-size:14.5px;margin:0}
+.sheet.v2 .kv dt{color:var(--muted)}
+.sheet.v2 .kv dd{margin:0;overflow-wrap:anywhere}
+.sheet.v2 .kv a,.sheet.v2 .note2 a{color:var(--blue-ink)}
+.sheet.v2 .chips2{display:flex;flex-wrap:wrap;gap:8px}
+.sheet.v2 .chips2 button{border:1px solid var(--line);background:var(--surface);border-radius:999px;padding:7px 13px;font-size:14px}
+.sheet.v2 .chips2 button[aria-pressed="true"]{border-color:var(--blue);background:var(--blue-soft);color:var(--blue-ink)}
+.sheet.v2 .prof{display:flex;align-items:center;gap:14px}
+.sheet.v2 .prof img,.sheet.v2 .prof .ini{width:56px;height:56px;border-radius:50%;object-fit:cover;font-size:18px}
+.sheet.v2 .prof b{display:block;font:700 17px var(--f-display)}
+.sheet.v2 .prof span span{display:block;color:var(--muted);font-size:14px}
+.sheet.v2 .chg{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:6px 12px;align-items:center;padding:10px 12px;border:1px solid var(--line);border-radius:10px}
+.sheet.v2 .chg b{display:block;font:600 14.5px/1.3 var(--f-display);overflow-wrap:anywhere}
+.sheet.v2 .chg small{display:block;color:var(--muted);font-size:12.5px}
+.sheet.v2 .chg .bnote{grid-column:1/-1;margin:0;font-size:13.5px;background:#fdecea;color:#8a1c12;border-radius:8px;padding:8px 10px}
+.sheet.v2 .chg .row3{grid-column:1/-1;display:flex;gap:6px;flex-wrap:wrap}
+.sheet.v2 .st{font:600 12px var(--f-body);border-radius:999px;padding:3px 9px;white-space:nowrap}
+.sheet.v2 .st.green{background:var(--green-soft);color:var(--green)}.sheet.v2 .st.amber{background:var(--amber-soft);color:var(--amber)}.sheet.v2 .st.red{background:#fdecea;color:var(--red)}.sheet.v2 .st.gray{background:var(--line-soft);color:var(--muted)}
+.sheet.v2 .links{display:grid;gap:8px}
+.sheet.v2 .links a{display:flex;align-items:center;gap:12px;padding:10px 12px;border:1px solid var(--line);border-radius:12px;text-decoration:none;color:var(--ink)}
+.sheet.v2 .links a:hover{border-color:#c7d2e4;background:#fafbfd}
+.sheet.v2 .links .li{width:36px;height:36px;border-radius:10px;display:grid;place-items:center;background:var(--blue-soft);color:var(--blue-ink);font:700 14px var(--f-display);flex:none}
+.sheet.v2 .links b{display:block;font:600 14.5px var(--f-display)}
+.sheet.v2 .links span span{display:block;font-size:13px;color:var(--muted)}
+.sheet.v2 .opts{display:grid;gap:8px}
+.sheet.v2 .opts .o{display:flex;gap:8px}
+.sheet.v2 .opts input{flex:1;min-width:0;border:1px solid var(--line);border-radius:10px;padding:10px 12px}
+.sheet.v2 .opts button{width:38px;border:1px solid var(--line);border-radius:10px;background:var(--surface);color:var(--muted)}
+.sheet.v2 .opts button[disabled]{opacity:.4}
+.sheet.v2 .poll{display:grid;gap:8px;padding:14px;border:1px solid var(--line);border-radius:12px}
+.sheet.v2 .poll .pq{font:600 15px var(--f-display);margin:0}
+.sheet.v2 .poll .pm{color:var(--muted);font-size:13px;margin:-4px 0 2px}
+.sheet.v2 .po{position:relative;overflow:hidden;display:flex;align-items:center;gap:10px;border:1px solid var(--line);border-radius:10px;padding:9px 12px;background:var(--surface);text-align:left;width:100%}
+.sheet.v2 .po[disabled]{cursor:default}
+.sheet.v2 .po .fill{position:absolute;inset:0 auto 0 0;background:var(--blue-soft);z-index:0}
+.sheet.v2 .po>*:not(.fill){position:relative;z-index:1}
+.sheet.v2 .po .dotc{width:16px;height:16px;border-radius:50%;border:1.5px solid #9aa3b6;flex:none}
+.sheet.v2 .po .dotc.sq{border-radius:4px}
+.sheet.v2 .po.on{border-color:var(--blue)}.sheet.v2 .po.on .dotc{border:5px solid var(--blue)}
+.sheet.v2 .po .c{margin-left:auto;font:600 12.5px var(--f-mono);color:var(--muted)}
+.sheet.v2 .po .who{display:flex;margin-left:6px}
+.sheet.v2 .po .who img,.sheet.v2 .po .who .ini{width:22px;height:22px;border-radius:50%;object-fit:cover;margin-left:-6px;border:2px solid var(--surface);font-size:9px}
+.sheet.v2 .myreq{display:grid;gap:8px}
+.sheet.v2 .file-l{font-size:13.5px;color:var(--muted);margin-top:4px}
+.sheet.v2 .lbtn{border:0;background:none;color:var(--blue-ink);font:600 13.5px var(--f-body);padding:0;cursor:pointer}
+.sheet.v2 .lbtn.danger{color:var(--red)}
+</style>
+<script>
+/* name menu panels, on every dashboard page. Each one opens with a link to #p-<name> too. */
+(function(){
+  var FULLM=["January","February","March","April","May","June","July","August","September","October","November","December"];
+  var cur=null; // which menu panel is open, for redraws
+  function me(){return DASH.me.name}
+  function admin(){return isAdmin()}
+  function first(n){var k=String(n).match(/"([^"]*)"/);return k?k[1]:String(n).split(" ")[0]}
+  function meP(){return ((typeof DATA!=="undefined"&&DATA.members)||[]).find(function(m){return m.name===me()})||{}}
+  function lk(u){return u?'<a href="'+esc(/^https?:/i.test(u)?u:"https://"+u)+'" target="_blank" rel="noopener">'+esc(u.replace(/^https?:\/\//,""))+'</a>':'<span style="color:var(--muted)">Not set</span>'}
+  function pickFile(accept,cb){var i=document.createElement("input");i.type="file";i.accept=accept;i.hidden=true;document.body.appendChild(i);i.onchange=function(){var f=i.files[0];i.remove();if(!f)return;if(f.size>20*1024*1024){toast(f.name+" is over 20 MB.");return}cb(f)};i.click()}
+  function add(c,files){c=Object.assign({_k:"k"+Date.now()+Math.random(),by:me(),when:"Today",status:admin()?"published":"waiting"},c);DASH.changes.unshift(c);LAB.addChange(c,files||[]);document.dispatchEvent(new Event("bell:refresh"));return c}
+  function resend(c,v,files){Object.assign(c,v,{status:admin()?"published":"waiting",when:"Today",note:""});LAB.resendChange(c,files||[]);document.dispatchEvent(new Event("bell:refresh"))}
+  function done(what){toast(admin()?what+" is live on the website within a minute.":what+" was sent to the admins for approval.")}
+  var ST={waiting:["Waiting for approval","amber"],published:["Live","green"],back:["Sent back","red"]};
+  var KIND={News:"News",Profile:"Profile",Paper:"Publication",Page:"Page"};
+
+  /* ---------- my profile, and my website changes ---------- */
+  function lastProfile(){return DASH.changes.find(function(c){return c.by===me()&&c.kind==="Profile"})}
+  function profVals(){var p=meP(),c=lastProfile(),f=(c&&c.fields)||{};return {name:f.name||me(),topic:f.topic!=null?f.topic:(p.topic||""),web:f.web!=null?f.web:(p.url||""),li:f.li||"",gs:f.gs||""}}
+  function myChanges(){var mine=DASH.changes.filter(function(c){return c.by===me()});
+    return mine.length?'<div style="display:grid;gap:8px">'+mine.map(function(c){var s=ST[c.status]||["",""];
+      return '<div class="chg"><span><b>'+esc(c.title)+'</b><small>'+esc(KIND[c.kind]||c.kind)+', '+esc(c.when)+'</small></span><span class="st '+s[1]+'">'+s[0]+'</span>'+
+        (c.status==="back"&&c.note?'<p class="bnote"><b>Note from the admin:</b> '+esc(c.note)+'</p>':'')+
+        '<span class="row3">'+(c.status==="back"?'<button type="button" class="btn secondary sm" data-again="'+esc(c._k||c.id)+'">Edit and send again</button>':'')+'<button type="button" class="lbtn danger" data-rmc="'+esc(c._k||c.id)+'">'+(c.status==="published"?"Remove from the site":"Withdraw")+'</button></span></div>'}).join("")+'</div>':'<p class="meta" style="margin:0">Nothing yet. News, publications and profile updates you send show up here.</p>'}
+  function chByKey(k){return DASH.changes.find(function(c){return String(c._k||c.id)===String(k)})}
+  function removeChange(c,redraw){var i=DASH.changes.indexOf(c);later(function(){return '"'+c.title+'" was removed.'},function(){DASH.changes.splice(i,1);redraw()},function(){DASH.changes.splice(i,0,c);redraw()},function(){LAB.delChange(c)})}
+  function changeActions(b,redraw){if(b.dataset.rmc){removeChange(chByKey(b.dataset.rmc),redraw);return true}
+    if(b.dataset.again){var c=chByKey(b.dataset.again);if(c.kind==="News")shareNews(c);else if(c.kind==="Paper")addPub(c);else profile(true,c);return true}return false}
+  function profile(edit,backC){cur="profile";var v=profVals(),r=DASH.me.row||{},photo=null,pend=DASH.changes.find(function(c){return c.by===me()&&c.kind==="Profile"&&c.status!=="published"});
+    if(!edit){V2.open("My profile","On the People page",
+      '<div class="prof">'+face(me())+'<span><b>'+esc(v.name)+'</b><span>'+esc(v.topic||"Research topic not set")+'</span></span></div>'+
+      '<dl class="kv"><dt>Website</dt><dd>'+lk(v.web)+'</dd><dt>LinkedIn</dt><dd>'+lk(v.li)+'</dd><dt>Scholar</dt><dd>'+lk(v.gs)+'</dd><dt>Birthday</dt><dd>'+(r.birthday_month?esc(FULLM[r.birthday_month-1]+" "+r.birthday_day)+(r.show_birthday===false?', private':', shown on Today'):'<span style="color:var(--muted)">Not set</span>')+'</dd>'+
+        (pend?'<dt>Status</dt><dd>'+(pend.status==="back"?'<span class="st red">Sent back</span>':'<span class="st amber">Changes waiting for approval</span>')+'</dd>':'')+'</dl>'+
+      '<p class="sec">My website changes</p>'+myChanges(),
+      '<button type="button" class="btn primary" data-pe>Edit</button>',function(b){if(b.dataset.pe!=null){profile(true);return}changeActions(b,function(){profile(false)})});return}
+    V2.open("Edit my profile",admin()?"As an admin, changes go live right away.":"An admin checks profile changes before they go on the People page.",
+      (backC&&backC.note?'<p class="calwarn" style="margin:0;font-size:13.5px;color:#8a1c12;background:#fdecea;border-radius:10px;padding:8px 12px"><b>Note from the admin:</b> '+esc(backC.note)+'</p>':'')+
+      '<div class="field"><label for="pf-n">Name</label><input id="pf-n" value="'+esc(v.name)+'"></div><div class="field"><label for="pf-t">Research topic</label><textarea id="pf-t">'+esc(v.topic)+'</textarea></div>'+
+      '<div class="field"><label for="pf-w">Website</label><input id="pf-w" value="'+esc(v.web)+'" placeholder="https://"></div><div class="two"><div class="field"><label for="pf-l">LinkedIn</label><input id="pf-l" value="'+esc(v.li)+'" placeholder="https://"></div><div class="field"><label for="pf-g">Scholar</label><input id="pf-g" value="'+esc(v.gs)+'" placeholder="https://"></div></div>'+
+      '<div class="drop" role="button" tabindex="0" data-photo><b>New photo</b> <span class="opt">optional</span><div class="file-l" id="pf-f"></div></div>'+
+      '<div class="two"><div class="field"><label for="pf-bm">Birthday <span class="opt">optional, no year</span></label><select id="pf-bm"><option value="">Month</option>'+FULLM.map(function(m,i){return '<option value="'+(i+1)+'"'+(r.birthday_month===i+1?' selected':'')+'>'+m+'</option>'}).join("")+'</select></div><div class="field"><label for="pf-bd">Day</label><select id="pf-bd"><option value="">Day</option>'+Array.from({length:31},function(_,k){return '<option'+(r.birthday_day===k+1?' selected':'')+'>'+(k+1)+'</option>'}).join("")+'</select></div></div>'+
+      '<label class="check"><input type="checkbox" id="pf-s"'+(r.show_birthday===false?'':' checked')+'> Show my birthday on Today</label><p class="meta" style="margin:0">Your birthday saves right away. The rest goes on the People page.</p>',
+      '<button type="button" class="btn quiet" data-pv>Cancel</button><button type="button" class="btn primary" data-psave>'+(admin()?"Save":"Send for approval")+'</button>',
+      Object.assign(function(b){if(b.dataset.pv!=null){profile(false);return}
+        if(b.dataset.photo!=null){pickFile("image/*",function(f){photo=f;document.getElementById("pf-f").textContent=f.name});return}
+        if(b.dataset.psave==null)return;
+        var g=function(id){return document.getElementById(id).value.trim()},bm=+g("pf-bm")||null,bd=+g("pf-bd")||null,show=document.getElementById("pf-s").checked;
+        if((bm&&!bd)||(!bm&&bd)){toast("Pick both the month and the day, or neither.");return}
+        var bChanged=bm!==(r.birthday_month||null)||bd!==(r.birthday_day||null)||show!==(r.show_birthday!==false);
+        if(bChanged){LAB.saveBirthday(bm,bd,show);(DASH.people||[]).forEach(function(p){if(p.email===DASH.me.email){p.birthday_month=bm;p.birthday_day=bd;p.show_birthday=show}})}
+        var f={name:g("pf-n")||me(),topic:g("pf-t"),web:g("pf-w"),li:g("pf-l"),gs:g("pf-g")},o=profVals();
+        var same=f.name===o.name&&f.topic===o.topic&&f.web===o.web&&f.li===o.li&&f.gs===o.gs&&!photo;
+        if(same){profile(false);toast(bChanged?"Your birthday is saved.":"Nothing changed.");return}
+        var lines=[];if(f.name!==me())lines.push("Name: "+f.name);lines.push("Research topic: "+f.topic);if(f.web)lines.push("Website: "+f.web);if(f.li)lines.push("LinkedIn: "+f.li);if(f.gs)lines.push("Scholar: "+f.gs);if(photo)lines.push("New photo attached");
+        var pv={kind:"Profile",title:"Updated profile",text:lines.join("\n"),fields:f},pb=backC||DASH.changes.find(function(c){return c.by===me()&&c.kind==="Profile"&&c.status==="back"});
+        if(pb)resend(pb,pv,photo?[photo]:[]);else add(pv,photo?[photo]:[]);profile(false);done("Your profile")},
+        {key:function(e){if((e.key==="Enter"||e.key===" ")&&e.target.matches("[data-photo]")){e.preventDefault();e.target.click()}}}))}
+
+  /* ---------- share news ---------- */
+  function shareNews(editC,pre){cur="news";var n=editC||pre||{},type=n.type||"Other",photo=null;
+    V2.open(editC?"Edit: "+editC.title:"Share news",admin()?"As an admin, it goes on the News page right away.":"An admin checks it, then it goes on the News page.",
+      (editC&&editC.note?'<p style="margin:0;font-size:13.5px;color:#8a1c12;background:#fdecea;border-radius:10px;padding:8px 12px"><b>Note from the admin:</b> '+esc(editC.note)+'</p>':'')+
+      '<div class="field"><label for="nw-h">Headline</label><input id="nw-h" value="'+esc(n.title||"")+'" placeholder="Best paper award at ACC"></div>'+
+      '<div class="field"><span class="lab">Type</span><div class="chips2">'+DASH.newsTypes.map(function(t){return '<button type="button" data-nt="'+esc(t)+'" aria-pressed="'+(t===type)+'">'+esc(t)+'</button>'}).join("")+'</div></div>'+
+      '<div class="field"><label for="nw-t">A line or two</label><textarea id="nw-t" placeholder="What happened, in plain words. Name the people involved.">'+esc(n.text||"")+'</textarea></div>'+
+      '<div class="field"><label for="nw-l">Link <span class="opt">optional</span></label><input id="nw-l" value="'+esc(n.link||"")+'" placeholder="Paper, article or event page"></div>'+
+      '<div class="drop" role="button" tabindex="0" data-photo><b>Add a photo</b> <span class="opt">optional</span><div class="file-l" id="nw-f"></div></div>',
+      '<button type="button" class="btn quiet" data-close>Cancel</button><button type="button" class="btn primary" data-nwsend>'+(admin()?"Publish":"Send for approval")+'</button>',
+      Object.assign(function(b){
+        if(b.dataset.nt){type=b.dataset.nt;document.querySelectorAll("#shB [data-nt]").forEach(function(x){x.setAttribute("aria-pressed",String(x===b))});return}
+        if(b.dataset.photo!=null){pickFile("image/*",function(f){photo=f;document.getElementById("nw-f").textContent=f.name});return}
+        if(b.dataset.nwsend==null)return;var h=document.getElementById("nw-h").value.trim();if(!h){toast("Add a headline.");document.getElementById("nw-h").focus();return}
+        var v={kind:"News",type:type,title:h,text:document.getElementById("nw-t").value.trim(),link:document.getElementById("nw-l").value.trim()};if(pre&&pre.from)v.from=pre.from;
+        if(editC)resend(editC,v,photo?[photo]:[]);else add(v,photo?[photo]:[]);V2.close();done("Your news")},
+        {key:function(e){if((e.key==="Enter"||e.key===" ")&&e.target.matches("[data-photo]")){e.preventDefault();e.target.click()}}}))}
+
+  /* ---------- add a publication ---------- */
+  function addPub(editC){cur="pub";var c=editC||{},f=c.fields||{},last="",tm=null;
+    V2.open(editC?"Edit: "+editC.title:"Add a publication",admin()?"As an admin, it goes on the Publications page right away.":"An admin checks it, then it goes on the Publications page.",
+      (editC&&editC.note?'<p style="margin:0;font-size:13.5px;color:#8a1c12;background:#fdecea;border-radius:10px;padding:8px 12px"><b>Note from the admin:</b> '+esc(editC.note)+'</p>':'')+
+      '<div class="field"><label for="pb-l">Link <span class="opt">arXiv or DOI</span></label><input id="pb-l" value="'+esc(f.link||"")+'" placeholder="Paste an arXiv link and the details fill in"><span class="meta" id="pb-ax" style="margin:0" hidden></span></div>'+
+      '<div class="field"><label for="pb-t">Title</label><input id="pb-t" value="'+esc(c.title||"")+'"></div>'+
+      '<div class="two"><div class="field"><label for="pb-v">Venue</label><input id="pb-v" value="'+esc(c.venue||"")+'" placeholder="IEEE Conference on Decision and Control"></div><div class="field"><label for="pb-y">Year</label><input id="pb-y" inputmode="numeric" value="'+esc(c.year||"")+'" placeholder="'+(new Date().getFullYear())+'"></div></div>'+
+      '<div class="field"><label for="pb-a">Authors</label><input id="pb-a" value="'+esc(f.authors||"")+'" placeholder="In order, separated by commas"></div>'+
+      (editC?'':'<label class="check"><input type="checkbox" id="pb-n" checked> Also share it as lab news (a draft opens next)</label>'),
+      '<button type="button" class="btn quiet" data-close>Cancel</button><button type="button" class="btn primary" data-pbsend>'+(admin()?"Publish":"Send for approval")+'</button>',
+      Object.assign(function(b){if(b.dataset.pbsend==null)return;var g=function(id){return document.getElementById(id).value.trim()},t=g("pb-t"),v=g("pb-v"),y=g("pb-y"),a=g("pb-a"),l=g("pb-l");
+        if(!t||!v||!y){toast("Add the title, venue and year.");return}
+        var val={kind:"Paper",title:t,text:v+", "+y+(a?"\nAuthors: "+a:"")+(l?"\nLink: "+l:""),venue:v,year:y,fields:{authors:a,link:l}},news=!editC&&document.getElementById("pb-n").checked;val.wantsNews=news;
+        if(editC){resend(editC,val);V2.close();done("The paper");return}
+        add(val);done("The paper");
+        if(news){var co=a.split(/\s*,\s*/).filter(function(x){return x&&x!==me()&&!/mesbahi/i.test(x)});
+          shareNews(null,{type:"Paper accepted",title:"Paper accepted to "+v+" "+y,text:first(me())+(co.length?" and "+co.map(first).join(" and "):"")+"'s paper “"+t+"”"+(/mesbahi/i.test(a)?", with Prof. Mesbahi,":"")+" will appear at "+v+" "+y+".",link:l,from:t})}else V2.close()},
+        {input:function(e){if(e.target.id!=="pb-l")return;var m=e.target.value.match(/arxiv\.org\/(?:abs|pdf)\/([0-9]{4}\.[0-9]{4,5})/i);if(!m||m[1]===last)return;last=m[1];var ax=document.getElementById("pb-ax");ax.hidden=false;ax.textContent="Looking it up on arXiv...";
+          clearTimeout(tm);tm=setTimeout(function(){LAB.arxiv(m[1]).then(function(j){if(!document.getElementById("pb-t"))return;document.getElementById("pb-t").value=j.title;document.getElementById("pb-a").value=(j.authors||[]).join(", ");if(j.year&&!document.getElementById("pb-y").value)document.getElementById("pb-y").value=j.year;ax.textContent="Filled in from arXiv. Add the venue."},function(err){ax.textContent=(err.message||"Could not reach arXiv.")+" Type it in yourself.";last=""})},300)}}))}
+
+  /* ---------- polls ---------- */
+  function pollBlock(p){var ME=me(),open=pollOpen(p),tot=0,voted=p.options.some(function(o){return o.v.indexOf(ME)>=0});p.options.forEach(function(o){tot+=o.v.length});
+    var dt=new Date(p.closes+"T12:00"),kind={one:"pick one",many:"pick any",time:"pick the days that work"}[p.kind]||"pick one";
+    return '<div class="poll"><p class="pq">'+esc(p.q)+'</p><p class="pm">'+esc(first(p.by))+', '+(open?'closes '+MON[dt.getMonth()]+' '+dt.getDate()+', '+kind:'closed')+(p.anon?', anonymous':'')+'</p>'+
+      p.options.map(function(o,i){var on=o.v.indexOf(ME)>=0,show=voted||!open,w=tot?Math.round(100*o.v.length/tot):0;
+        return '<button type="button" class="po'+(on?' on':'')+'" data-pv="'+p.id+'" data-i="'+i+'"'+(open?'':' disabled')+' aria-pressed="'+on+'"><span class="fill" style="width:'+(show?w:0)+'%"></span><span class="dotc'+(p.kind==="one"?'':' sq')+'"></span><span>'+esc(o.t)+'</span>'+(show&&!p.anon?'<span class="who">'+o.v.slice(0,4).map(face).join("")+'</span>':'')+'<span class="c">'+(show?o.v.length:'')+'</span></button>'}).join("")+
+      ((p.by===ME||admin())?'<button type="button" class="lbtn danger" style="justify-self:start" data-pdel="'+p.id+'">Delete poll</button>':'')+'</div>'}
+  function polls(){cur="polls";var op=DASH.polls.filter(pollOpen),cl=DASH.polls.filter(function(p){return !pollOpen(p)});
+    var body=(op.map(pollBlock).join("")||'<p class="meta" style="margin:0">No open polls. Ask the lab something.</p>')+(cl.length?'<p class="sec">Closed</p>'+cl.slice(0,8).map(pollBlock).join(""):'');
+    if(V2.isOpen()&&document.getElementById("shT").textContent==="Polls"){var b=document.getElementById("shB"),st=b.scrollTop;b.innerHTML=body;b.scrollTop=st;return}
+    V2.open("Polls","Quick questions for the lab",body,'<button type="button" class="btn primary" data-newpoll>New poll</button>',function(b){
+      if(b.dataset.newpoll!=null){newPoll();return}
+      if(b.dataset.pdel){var p=DASH.polls.find(function(x){return String(x.id)===b.dataset.pdel}),i=DASH.polls.indexOf(p);later(function(){return "Poll deleted."},function(){DASH.polls.splice(i,1);polls();document.dispatchEvent(new Event("dash:redraw"))},function(){DASH.polls.splice(i,0,p);polls();document.dispatchEvent(new Event("dash:redraw"))},function(){LAB.delPoll(p)})}})}
+  function newPoll(){cur="newpoll";var kind="one",vals=["",""];
+    function grab(){vals=[].map.call(document.querySelectorAll("#shB .opts input"),function(x){return x.value})}
+    function optsHTML(){return vals.map(function(v,i){return '<div class="o"><input '+(kind==="time"?'type="date"':'placeholder="Option '+(i+1)+'"')+' aria-label="Option '+(i+1)+'" value="'+esc(v)+'"><button type="button" aria-label="Remove option '+(i+1)+'" data-orm="'+i+'"'+(vals.length<=2?' disabled':'')+'>&times;</button></div>'}).join("")}
+    function drawOpts(){document.getElementById("pl-o").innerHTML=optsHTML();document.getElementById("pl-ol").textContent=kind==="time"?"Days to choose from":"Options"}
+    var d=new Date();d.setDate(d.getDate()+7);var def=d.getFullYear()+"-"+("0"+(d.getMonth()+1)).slice(-2)+"-"+("0"+d.getDate()).slice(-2);
+    V2.open("New poll","Everyone in the lab can vote.",'<div class="field"><label for="pl-q">Question</label><input id="pl-q" placeholder="Where should we go for lunch on Friday?"></div>'+
+      '<div class="field"><span class="lab">Kind</span><div class="seg2"><button type="button" data-k="one" aria-pressed="true">Pick one</button><button type="button" data-k="many" aria-pressed="false">Pick any</button><button type="button" data-k="time" aria-pressed="false">Dates</button></div></div>'+
+      '<div class="field"><span class="lab" id="pl-ol">Options</span><div class="opts" id="pl-o">'+optsHTML()+'</div><button type="button" class="btn quiet sm" style="justify-self:start" data-addo>+ Add an option</button></div>'+
+      '<div class="field"><label for="pl-c">Closes on</label><input id="pl-c" type="date" value="'+def+'"></div><label class="check"><input type="checkbox" id="pl-a"> Anonymous: show counts, not names</label>',
+      '<button type="button" class="btn quiet" data-back>Back</button><button type="button" class="btn primary" data-post>Post poll</button>',function(b){
+        if(b.dataset.back!=null){polls();return}
+        if(b.dataset.k){grab();var was=kind==="time";kind=b.dataset.k;if(was!==(kind==="time"))vals=vals.map(function(){return ""});document.querySelectorAll("#shB [data-k]").forEach(function(x){x.setAttribute("aria-pressed",String(x===b))});drawOpts();return}
+        if(b.dataset.addo!=null){grab();vals.push("");drawOpts();var ins=document.querySelectorAll("#shB .opts input");ins[ins.length-1].focus();return}
+        if(b.dataset.orm){grab();if(vals.length>2){vals.splice(+b.dataset.orm,1);drawOpts()}return}
+        if(b.dataset.post==null)return;grab();var q=document.getElementById("pl-q").value.trim(),closes=document.getElementById("pl-c").value;
+        var os=vals.map(function(v){v=v.trim();if(kind==="time"&&v){var t=new Date(v+"T12:00");v=["Sun","Mon","Tue","Wed","Thu","Fri","Sat"][t.getDay()]+", "+MON[t.getMonth()]+" "+t.getDate()}return v}).filter(Boolean);
+        if(!q){toast("Add a question.");return}if(os.length<2){toast("Add at least two options.");return}if(os.some(function(x,i){return os.indexOf(x)!==i})){toast("Two options are the same.");return}
+        if(!closes||daysTo(closes)<0){toast("Pick a closing date from today on.");return}
+        var np={id:Date.now(),q:q,by:me(),kind:kind,anon:document.getElementById("pl-a").checked,closes:closes,options:os.map(function(t){return {t:t,v:[]}})};
+        DASH.polls.unshift(np);LAB.addPoll(np);polls();document.dispatchEvent(new Event("dash:redraw"));toast("Posted. It shows on everyone's Today.")})}
+
+  /* ---------- lab links ---------- */
+  var LINKS=[["D","Rain-general on Dropbox","All shared lab files","https://www.dropbox.com/home/Rain-general"],["S","Standard procedures","Lab SOPs, in Dropbox","https://www.dropbox.com/home/Rain-general/SOP"],["E","Safety (EHS)","Environmental health and safety documents","https://www.dropbox.com/home/Rain-general/EHS%20stuff"],
+    ["T","RAIN Testbeds","Testbed documents, in Dropbox","https://www.dropbox.com/home/Rain-general/RAIN%20Testbeds"],["G","Rainlabuw on GitHub","Lab code","https://github.com/Rainlabuw"],["W","Public website","What visitors see","index.html"]];
+  function links(){cur="links";V2.open("Lab links","Places the lab uses every day.",'<div class="links">'+LINKS.map(function(x){return '<a href="'+esc(x[3])+'"'+(/^https?:/.test(x[3])?' target="_blank" rel="noopener"':'')+'><span class="li">'+x[0]+'</span><span><b>'+esc(x[1])+'</b><span>'+esc(x[2])+'</span></span></a>'}).join("")+'</div>'+
+    '<p class="meta" style="margin:0">Missing a link, like a template or the group meeting notes? Use Ask the admins.</p>',"",null)}
+
+  /* ---------- ask the admins ---------- */
+  function ask(){cur="ask";var type=DASH.reqTypes[DASH.reqTypes.length-1];
+    function mine(){var m=DASH.requests.filter(function(r){return r.by===me()});return m.length?'<p class="sec">My requests</p><div class="myreq">'+m.map(function(r){var d=r.status==="done";return '<div class="chg"><span><b>'+esc(r.text)+'</b><small>'+esc(r.type)+', '+esc(r.when)+'</small></span><span class="st '+(d?'green':'amber')+'">'+(d?'Done':'Open')+'</span>'+(r.reply?'<p class="bnote" style="background:var(--blue-soft);color:var(--ink)"><b>Reply:</b> '+esc(r.reply)+'</p>':'')+'</div>'}).join("")+'</div>':''}
+    V2.open("Ask the admins","Shiva or Prof. Mesbahi will reply here.",'<div class="field"><span class="lab">About</span><div class="chips2">'+DASH.reqTypes.map(function(t){return '<button type="button" data-rt="'+esc(t)+'" aria-pressed="'+(t===type)+'">'+esc(t)+'</button>'}).join("")+'</div></div>'+
+      '<div class="field"><label for="aa-t">Your request</label><textarea id="aa-t" placeholder="What do you need, and by when?"></textarea></div><div id="aa-m">'+mine()+'</div>',
+      '<button type="button" class="btn quiet" data-close>Cancel</button><button type="button" class="btn primary" data-aasend>Send</button>',function(b){
+        if(b.dataset.rt){type=b.dataset.rt;document.querySelectorAll("#shB [data-rt]").forEach(function(x){x.setAttribute("aria-pressed",String(x===b))});return}
+        if(b.dataset.aasend==null)return;var t=document.getElementById("aa-t").value.trim();if(!t){toast("Write your request.");document.getElementById("aa-t").focus();return}
+        var rq={id:null,by:me(),email:DASH.me.email,type:type,text:t,when:"Today",status:"open"};DASH.requests.unshift(rq);LAB.addRequest(type,t).then(function(id){rq.id=id});
+        document.getElementById("aa-t").value="";document.getElementById("aa-m").innerHTML=mine();document.dispatchEvent(new Event("dash:redraw"));toast("Sent. The reply shows up here.")})}
+
+  var OPEN={profile:function(){profile(false)},news:function(){shareNews()},pub:function(){addPub()},polls:polls,links:links,ask:ask};
+  window.openMenuPanel=function(k){if(OPEN[k])OPEN[k]()};
+  document.addEventListener("click",function(e){var b=e.target.closest("[data-panel]");if(!b)return;e.preventDefault();openMenuPanel(b.dataset.panel)});
+  function fromHash(){var m=location.hash.match(/^#p-(\w+)$/);if(m&&OPEN[m[1]]){try{history.replaceState(null,"",location.pathname)}catch(x){}OPEN[m[1]]()}}
+  window.addEventListener("hashchange",fromHash);labReady(function(){setTimeout(fromHash,0)});
+  document.addEventListener("dash:redraw",function(){if(!V2.isOpen())return;if(cur==="polls"&&document.getElementById("shT").textContent==="Polls")polls()});
+})();
+</script>
 
 <style>
 /* Calendar, redesigned */
@@ -909,7 +1114,7 @@ var V2={};
 <path d="M291.447 15.0032H298.972V50.5984H316.949V57.2874H291.447V15.0032Z" fill="currentColor"/>
 <path d="M127 15H141.693C143.684 15 145.615 15.219 147.486 15.657C149.358 16.0552 151.01 16.7321 152.444 17.6877C153.917 18.6433 155.091 19.8976 155.967 21.4505C156.843 23.0034 157.281 24.8947 157.281 27.1245C157.281 30.1904 156.405 32.699 154.653 34.65C152.941 36.5613 150.592 37.8553 147.606 38.5322L158.894 57.2864H149.816L140.02 39.3684H134.526V57.2864H127V15ZM140.677 33.2166C141.752 33.2166 142.828 33.137 143.903 32.9777C144.978 32.8184 145.933 32.5198 146.769 32.0818C147.645 31.6438 148.362 31.0266 148.92 30.2303C149.477 29.3941 149.756 28.3389 149.756 27.0648C149.756 25.91 149.497 24.9743 148.979 24.2576C148.462 23.5011 147.805 22.9038 147.008 22.4658C146.212 22.0278 145.296 21.7292 144.261 21.5699C143.266 21.4106 142.29 21.331 141.334 21.331H134.526V33.2166H140.677Z" fill="currentColor"/>
 </svg>
-</a><button type="button" class="bell" id="bell" aria-label="Notifications" aria-expanded="false"><svg viewBox="0 0 18 18" aria-hidden="true"><path d="M4.5 12.5V8a4.5 4.5 0 0 1 9 0v4.5l1.3 1.5H3.2zM7.3 15.5a1.8 1.8 0 0 0 3.4 0" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linejoin="round"/></svg><span class="bdot" hidden></span></button></div><nav class="nav2" aria-label="Dashboard pages"><a href="dashboard.html"><svg viewBox="0 0 20 20" aria-hidden="true"><path d="M3.5 9.2L10 3.8l6.5 5.4V16a.8.8 0 0 1-.8.8H12v-4.6H8v4.6H4.3a.8.8 0 0 1-.8-.8z" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"/></svg><span>Today</span></a><a href="dashboard-calendar.html" aria-current="page"><svg viewBox="0 0 20 20" aria-hidden="true"><rect x="3" y="4.5" width="14" height="12.5" rx="2" fill="none" stroke="currentColor" stroke-width="1.5"/><path d="M3 8.5h14M7 2.8v3.4M13 2.8v3.4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg><span>Calendar</span></a><a href="dashboard-reading.html"><svg viewBox="0 0 20 20" aria-hidden="true"><path d="M10 5.5C8.3 4.3 6 3.8 3 4v11.5c3-.2 5.3.3 7 1.5 1.7-1.2 4-1.7 7-1.5V4c-3-.2-5.3.3-7 1.5zM10 5.5V17" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"/></svg><span>Reading</span></a><a href="dashboard-reviews.html"><svg viewBox="0 0 20 20" aria-hidden="true"><path d="M5 2.8h7l3.5 3.5V17.2H5z" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"/><path d="M7.5 11.5l2 2 3.5-4" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg><span>Reviews</span></a><a href="dashboard-courses.html"><svg viewBox="0 0 20 20" aria-hidden="true"><path d="M1.8 7.5L10 3.5l8.2 4L10 11.5zM5 9.2v4.3c1.8 1.9 8.2 1.9 10 0V9.2" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"/></svg><span>Courses</span></a><span class="sep" aria-hidden="true"></span><a class="adm-only adm" href="dashboard-admin.html"><svg viewBox="0 0 20 20" aria-hidden="true"><path d="M10 2.5l6.5 2.7v4.6c0 3.9-2.7 6.5-6.5 7.9-3.8-1.4-6.5-4-6.5-7.9V5.2z" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"/></svg><span>Admin</span></a><button type="button" class="meTab" data-me aria-haspopup="true" aria-expanded="false" aria-label="Your menu"><img alt="" src="shiva-shakeri.jpg"><span>You</span></button></nav><button type="button" class="me" data-me aria-haspopup="true" aria-expanded="false"><img alt="" src="shiva-shakeri.jpg"><div><b>Shiva Shakeri</b><span id="roleLbl">Admin</span></div><svg class="chev" width="16" height="16" viewBox="0 0 16 16" aria-hidden="true"><path d="M4 10l4-4 4 4" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg></button><div class="memenu" id="memenu" role="menu" hidden><a role="menuitem" href="dashboard-website.html#profile"><svg viewBox="0 0 18 18" aria-hidden="true"><circle cx="9" cy="6.5" r="3" fill="none" stroke="currentColor" stroke-width="1.5"/><path d="M3.5 15.5c.7-3 2.8-4.5 5.5-4.5s4.8 1.5 5.5 4.5" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>My profile</a><a role="menuitem" href="dashboard-website.html#share"><svg viewBox="0 0 18 18" aria-hidden="true"><path d="M3 4h9v10H4.5A1.5 1.5 0 0 1 3 12.5zM12 7h3v5.5a1.5 1.5 0 0 1-3 0M5.5 7h4M5.5 10h4" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"/></svg>Share news</a><a role="menuitem" href="dashboard-website.html#addpub"><svg viewBox="0 0 18 18" aria-hidden="true"><path d="M5 2.5h6l3 3v10H5zM8 9.5h4M10 7.5v4" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round" stroke-linecap="round"/></svg>Add a publication</a><a role="menuitem" href="dashboard-polls.html"><svg viewBox="0 0 18 18" aria-hidden="true"><path d="M4 15V9M9 15V4M14 15v-4" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/></svg>Polls</a><a role="menuitem" href="dashboard-resources.html"><svg viewBox="0 0 18 18" aria-hidden="true"><path d="M7.5 10.5l3-3M6 8L4.5 9.5a2.5 2.5 0 0 0 3.5 3.5L9.5 11.5M12 10l1.5-1.5A2.5 2.5 0 0 0 10 5L8.5 6.5" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>Lab links</a><button type="button" role="menuitem" id="reqOpen"><svg viewBox="0 0 18 18" aria-hidden="true"><path d="M3 4h12v8H8l-3.5 3v-3H3z" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"/></svg>Ask the admins</button><span class="adm-only m-only"><a role="menuitem" href="dashboard-admin.html"><svg viewBox="0 0 18 18" aria-hidden="true"><path d="M9 2l6 2.5v4.2c0 3.6-2.5 6-6 7.3-3.5-1.3-6-3.7-6-7.3V4.5z" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"/></svg>Admin</a></span><hr><a role="menuitem" href="index.html"><svg viewBox="0 0 18 18" aria-hidden="true"><circle cx="9" cy="9" r="6.5" fill="none" stroke="currentColor" stroke-width="1.4"/><path d="M2.5 9h13M9 2.5c2 2 2 11 0 13M9 2.5c-2 2-2 11 0 13" fill="none" stroke="currentColor" stroke-width="1.2"/></svg>Public website</a><a role="menuitem" href="members.html" data-signout><svg viewBox="0 0 18 18" aria-hidden="true"><path d="M10.5 3H14v12h-3.5M8 5.5L4.5 9 8 12.5M4.5 9h7" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>Sign out</a></div></aside>
+</a><button type="button" class="bell" id="bell" aria-label="Notifications" aria-expanded="false"><svg viewBox="0 0 18 18" aria-hidden="true"><path d="M4.5 12.5V8a4.5 4.5 0 0 1 9 0v4.5l1.3 1.5H3.2zM7.3 15.5a1.8 1.8 0 0 0 3.4 0" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linejoin="round"/></svg><span class="bdot" hidden></span></button></div><nav class="nav2" aria-label="Dashboard pages"><a href="dashboard.html"><svg viewBox="0 0 20 20" aria-hidden="true"><path d="M3.5 9.2L10 3.8l6.5 5.4V16a.8.8 0 0 1-.8.8H12v-4.6H8v4.6H4.3a.8.8 0 0 1-.8-.8z" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"/></svg><span>Today</span></a><a href="dashboard-calendar.html" aria-current="page"><svg viewBox="0 0 20 20" aria-hidden="true"><rect x="3" y="4.5" width="14" height="12.5" rx="2" fill="none" stroke="currentColor" stroke-width="1.5"/><path d="M3 8.5h14M7 2.8v3.4M13 2.8v3.4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg><span>Calendar</span></a><a href="dashboard-reading.html"><svg viewBox="0 0 20 20" aria-hidden="true"><path d="M10 5.5C8.3 4.3 6 3.8 3 4v11.5c3-.2 5.3.3 7 1.5 1.7-1.2 4-1.7 7-1.5V4c-3-.2-5.3.3-7 1.5zM10 5.5V17" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"/></svg><span>Reading</span></a><a href="dashboard-reviews.html"><svg viewBox="0 0 20 20" aria-hidden="true"><path d="M5 2.8h7l3.5 3.5V17.2H5z" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"/><path d="M7.5 11.5l2 2 3.5-4" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg><span>Reviews</span></a><a href="dashboard-courses.html"><svg viewBox="0 0 20 20" aria-hidden="true"><path d="M1.8 7.5L10 3.5l8.2 4L10 11.5zM5 9.2v4.3c1.8 1.9 8.2 1.9 10 0V9.2" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"/></svg><span>Courses</span></a><span class="sep" aria-hidden="true"></span><a class="adm-only adm" href="dashboard-admin.html"><svg viewBox="0 0 20 20" aria-hidden="true"><path d="M10 2.5l6.5 2.7v4.6c0 3.9-2.7 6.5-6.5 7.9-3.8-1.4-6.5-4-6.5-7.9V5.2z" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"/></svg><span>Admin</span></a><button type="button" class="meTab" data-me aria-haspopup="true" aria-expanded="false" aria-label="Your menu"><img alt="" src="shiva-shakeri.jpg"><span>You</span></button></nav><button type="button" class="me" data-me aria-haspopup="true" aria-expanded="false"><img alt="" src="shiva-shakeri.jpg"><div><b>Shiva Shakeri</b><span id="roleLbl">Admin</span></div><svg class="chev" width="16" height="16" viewBox="0 0 16 16" aria-hidden="true"><path d="M4 10l4-4 4 4" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg></button><div class="memenu" id="memenu" role="menu" hidden><button type="button" role="menuitem" data-panel="profile"><svg viewBox="0 0 18 18" aria-hidden="true"><circle cx="9" cy="6.5" r="3" fill="none" stroke="currentColor" stroke-width="1.5"/><path d="M3.5 15.5c.7-3 2.8-4.5 5.5-4.5s4.8 1.5 5.5 4.5" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>My profile</button><button type="button" role="menuitem" data-panel="news"><svg viewBox="0 0 18 18" aria-hidden="true"><path d="M3 4h9v10H4.5A1.5 1.5 0 0 1 3 12.5zM12 7h3v5.5a1.5 1.5 0 0 1-3 0M5.5 7h4M5.5 10h4" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"/></svg>Share news</button><button type="button" role="menuitem" data-panel="pub"><svg viewBox="0 0 18 18" aria-hidden="true"><path d="M5 2.5h6l3 3v10H5zM8 9.5h4M10 7.5v4" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round" stroke-linecap="round"/></svg>Add a publication</button><button type="button" role="menuitem" data-panel="polls"><svg viewBox="0 0 18 18" aria-hidden="true"><path d="M4 15V9M9 15V4M14 15v-4" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/></svg>Polls</button><button type="button" role="menuitem" data-panel="links"><svg viewBox="0 0 18 18" aria-hidden="true"><path d="M7.5 10.5l3-3M6 8L4.5 9.5a2.5 2.5 0 0 0 3.5 3.5L9.5 11.5M12 10l1.5-1.5A2.5 2.5 0 0 0 10 5L8.5 6.5" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>Lab links</button><button type="button" role="menuitem" data-panel="ask"><svg viewBox="0 0 18 18" aria-hidden="true"><path d="M3 4h12v8H8l-3.5 3v-3H3z" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"/></svg>Ask the admins</button><span class="adm-only m-only"><a role="menuitem" href="dashboard-admin.html"><svg viewBox="0 0 18 18" aria-hidden="true"><path d="M9 2l6 2.5v4.2c0 3.6-2.5 6-6 7.3-3.5-1.3-6-3.7-6-7.3V4.5z" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"/></svg>Admin</a></span><hr><a role="menuitem" href="index.html"><svg viewBox="0 0 18 18" aria-hidden="true"><circle cx="9" cy="9" r="6.5" fill="none" stroke="currentColor" stroke-width="1.4"/><path d="M2.5 9h13M9 2.5c2 2 2 11 0 13M9 2.5c-2 2-2 11 0 13" fill="none" stroke="currentColor" stroke-width="1.2"/></svg>Public website</a><a role="menuitem" href="members.html" data-signout><svg viewBox="0 0 18 18" aria-hidden="true"><path d="M10.5 3H14v12h-3.5M8 5.5L4.5 9 8 12.5M4.5 9h7" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>Sign out</a></div></aside>
   <main class="main v2">
   <div class="wrap">
     <header class="head">
