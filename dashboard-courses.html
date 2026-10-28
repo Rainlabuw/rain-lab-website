@@ -591,7 +591,7 @@ ooEvents();
 .pick img,.pick .ini{width:26px;height:26px;border-radius:50%;object-fit:cover}
 .pick .ini{display:grid;place-content:center;background:#fff;color:var(--blue-text);font:600 .55rem var(--f-mono)}
 .pick small{margin-left:auto;font:500 .66rem var(--f-mono);color:var(--muted)}
-.cform{display:none;margin-bottom:1.2rem}.cform.open{display:block}
+.cform h2{margin-bottom:.9rem}
 .cform .row2{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,2fr);gap:.9rem 1.2rem}
 .cform .chk{display:flex;align-items:center;gap:.5rem;font-size:.9rem;margin:.2rem 0 .4rem}
 .tookf{display:flex;flex-wrap:wrap;gap:.4rem;align-items:center;font-size:.84rem}
@@ -629,7 +629,15 @@ ooEvents();
     
     <header class="top"><div><h1>Courses</h1><p class="sub">What we took, tips, and where the notes are</p></div>
       <button type="button" class="btn dark" id="cAdd"><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M8 3v10M3 8h10" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>Add a course</button></header>
-    <form class="card cform" id="cform" novalidate>
+    <div class="bar1"><input id="cq" type="search" placeholder="Search courses" aria-label="Search courses"><div class="flt" id="flt"></div></div>
+    <div class="cgrid" id="cgrid"></div>
+
+    <h2 class="sec-h">Quals prep</h2>
+    <section class="card"><h2>Courses that help most <a href="https://www.dropbox.com/home/Rain-general" target="_blank" rel="noopener">Study folder</a></h2><ul class="qlist" id="qc"></ul></section>
+  </main>
+</div>
+<div class="modal" id="cmodal" hidden role="dialog" aria-modal="true" aria-labelledby="cfH"><div class="box" style="width:min(38rem,100%)">
+    <form class="cform" id="cform" novalidate>
       <h2 id="cfH">Add a course</h2>
       <div class="row2">
         <label class="fld"><span>Course number</span><input name="code" placeholder="A A 547"></label>
@@ -644,13 +652,7 @@ ooEvents();
       <p class="err" id="cerr" role="alert"></p>
       <div class="mfoot"><button type="button" class="linkbtn danger" id="cDel" hidden style="margin-right:auto">Delete course</button><button type="button" class="btn" id="cCancel">Cancel</button><button class="btn dark" id="cSave">Add course</button></div>
     </form>
-    <div class="bar1"><input id="cq" type="search" placeholder="Search courses" aria-label="Search courses"><div class="flt" id="flt"></div></div>
-    <div class="cgrid" id="cgrid"></div>
-
-    <h2 class="sec-h">Quals prep</h2>
-    <section class="card"><h2>Courses that help most <a href="https://www.dropbox.com/home/Rain-general" target="_blank" rel="noopener">Study folder</a></h2><ul class="qlist" id="qc"></ul></section>
-  </main>
-</div>
+</div></div>
 <div class="modal" id="ask" hidden role="dialog" aria-modal="true" aria-labelledby="askH"><div class="box">
   <h2 id="askH">Ask someone</h2><p class="lead" id="askL"></p>
   <div class="pick" id="askP"></div>
@@ -666,6 +668,7 @@ ooEvents();
   function deptOf(code){var m=String(code).match(/^([A-Za-z& ]+?)\s*\d/);return m?m[1].trim().toUpperCase():"Other"}
   function terms(){var out=[],d=new Date(),y=d.getFullYear(),m=d.getMonth(),Q=["Win","Spr","Sum","Aut"],k=m<3?0:m<6?1:m<9?2:3;
     for(var i=0;i<16;i++){out.push(Q[k]+" "+y);k--;if(k<0){k=3;y--}}return out}
+  function sortC(){C.sort(function(a,b){return a.code.localeCompare(b.code,undefined,{numeric:true})})}sortC();
   function drawFlt(){var ds=["All"].concat(C.map(function(c){return c.dept||deptOf(c.code)}).filter(function(d,i,a){return a.indexOf(d)===i}));if(ds.indexOf(dept)<0)dept="All";
     document.getElementById("flt").innerHTML=ds.length>2?ds.map(function(d){return '<button type="button" data-d="'+esc(d)+'" aria-pressed="'+(d===dept)+'">'+esc(d)+'</button>'}).join(""):""}
   function draw(){drawFlt();
@@ -685,7 +688,7 @@ ooEvents();
   document.getElementById("flt").addEventListener("click",function(e){var b=e.target.closest("[data-d]");if(!b)return;dept=b.dataset.d;draw()});
   document.getElementById("cq").addEventListener("input",function(){q=this.value.trim().toLowerCase();draw()});
   // add or edit a course
-  var cf=document.getElementById("cform"),editing=null;
+  var cf=document.getElementById("cform"),cm=document.getElementById("cmodal"),editing=null,cOpener=null;
   cf.elements.term.innerHTML=terms().map(function(t){return '<option>'+t+'</option>'}).join("");
   function syncTerm(){document.getElementById("termF").hidden=!cf.elements.took.checked}
   cf.elements.took.addEventListener("change",syncTerm);
@@ -694,13 +697,14 @@ ooEvents();
     document.getElementById("filesL").textContent=c?"Add more files (optional)":"Attach files (optional)";document.getElementById("cDel").hidden=!c;
     if(c){var mt=c.took.find(function(t){return t[0]===me});cf.elements.code.value=c.code;cf.elements.name.value=c.name;cf.elements.tip.value=c.tip||"";cf.elements.quals.checked=!!c.quals;cf.elements.took.checked=!!mt;
       if(mt&&mt[1]){if(![].some.call(cf.elements.term.options,function(o){return o.value===mt[1]}))cf.elements.term.insertAdjacentHTML("beforeend",'<option>'+esc(mt[1])+'</option>');cf.elements.term.value=mt[1]}}
-    syncTerm();cf.classList.add("open");cf.scrollIntoView({behavior:"smooth",block:"start"});cf.elements.code.focus({preventScroll:true})}
-  document.getElementById("cAdd").onclick=function(){openCF(null)};
-  function closeCF(){cf.classList.remove("open");cf.reset();editing=null;document.getElementById("cerr").textContent=""}
+    syncTerm();cm.hidden=false;cf.elements.code.focus()}
+  document.getElementById("cAdd").onclick=function(){cOpener=this;openCF(null)};
+  function closeCF(){cm.hidden=true;cf.reset();editing=null;document.getElementById("cerr").textContent="";if(cOpener&&document.body.contains(cOpener))cOpener.focus()}
+  cm.addEventListener("mousedown",function(e){if(e.target===cm)closeCF()});
   document.getElementById("cCancel").onclick=closeCF;
   document.getElementById("cDel").onclick=function(){var c=editing,ri=C.indexOf(c);closeCF();
-    later(function(){return c.code+" was deleted."},function(){C.splice(ri,1);draw()},function(){C.splice(ri,0,c);draw()},function(){if(window.LAB&&c.id)LAB.delCourse(c)})};
-  cf.addEventListener("keydown",function(e){if(e.key==="Escape"){closeCF();document.getElementById("cAdd").focus()}});
+    later(function(){return c.code+" was deleted. Its Dropbox folder and files stay in Dropbox."},function(){C.splice(ri,1);draw()},function(){C.splice(ri,0,c);draw()},function(){if(window.LAB&&c.id)LAB.delCourse(c)})};
+  cf.addEventListener("keydown",function(e){if(e.key==="Escape")closeCF()});
   cf.addEventListener("submit",function(e){e.preventDefault();var code=cf.elements.code.value.trim().replace(/\s+/g," ").toUpperCase(),name=cf.elements.name.value.trim(),err=document.getElementById("cerr");
     if(!code){err.textContent="Add the course number.";cf.elements.code.focus();return}
     if(!name){err.textContent="Add the course name.";cf.elements.name.focus();return}
@@ -712,9 +716,9 @@ ooEvents();
       Object.assign(c,{code:code,dept:deptOf(code),name:name,tip:cf.elements.tip.value.trim(),quals:cf.elements.quals.checked});if(window.LAB)LAB.updCourse(c);
       if(took){if(wasTook>=0)c.took[wasTook][1]=term;else c.took.push([me,term]);if(window.LAB)LAB.took(c,term)}
       else if(wasTook>=0){c.took.splice(wasTook,1);if(window.LAB)LAB.took(c,null)}
-      closeCF();draw();toast("Saved.");if(fl.length)upload(c,fl);return}
+      sortC();closeCF();draw();toast("Saved.");if(fl.length)upload(c,fl);return}
     c={code:code,dept:deptOf(code),name:name,tip:cf.elements.tip.value.trim(),quals:cf.elements.quals.checked,by:me,took:took?[[me,term]]:[],url:""};
-    C.unshift(c);if(window.LAB)LAB.addCourse(c);closeCF();dept="All";draw();upload(c,fl,true)});
+    C.push(c);sortC();if(window.LAB)LAB.addCourse(c);closeCF();dept="All";draw();upload(c,fl,true)});
   // course files go to the lab Dropbox
   var picker=document.createElement("input");picker.type="file";picker.multiple=true;picker.hidden=true;document.body.appendChild(picker);var upFor=null;
   function upload(c,files,makeFolder){files=[].slice.call(files||[]);if(!files.length&&!makeFolder)return;
@@ -727,7 +731,7 @@ ooEvents();
   function msg(){var p=m.querySelector("input:checked");return 'Hi '+(p?first(p.value):'')+', I am thinking about taking '+cur.code+' ('+cur.name+'). Since you took it, do you have 15 minutes sometime this week to tell me how it went?'}
   document.getElementById("cgrid").addEventListener("click",function(e){
     var up=e.target.closest("[data-cup]");if(up){upFor=C[+up.dataset.cup];picker.click();return}
-    var ed=e.target.closest("[data-cedit]");if(ed){openCF(C[+ed.dataset.cedit]);return}
+    var ed=e.target.closest("[data-cedit]");if(ed){cOpener=ed;openCF(C[+ed.dataset.cedit]);return}
     var t=e.target.closest("[data-took]");if(t){var i=+t.dataset.took,c=C[i],k=c.took.findIndex(function(x){return x[0]===me});
       if(k>=0){c.took.splice(k,1);if(window.LAB)LAB.took(c,null);draw()}else{tookAt=i;draw();var sl=document.querySelector(".tookf select");if(sl)sl.focus()}return}
     var ts=e.target.closest("[data-tooksave]");if(ts){var c2=C[+ts.dataset.tooksave],term=ts.parentNode.querySelector("select").value,k2=c2.took.findIndex(function(x){return x[0]===me});
