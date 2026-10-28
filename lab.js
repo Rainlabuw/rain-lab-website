@@ -7,7 +7,7 @@ var LAB_CFG={
   key:"sb_publishable_BFwGDxrQtwCcW3pSZtQ-0A_f661pXMo",
   meeting:{weekday:3,start:"10:30",end:"12:30",where:"GUG 211D"} // group meeting: Thursdays (0 = Monday)
 };
-var LAB_CARDS=["needs","pinned","week","oneone","talks","reading","reviews","confs"]; // Today cards that are connected so far
+var LAB_CARDS=["needs","pinned","week","oneone","talks","reading","reviews","confs","library"]; // Today cards that are connected so far
 var sb=supabase.createClient(LAB_CFG.url,LAB_CFG.key);
 var _labQ=[],_labOK=false;
 function labReady(f){if(_labOK)f();else _labQ.push(f)}
@@ -17,7 +17,7 @@ var LAB=(function(){
   var N={},E={}; // email -> name, name -> email
   function nm(email){return N[email]||email}
   function iso(d){var z=new Date(d);z.setMinutes(z.getMinutes()-z.getTimezoneOffset());return z.toISOString().slice(0,10)}
-  function offset(dateStr){var m=monday(new Date());return Math.round((new Date(dateStr+"T12:00")-m)/864e5)}
+  function offset(dateStr){var m=monday(new Date());return Math.round((new Date(dateStr+"T00:00")-m)/864e5)}
   function when(ts){var d=new Date(ts);return MON[d.getMonth()]+" "+d.getDate()}
   function fail(e){console.error(e);if(window.toast)toast("Could not save that. Please try again.")}
   async function q(p){var r=await p;if(r.error)throw r.error;return r.data}
@@ -47,7 +47,12 @@ var LAB=(function(){
       q(sb.from("reading_groups").select("*").neq("state","archived").order("created_at",{ascending:false})),
       q(sb.from("reading_group_people").select("*")),
       q(sb.from("reading_time_options").select("*").order("id")),
-      q(sb.from("reading_time_votes").select("*"))
+      q(sb.from("reading_time_votes").select("*")),
+      q(sb.from("reading_sessions").select("*").order("meets_on")),
+      q(sb.from("reading_paper_options").select("*").order("id")),
+      q(sb.from("reading_paper_votes").select("*")),
+      q(sb.from("library").select("*").order("added_at",{ascending:false})),
+      q(sb.from("suggestions").select("*").order("created_at",{ascending:false}))
     ]);
     var people=r[0];people.forEach(function(p){N[p.email]=p.name;E[p.name]=p.email});
     var pub=((typeof DATA!=="undefined"&&DATA.members)||[]).find(function(m){return m.name===meRow.name})||{};
@@ -77,11 +82,19 @@ var LAB=(function(){
         invited:ppl.filter(function(x){return x.status==="invited"}).map(function(x){return nm(x.email)}),
         options:r[11].filter(function(o){return o.group_id===g.id}).map(function(o){return {id:o.id,d:o.label,day:o.weekday,
           v:r[12].filter(function(v){return v.option_id===o.id}).map(function(v){return nm(v.email)})}}),
-        sessions:[],past:[]}});
+        sessions:r[13].filter(function(x){return x.group_id===g.id}).map(function(x){return {id:x.id,day:offset(x.meets_on),mode:x.mode,by:x.picked_by?nm(x.picked_by):null,q:x.paper,
+          options:r[14].filter(function(o){return o.session_id===x.id}).map(function(o){return {id:o.id,q:o.paper,by:nm(o.suggested_by),
+            votes:r[15].filter(function(v){return v.option_id===o.id}).map(function(v){return nm(v.email)})}})}}),
+        sugs:r[17].filter(function(x){return x.to_group===g.id}).map(function(x){return {id:x.id,q:x.paper,by:nm(x.from_email)}}),
+        past:[]}});
+    var now=Date.now();
+    DASH.library=r[16].map(function(x){return {id:x.id,p:{t:x.title,a:x.authors?[x.authors]:[],v:"",y:"",l:x.link?[["Link",x.link]]:[],ar:x.area?[x.area]:[]},
+      by:nm(x.added_by),ago:Math.max(0,Math.floor((now-new Date(x.added_at))/864e5)),note:x.note||""}});
+    DASH.suggested=r[17].filter(function(x){return x.to_email===meRow.email}).map(function(x){return {id:x.id,q:x.paper,by:nm(x.from_email)}});
     // weekly reading group meetings on the calendar
     DASH.groups.filter(function(g){return g.state==="set"&&g.day!=null}).forEach(function(g){
       for(var w=-1;w<=10;w++)DASH.events.push({t:"reading",title:g.name+" reading group",day:w*7+g.day,s:(g.start||"15:00").slice(0,5),e:(g.end||"16:00").slice(0,5),where:g.where,who:g.members.length+" members"})});
-    ["changes","polls","library","digest","courses","quals"].forEach(function(k){DASH[k]=[]});
+    ["changes","polls","digest","courses","quals"].forEach(function(k){DASH[k]=[]});
   }
 
   // ---- writes
@@ -138,6 +151,25 @@ var LAB=(function(){
     settleGroup:function(g){
       // the vote that completes the poll may still be saving, so wait a moment before asking the database to set the time
       setTimeout(async function(){try{var r=await sb.rpc("settle_reading_group",{gid:g.id});if(r.error)throw r.error}catch(e){console.error(e)}},1200)},
+    // papers for reading group meetings
+    addSession:function(g,ss){ss._p=(async function(){try{
+        ss.id=(await q(sb.from("reading_sessions").insert({group_id:g.id,meets_on:iso(sessDate(ss.day)),mode:ss.mode,picked_by:ss.mode==="pick"?DASH.me.email:null}).select()))[0].id}
+      catch(e){console.error(e);var i=g.sessions.indexOf(ss);if(i>=0)g.sessions.splice(i,1);document.dispatchEvent(new Event("dash:redraw"));
+        if(window.toast)toast("Someone else just took that week. Refresh the page to see it.")}})();return ss._p},
+    delSession:async function(ss){try{await ss._p;if(ss.id)await q(sb.from("reading_sessions").delete().eq("id",ss.id))}catch(e){fail(e)}},
+    setPaper:async function(ss){try{await ss._p;await q(sb.from("reading_sessions").update({paper:ss.q}).eq("id",ss.id))}catch(e){fail(e)}},
+    addOption:function(ss,o){o._p=(async function(){try{await ss._p;
+        o.id=(await q(sb.from("reading_paper_options").insert({session_id:ss.id,paper:o.q}).select()))[0].id}catch(e){fail(e)}})();return o._p},
+    paperVote:async function(ss,o){try{var me=DASH.me.email,ids=ss.options.map(function(x){return x.id}).filter(Boolean);
+        if(ids.length)await q(sb.from("reading_paper_votes").delete().eq("email",me).in("option_id",ids));
+        if(o){await o._p;await q(sb.from("reading_paper_votes").insert({option_id:o.id,email:me}))}}catch(e){fail(e)}},
+    // the lab library and suggestions
+    addLib:async function(x){try{var l=x.p.l.length?x.p.l[0][1]:null;
+        x.id=(await q(sb.from("library").insert({title:x.p.t,authors:x.p.a[0]||null,link:l,area:x.p.ar[0]||null,note:x.note||null}).select()))[0].id}catch(e){fail(e)}},
+    delLib:async function(x){try{await q(sb.from("library").delete().eq("id",x.id))}catch(e){fail(e)}},
+    suggest:function(x,to){x._p=(async function(){try{var row={paper:x.q};if(to.to_group)row.to_group=to.to_group;else row.to_email=E[to.to_email];
+        x.id=(await q(sb.from("suggestions").insert(row).select()))[0].id}catch(e){fail(e)}})();return x._p},
+    delSug:async function(x){try{await x._p;if(x.id)await q(sb.from("suggestions").delete().eq("id",x.id))}catch(e){fail(e)}},
     signOut:async function(){await sb.auth.signOut();location.replace("members.html")}
   };
   return api;

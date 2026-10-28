@@ -1,4 +1,4 @@
-<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover"></head><body><script src="vendor/supabase-2.117.2.js"></script><script src="lab.js?v=c4051836"></script><style>.lab-loading body{visibility:hidden}.live-hide{display:none!important}</style><!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover"></head><body><title>Reading | RAIN Lab members</title><link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Caveat:wght@500;600&family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:wght@400;500;600&family=Urbanist:wght@500;600;700&display=swap"><style>:root{
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover"></head><body><script src="vendor/supabase-2.117.2.js"></script><script src="lab.js?v=1da29cb5"></script><style>.lab-loading body{visibility:hidden}.live-hide{display:none!important}</style><!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover"></head><body><title>Reading | RAIN Lab members</title><link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Caveat:wght@500;600&family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:wght@400;500;600&family=Urbanist:wght@500;600;700&display=swap"><style>:root{
   --cloud:#f6f8fb; --white:#ffffff; --ink:#13101d; --muted:#586174; --line:#e1e6ee;
   --blue:#1f6feb; --blue-text:#1a5fcc; --blue-soft:#e7effd;
   --night:#0b0714; --black:#000; --night-ink:#eef1f7; --night-muted:#9aa3b6; --night-line:#231d33;
@@ -290,16 +290,19 @@ var DASH={
   // reading groups: any member can start one, invite people or let others join,
   // then everyone votes on a weekly time; when all members have voted the time is set until the end of the quarter
   quarterEnd:"the end of autumn quarter",
+  // papers other members suggested to you
+  suggested:[{q:"Hidden Star-Convexity in Policy Optimization",by:"Ruiqi Li",ago:1}],
   groups:[
     {id:1,name:"Policy optimization",area:"learning",desc:"Landscape, convergence and data-driven methods for learning controllers.",owner:"Cheng \"Justin\" Chang",
      members:["Cheng \"Justin\" Chang","Shiva Shakeri","Ruiqi Li","Yifu Wang"],invited:[],open:true,state:"set",time:"Tuesdays, 3 to 4 pm",day:1,where:"Guggenheim 218",
      sessions:[
        {day:1,mode:"pick",by:"Ruiqi Li",q:"Global Convergence of Policy Gradient Methods for the Linear"},
-       {day:8,mode:"vote",closes:"Monday at noon",options:[
+       {day:8,mode:"vote",options:[
          {q:"Hidden Star-Convexity in Policy Optimization",by:"Cheng \"Justin\" Chang",votes:["Cheng \"Justin\" Chang","Ruiqi Li"]},
          {q:"Output-Feedback Synthesis Orbit Geometry",by:"Yifu Wang",votes:["Yifu Wang"]}]},
        {day:15,mode:"pick",by:"Yifu Wang",q:null}],
-     past:[{weeks:1,q:"Policy Optimization in Control: Geometry",by:"Shiva Shakeri"},{weeks:2,q:"Data-driven Optimal Filtering",by:"Cheng \"Justin\" Chang"}]},
+     past:[{weeks:1,q:"Policy Optimization in Control: Geometry",by:"Shiva Shakeri"},{weeks:2,q:"Data-driven Optimal Filtering",by:"Cheng \"Justin\" Chang"}],
+     sugs:[{q:"A tutorial on successive convexification",by:"Yifu Wang"}]},
     {id:2,name:"Space autonomy",area:"guidance",desc:"Powered descent, convexification and onboard guidance.",owner:"Joseph Pinkston",
      members:["Joseph Pinkston","Brendan Garwood","Justin Ganiban"],invited:["Shiva Shakeri"],open:false,state:"scheduling",where:"Guggenheim 218",
      options:[{d:"Mondays, 2 to 3 pm",day:0,v:["Joseph Pinkston","Brendan Garwood","Justin Ganiban"]},{d:"Wednesdays, 11 am to noon",day:2,v:["Joseph Pinkston","Justin Ganiban"]},{d:"Thursdays, 4 to 5 pm",day:3,v:["Brendan Garwood"]}]},
@@ -391,6 +394,14 @@ document.addEventListener("click",function(e){var b=e.target.closest("[data-talk
   if(window.LAB){if(t)LAB.talk(t,i<0);else LAB.conf(c,i<0)}});
 function pub(q){return (typeof DATA!=="undefined"&&DATA.pubs||[]).find(function(p){return p.t.toLowerCase().indexOf(q.toLowerCase())===0})||{t:q,a:[],v:"",y:"",l:[],ar:[]}}
 function pubLink(p){return p.l&&p.l.length?p.l[0][1]:null}
+// a paper as people type it: a title, a link, or "Title\nlink"
+function ppr(q){q=String(q||"").trim();var i=q.indexOf("\n"),t=i>=0?q.slice(0,i).trim():q,l=i>=0?q.slice(i+1).trim():"";
+  if(!l&&/^https?:\/\//i.test(t)){l=t;t=t.replace(/^https?:\/\/(www\.)?/i,"").replace(/\/$/,"");if(t.length>60)t=t.slice(0,57)+"..."}
+  if(!l){var p=pub(t);return {t:p.t,l:pubLink(p)}}return {t:t,l:/^https?:\/\//i.test(l)?l:null}}
+// reading group meetings: the next meeting day (days from this Monday) and the paper for a session
+function nextMeet(g){var d=g.day;if(d==null)return null;while(!isUpcoming(d))d+=7;return d}
+function sessFor(g,day){return (g.sessions||[]).find(function(s){return s.day===day})}
+function sessPaper(s){if(!s)return null;if(s.mode==="pick")return s.q||null;var b=null;(s.options||[]).forEach(function(o){if(!b||o.votes.length>b.votes.length)b=o});return b?b.q:null}
 function authorsShort(a){return !a.length?"":a.length>3?a[0]+" et al":a.join(", ")}
 var MON=["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"],DOW=["Mon","Tue","Wed","Thu","Fri","Sat","Sun"];
 
@@ -441,8 +452,11 @@ function needsMe(){var me=DASH.me.name,out=[],fmt=function(iso){var d=new Date(i
     if(g.invited.indexOf(me)>=0)out.push({id:"inv"+g.id,who:g.owner,t:g.owner+" invited you to a reading group",s:g.name,go:"Join or decline",href:"dashboard-reading.html#rg"});
     if(g.members.indexOf(me)<0)return;
     if(g.state==="scheduling"&&!g.options.some(function(o){return o.v.indexOf(me)>=0}))out.push({id:"time"+g.id,ic:"vote",t:"Vote on a weekly time",s:g.name+" reading group",go:"Vote",href:"dashboard-reading.html#rg"});
-    if(g.state==="set")(g.sessions||[]).forEach(function(ss,i){if(ss.mode==="vote"&&!ss.options.some(function(o){return o.votes.indexOf(me)>=0}))out.push({id:"pap"+g.id+"-"+i,ic:"vote",t:"Vote on the next paper",s:g.name+", closes "+ss.closes,go:"Vote",href:"dashboard-reading.html#rg"})});
+    if(g.state==="set")(g.sessions||[]).forEach(function(ss){if(!isUpcoming(ss.day))return;var d=sessDate(ss.day),ds=MON[d.getMonth()]+" "+d.getDate();
+      if(ss.mode==="vote"&&ss.options.length&&!ss.options.some(function(o){return o.votes.indexOf(me)>=0}))out.push({id:"pap"+g.id+"-"+ss.day,ic:"vote",t:"Vote on a paper",s:g.name+", "+ds,go:"Vote",href:"dashboard-reading.html#rg"});
+      if(ss.mode==="pick"&&ss.by===me&&!ss.q)out.push({id:"pick"+g.id+"-"+ss.day,ic:"vote",t:"Pick the paper",s:g.name+", "+ds,go:"Pick",href:"dashboard-reading.html#rg"})});
   });
+  (DASH.suggested||[]).forEach(function(x){out.push({id:"sug"+(x.id||x.q),who:x.by,t:x.by+" suggested a paper to you",s:ppr(x.q).t,go:"See it",href:"dashboard-reading.html#rg"})});
   DASH.changes.forEach(function(c){if(c.by===me&&c.status==="back")out.push({id:"back"+c.id,ic:"back",t:"Your "+c.kind.toLowerCase()+" was sent back",s:c.title,go:"Edit and send again",href:"dashboard-website.html"})});
   if(isAdmin()){var w=DASH.changes.filter(function(c){return c.status==="waiting"}),q=DASH.requests.filter(function(r){return r.status==="open"});
     if(w.length)out.push({id:"adm-w"+w.length,ic:"admin",t:"Website changes to approve",s:w.map(function(c){return (c.by.match(/"([^"]*)"/)||[0,c.by.split(" ")[0]])[1]}).join(", "),go:"Review",href:"dashboard-admin.html"});
@@ -691,6 +705,30 @@ select.freq{font:500 .8rem var(--f-body);border:1px solid var(--line);border-rad
 .sugpop .none{font-size:.82rem;color:var(--muted);padding:0 .45rem}
 .sugpop .sf{display:flex;justify-content:flex-end;gap:.4rem;margin-top:.8rem;padding-top:.7rem;border-top:1px solid var(--line)}
 .sugpop .btn[disabled]{opacity:.45;cursor:default}
+.gsess .sbtns{display:flex;flex-wrap:wrap;gap:.4rem;margin-top:.3rem}
+.gsess .popt{display:flex;gap:.5rem;align-items:center;justify-content:space-between;border-top:1px solid var(--line);padding-top:.45rem;margin-top:.15rem}
+.gsess .popt span{font-size:.84rem;min-width:0;overflow-wrap:anywhere}
+.gsess .popt a{color:inherit}
+.gsess .popt small{display:block;font-size:.72rem;color:var(--muted)}
+.gsess .pt{font:600 .92rem/1.3 var(--f-display);overflow-wrap:anywhere}
+.gsess a.pt{color:inherit}
+.pform{display:grid;gap:.4rem;margin-top:.2rem}
+.pform input{font:400 .88rem var(--f-body);border:1px solid var(--line);border-radius:7px;padding:.45rem .6rem;min-width:0}
+.pform .pf-b{display:flex;gap:.4rem}
+.psug{display:flex;flex-wrap:wrap;gap:.3rem;align-items:center}
+.psug button{font:500 .74rem var(--f-body);background:#f1f3f7;border:0;border-radius:999px;padding:.25rem .6rem;cursor:pointer;color:var(--ink);text-align:left;max-width:100%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.psug button:hover{background:var(--blue-soft)}
+.forme{margin-bottom:1.2rem}
+.forme ul{list-style:none;margin:0;padding:0;display:grid;gap:.6rem}
+.forme li{display:flex;flex-wrap:wrap;align-items:center;gap:.6rem;font-size:.9rem}
+.forme li .pt{font:600 .92rem/1.3 var(--f-display);color:var(--ink);overflow-wrap:anywhere}
+.forme li .x{font-size:.78rem;color:var(--muted)}
+.forme li .sp{margin-right:auto;min-width:0;display:flex;align-items:center;gap:.55rem}
+.forme li .sp img,.forme li .sp .ini{width:26px;height:26px;border-radius:50%;object-fit:cover;flex:none}
+.forme li .sp .ini{display:grid;place-content:center;background:var(--blue-soft);color:var(--blue-text);font:600 .55rem var(--f-mono)}
+.lform{display:none;margin-bottom:1.2rem}
+.lform.open{display:block}
+.fgrid textarea{font:400 .92rem var(--f-body);color:var(--ink);border:1px solid var(--line);border-radius:7px;padding:.5rem .65rem;text-transform:none;letter-spacing:0;min-height:4.5rem;resize:vertical}
 </style>
 <div class="dash">
   <aside class="rail"><div class="top1"><div><a class="brand" href="dashboard.html" aria-label="RAIN Lab dashboard"><svg class="logo" viewBox="0 0 397 73" role="img" aria-label="RAIN LAB">
@@ -707,15 +745,27 @@ select.freq{font:500 .8rem var(--f-body);border:1px solid var(--line);border-rad
 </a><p class="tag">MEMBERS</p></div><button type="button" class="bell" id="bell" aria-label="Notifications" aria-expanded="false"><svg viewBox="0 0 18 18" aria-hidden="true"><path d="M4.5 12.5V8a4.5 4.5 0 0 1 9 0v4.5l1.3 1.5H3.2zM7.3 15.5a1.8 1.8 0 0 0 3.4 0" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linejoin="round"/></svg><span class="bdot" hidden></span></button></div><nav aria-label="Dashboard"><a href="dashboard.html" title="Today"><svg viewBox="0 0 18 18" aria-hidden="true"><path d="M3 8l6-5 6 5v7H3z" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"/></svg>Today</a><a href="dashboard-calendar.html" title="Calendar"><svg viewBox="0 0 18 18" aria-hidden="true"><rect x="2.5" y="3.5" width="13" height="12" rx="1.5" fill="none" stroke="currentColor" stroke-width="1.5"/><path d="M2.5 7.5h13M6 2v3M12 2v3" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>Calendar</a><a href="dashboard-reading.html" title="Reading" aria-current="page"><svg viewBox="0 0 18 18" aria-hidden="true"><path d="M2.5 4c2-.8 4.3-.8 6.5.6 2.2-1.4 4.5-1.4 6.5-.6v10c-2-.8-4.3-.8-6.5.6-2.2-1.4-4.5-1.4-6.5-.6zM9 4.6v10" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linejoin="round"/></svg>Reading</a><a href="dashboard-reviews.html" title="Reviews"><svg viewBox="0 0 18 18" aria-hidden="true"><path d="M4 2.5h7l3 3V15.5H4z" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linejoin="round"/><path d="M6.5 11.5l1.8 1.6 3.2-3.6" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></svg>Reviews</a><a href="dashboard-resources.html" title="Resources"><svg viewBox="0 0 18 18" aria-hidden="true"><path d="M2.5 4.5h5l1.5 1.5h6.5v8.5h-13z" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"/></svg>Resources</a><span class="navsep" aria-hidden="true"></span><a class="adm-only" title="Admin" href="dashboard-admin.html"><svg viewBox="0 0 18 18" aria-hidden="true"><path d="M9 2l6 2.5v4.2c0 3.6-2.5 6-6 7.3-3.5-1.3-6-3.7-6-7.3V4.5z" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linejoin="round"/><path d="M6.5 9l1.8 1.7 3.2-3.4" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></svg>Admin</a><button type="button" class="navbtn" id="reqOpen" title="Ask the admins"><svg viewBox="0 0 18 18" aria-hidden="true"><path d="M3 4h12v8H8l-3.5 3v-3H3z" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linejoin="round"/><path d="M9 6v4M7 8h4" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/></svg>Ask the admins</button></nav><div class="links"><a class="site" href="index.html" title="Public website"><svg viewBox="0 0 16 16" aria-hidden="true"><circle cx="8" cy="8" r="6" fill="none" stroke="currentColor" stroke-width="1.3"/><path d="M2 8h12M8 2c2 2 2 10 0 12M8 2c-2 2-2 10 0 12" fill="none" stroke="currentColor" stroke-width="1.2"/></svg><span>Public website</span></a></div><div class="me"><img src="shiva-shakeri.jpg" alt=""><div><b>Shiva Shakeri</b><span id="roleLbl">ADMIN</span></div><a href="members.html" title="Sign out"><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M9.5 3H13v10H9.5M7 5L4 8l3 3M4 8h6.5" fill="none" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"/></svg><span>Sign out</span></a></div></aside>
   <main class="main">
     
-    <header class="top"><div><h1>Reading</h1><p class="sub">Reading groups</p></div></header>
-    <div class="tabbar live-hide" role="tablist">
+    <header class="top"><div><h1>Reading</h1><p class="sub">Reading groups and the lab library</p></div></header>
+    <div class="tabbar" role="tablist">
       <button role="tab" aria-selected="true" data-tab="rg">Reading groups</button>
-      <button role="tab" class="live-hide" aria-selected="false" data-tab="lib">Lab library</button>
+      <button role="tab" aria-selected="false" data-tab="lib">Lab library</button>
       <button role="tab" class="live-hide" aria-selected="false" data-tab="dg">New on arXiv</button>
     </div>
 
     <section id="tab-lib" hidden>
-      <div class="about"><p><b>The lab library</b> is the papers we chose to keep. Members add them by hand, with a short note on why each one is worth reading. It grows slowly and stays.</p><a class="btn dark" href="#" data-soon><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M8 3v10M3 8h10" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>Add a paper</a></div>
+      <div class="about"><p><b>The lab library</b> is the papers we chose to keep. Members add them by hand, with a short note on why each one is worth reading. It grows slowly and stays.</p><button type="button" class="btn dark" id="libAdd"><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M8 3v10M3 8h10" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>Add a paper</button></div>
+      <form class="card lform" id="lform" novalidate>
+        <h2>Add a paper to the library</h2>
+        <div class="fgrid">
+          <label class="full">Title<input name="title" required></label>
+          <label>Link<input name="link" type="url" placeholder="https://"></label>
+          <label>Authors<input name="authors" placeholder="For example, Fazel et al."></label>
+          <label>Research area<select name="area" id="larea"></select></label>
+          <label class="full">Why it is worth reading<textarea name="note" placeholder="One or two lines for the next person"></textarea></label>
+        </div>
+        <p class="err" id="lerr"></p>
+        <div class="ffoot"><button type="submit" class="btn dark">Add to library</button><button type="button" class="btn" id="lcancel">Cancel</button></div>
+      </form>
       <div class="tools"><input class="search" id="q" type="search" placeholder="Search titles, authors and notes" aria-label="Search the library"><div class="tags" id="tags"></div></div>
       <ul class="lib" id="lib"></ul>
     </section>
@@ -736,6 +786,7 @@ select.freq{font:500 .8rem var(--f-body);border:1px solid var(--line);border-rad
         <p class="err" id="gerr"></p>
         <div class="ffoot"><button type="submit" class="btn dark">Create and send invitations</button><button type="button" class="btn" id="gcancel">Cancel</button></div>
       </form>
+      <section class="card forme" id="forme" hidden><h2>Suggested to you</h2><ul id="formeL"></ul></section>
       <div class="groups" id="groups"></div>
     </section>
 
@@ -759,7 +810,7 @@ select.freq{font:500 .8rem var(--f-body);border:1px solid var(--line);border-rad
 
 (function(){
   var me=DASH.me.name,A=DASH.areas,tag="all",q="";
-  var lib=DASH.library.map(function(x){var p=pub(x.q);return {p:p,by:x.by,ago:x.ago,note:x.note}});
+  var lib=DASH.library.map(function(x){return x.p?x:{p:pub(x.q),by:x.by,ago:x.ago,note:x.note}});
   function tagChips(ar){return ar.map(function(a){return '<span class="chip">'+esc(A[a].split(" ")[0])+'</span>'}).join("")}
   function paperHTML(x,acts){var p=x.p,l=pubLink(p),t=l?'<a class="t" href="'+esc(l)+'">'+esc(p.t)+'</a>':'<span class="t">'+esc(p.t)+'</span>';
     return '<li class="paper"><div>'+t+'<p class="a">'+esc(authorsShort(p.a))+(p.v?'. '+esc(p.v):'')+(p.y?', '+p.y:'')+'</p>'+(x.note?'<p class="note">'+esc(x.note)+'</p>':'')+
@@ -767,8 +818,25 @@ select.freq{font:500 .8rem var(--f-body);border:1px solid var(--line);border-rad
       '<div class="acts">'+acts+'</div></li>'}
   function drawLib(){
     var list=lib.filter(function(x){return (tag==="all"||(x.p.ar||[]).indexOf(tag)>=0)&&(!q||(x.p.t+" "+x.p.a.join(" ")+" "+x.note).toLowerCase().indexOf(q)>=0)});
-    document.getElementById("lib").innerHTML=list.map(function(x){return paperHTML(x,'<button type="button" class="btn sm" data-suggest="'+esc(x.p.t)+'">Suggest</button>')}).join("")||'<li class="empty">No papers match.</li>';
+    document.getElementById("lib").innerHTML=list.map(function(x){var l=pubLink(x.p);return paperHTML(x,'<button type="button" class="btn sm" data-suggest="'+esc(x.p.t+(l?"\n"+l:""))+'">Suggest</button>'+(x.by===me?'<button type="button" class="linkbtn danger" data-lrm="'+lib.indexOf(x)+'">Remove</button>':''))}).join("")||(lib.length?'<li class="empty">No papers match.</li>':'<li class="empty">The library is empty. Add the first paper worth keeping.</li>');
   }
+  document.getElementById("lib").addEventListener("click",function(e){var b=e.target.closest("[data-lrm]");if(!b)return;var i=+b.dataset.lrm,x=lib[i];lib.splice(i,1);drawLib();
+    var t=setTimeout(function(){if(window.LAB&&x.id)LAB.delLib(x)},6500);toast("Removed from the library.",function(){clearTimeout(t);lib.splice(i,0,x);drawLib()})});
+  // add a paper to the library
+  var lform=document.getElementById("lform");
+  document.getElementById("larea").innerHTML='<option value="">None</option>'+Object.keys(A).map(function(k){return '<option value="'+k+'">'+esc(A[k])+'</option>'}).join("");
+  function openLib(t,l){lform.classList.add("open");if(t!=null){lform.elements.title.value=t;lform.elements.link.value=l||""}lform.elements.title.focus()}
+  document.getElementById("libAdd").onclick=function(){openLib()};
+  document.getElementById("lcancel").onclick=function(){lform.classList.remove("open");lform.reset()};
+  lform.addEventListener("keydown",function(e){if(e.key==="Escape"){lform.classList.remove("open");document.getElementById("libAdd").focus()}});
+  lform.addEventListener("submit",function(e){e.preventDefault();var d=new FormData(lform),t=String(d.get("title")||"").trim(),l=String(d.get("link")||"").trim(),au=String(d.get("authors")||"").trim(),ar=d.get("area")||"";
+    if(!t){document.getElementById("lerr").textContent="Add the title.";return}
+    if(l&&!/^https?:\/\//i.test(l)){document.getElementById("lerr").textContent="The link should start with https://";return}
+    if(lib.some(function(x){return x.p.t.toLowerCase()===t.toLowerCase()})){document.getElementById("lerr").textContent="That paper is already in the library.";return}
+    var x={p:{t:t,a:au?[au]:[],v:"",y:"",l:l?[["Link",l]]:[],ar:ar?[ar]:[]},by:me,ago:0,note:String(d.get("note")||"").trim()};
+    lib.unshift(x);if(window.LAB)LAB.addLib(x);
+    lform.reset();document.getElementById("lerr").textContent="";lform.classList.remove("open");tag="all";q="";document.getElementById("q").value="";
+    document.querySelectorAll("#tags button").forEach(function(b){b.setAttribute("aria-pressed",String(b.dataset.t==="all"))});drawLib();toast("Added to the library.")});
   document.getElementById("tags").innerHTML='<button type="button" data-t="all" aria-pressed="true">All</button>'+Object.keys(A).map(function(k){return '<button type="button" data-t="'+k+'" aria-pressed="false">'+esc(A[k].split(" ")[0])+'</button>'}).join("");
   document.getElementById("tags").addEventListener("click",function(e){var b=e.target.closest("button");if(!b)return;tag=b.dataset.t;this.querySelectorAll("button").forEach(function(x){x.setAttribute("aria-pressed",String(x===b))});drawLib()});
   document.getElementById("q").addEventListener("input",function(){q=this.value.trim().toLowerCase();drawLib()});
@@ -780,7 +848,23 @@ select.freq{font:500 .8rem var(--f-body);border:1px solid var(--line);border-rad
   function settle(g){ // everyone voted: the most popular time wins, ties go to the earlier option
     var best=g.options.slice().sort(function(a,b){return b.v.length-a.v.length})[0];
     g.state="set";g.time=best.d;g.day=best.day;g.justSet=true;
-    g.sessions=window.LAB?[]:[{day:best.day+7,mode:"pick",by:g.owner,q:null}];g.past=[];if(window.LAB)LAB.settleGroup(g)}
+    g.sessions=[];g.past=[];if(window.LAB)LAB.settleGroup(g)}
+  var edit=null; // which session form is open: "group:day:pick" or "group:day:opt"
+  function plink(q,cls){var p=ppr(q);return p.l?'<a class="'+cls+'" href="'+esc(p.l)+'" target="_blank" rel="noopener">'+esc(p.t)+'</a>':'<span class="'+cls+'">'+esc(p.t)+'</span>'}
+  function pform(g,day,kind,val,ss){var used=ss?[ss.q].concat((ss.options||[]).map(function(o){return o.q})):[],sg=(g.sugs||[]).filter(function(x){return used.indexOf(x.q)<0});
+    return '<form class="pform" data-pf="'+kind+'" data-id="'+g.id+'" data-day="'+day+'"><input name="p" value="'+esc(val||"")+'" placeholder="Paper title or link" aria-label="Paper title or link">'+
+      (sg.length?'<div class="psug"><span class="x">Suggested:</span>'+sg.map(function(x){return '<button type="button" data-fill="'+esc(x.q)+'" title="Suggested by '+esc(x.by)+'">'+esc(ppr(x.q).t)+'</button>'}).join("")+'</div>':'')+
+      '<div class="pf-b"><button type="submit" class="btn sm dark">'+(kind==="pick"?'Save':'Add')+'</button><button type="button" class="btn sm" data-g="pcancel" data-id="'+g.id+'" data-day="'+day+'">Cancel</button></div></form>'}
+  function sessHTML(g,day,first){var ss=sessFor(g,day),key=g.id+":"+day,at=' data-id="'+g.id+'" data-day="'+day+'"',head='<span class="when">'+(first?'Next, ':'')+dstr(day)+'</span>';
+    if(!ss)return '<div>'+head+'<b style="color:var(--muted)">Paper not chosen yet</b><span class="sbtns"><button type="button" class="btn sm" data-g="claim"'+at+'>I\'ll pick the paper</button><button type="button" class="btn sm" data-g="startvote"'+at+'>Start a vote</button></span></div>';
+    if(ss.mode==="pick"){var mine=ss.by===me;
+      if(mine&&(!ss.q||edit===key+":pick"))return '<div>'+head+'<span class="x">You are picking the paper</span>'+pform(g,day,"pick",ss.q,ss)+(ss.q?'':'<button type="button" class="linkbtn" data-g="unclaim"'+at+'>Let someone else pick</button>')+'</div>';
+      return '<div>'+head+(ss.q?plink(ss.q,"pt"):'<b style="color:var(--muted)">Paper not chosen yet</b>')+'<span class="x">'+(ss.q?'Picked by ':'Being picked by ')+(mine?'you':esc(ss.by))+'</span>'+(mine?'<button type="button" class="linkbtn" data-g="pedit"'+at+'>Change</button>':'')+'</div>'}
+    var o=ss.options,top=sessPaper(ss);
+    return '<div>'+head+'<span class="x">'+(o.length?'Group vote. The paper with the most votes wins.':'Group vote. Add papers to vote on.')+'</span>'+
+      o.map(function(x,j){var on=x.votes.indexOf(me)>=0,p=ppr(x.q);
+        return '<span class="popt"><span>'+plink(x.q,"")+'<small>'+(x.q===top&&x.votes.length?'Leading, ':'')+'added by '+(x.by===me?'you':esc(x.by))+'</small></span><button type="button" class="btn sm'+(on?' on':'')+'" data-g="pvote"'+at+' data-o="'+j+'" aria-pressed="'+on+'" aria-label="'+(on?'Remove my vote for ':'Vote for ')+esc(p.t)+', '+x.votes.length+' votes">'+(on?'&#10003; Voted':'Vote')+' ('+x.votes.length+')</button></span>'}).join("")+
+      (edit===key+":opt"?pform(g,day,"opt","",ss):'<button type="button" class="linkbtn" data-g="padd"'+at+'>+ Add a paper</button>')+'</div>'}
   function groupHTML(g){
     var pend=g.invited.length;
     if(g.state==="scheduling"&&!pend&&g.members.every(function(m){return g.options.some(function(o){return o.v.indexOf(m)>=0})}))settle(g);
@@ -798,20 +882,25 @@ select.freq{font:500 .8rem var(--f-body);border:1px solid var(--line);border-rad
     }
     if(g.state==="set"&&isM){
       if(g.justSet)h+='<div class="setmsg"><svg viewBox="0 0 18 18" aria-hidden="true"><circle cx="9" cy="9" r="8" fill="currentColor" opacity=".15"/><path d="M5 9.2l2.6 2.4L13 6.4" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg><span>The time is set: <b>'+esc(g.time)+'</b>, every week until '+esc(DASH.quarterEnd)+'. It is on the lab calendar.</span></div>';
-      var first=true;
-      if(window.LAB&&!g.sessions.length)h+='<p class="wait">Meets '+esc(g.time)+'. Picking and voting on papers is coming soon.</p>';
-      h+='<div class="gsess">'+g.sessions.map(function(ss,i){if(!isUpcoming(ss.day))return "";var head='<span class="when">'+(first?'Next, ':'')+dstr(ss.day)+'</span>';first=false;
-        if(ss.mode==="pick"){var p=ss.q?pub(ss.q):null,l=p&&pubLink(p);return '<div>'+head+(p?(l?'<a href="'+esc(l)+'" style="color:inherit"><b>'+esc(p.t)+'</b></a>':'<b>'+esc(p.t)+'</b>'):'<b style="color:var(--muted)">Paper not chosen yet</b>')+'<span class="x">Picked by '+esc(ss.by)+'</span></div>'}
-        var tot=ss.options.reduce(function(n,o){return n+o.votes.length},0)||1;
-        return '<div>'+head+'<span class="x">Group vote, closes '+esc(ss.closes)+'</span>'+ss.options.map(function(o,j){var p=pub(o.q),mine=o.votes.indexOf(me)>=0;
-          return '<span style="display:flex;gap:.5rem;align-items:center;justify-content:space-between;border-top:1px solid var(--line);padding-top:.4rem;margin-top:.2rem"><span style="font-size:.84rem">'+esc(p.t)+'</span><button type="button" class="btn sm'+(mine?' on':'')+'" data-g="vote" data-id="'+g.id+'" data-s="'+i+'" data-o="'+j+'" aria-label="'+(mine?'Remove my vote for ':'Vote for ')+esc(p.t)+', '+o.votes.length+' votes">'+(mine?'&#10003; Voted':'Vote')+' ('+o.votes.length+')</button></span>'}).join("")+'</div>'}).join("")+'</div>';
-      if(g.past&&g.past.length)h+='<p class="wait">Read so far: '+g.past.map(function(x){return esc(pub(x.q).t)}).join("; ")+'.</p>';
+      var nd=nextMeet(g);
+      if(nd!=null)h+='<div class="gsess">'+[nd,nd+7,nd+14].map(function(day,i){return sessHTML(g,day,i===0)}).join("")+'</div>';
+      var past=(g.sessions||[]).filter(function(x){return !isUpcoming(x.day)}).sort(function(a,b){return b.day-a.day}).map(sessPaper).filter(Boolean).concat((g.past||[]).map(function(x){return x.q}));
+      if(past.length)h+='<p class="wait">Read so far: '+past.slice(0,6).map(function(x){return esc(ppr(x).t)}).join("; ")+'.</p>';
     }
     if(!isM&&!isInv)h+='<div class="gfoot">'+(g.open?'<button type="button" class="btn sm dark" data-g="join" data-id="'+g.id+'">Join group</button>':'<span class="wait">Invite only. Ask '+esc(g.owner)+' to add you.</span>')+'</div>';
     else if(isM&&g.owner!==me)h+='<div class="gfoot"><button type="button" class="linkbtn" data-g="leave" data-id="'+g.id+'">Leave group</button></div>';
     if(g.owner===me||isAdmin())h+='<div class="gfoot"><button type="button" class="linkbtn danger" data-g="delete" data-id="'+g.id+'">Delete group</button></div>';
     return '<article class="card grp">'+h+'</article>'}
-  function drawRG(){setTimeout(refreshBell,0);
+  // papers other members suggested to me
+  var SG=DASH.suggested||(DASH.suggested=[]);
+  function drawForMe(){var el=document.getElementById("forme");el.hidden=!SG.length;
+    document.getElementById("formeL").innerHTML=SG.map(function(x,i){var p=ppr(x.q);
+      return '<li><span class="sp">'+face(x.by)+'<span>'+plink(x.q,"pt")+'<span class="x" style="display:block">From '+esc(x.by)+'</span></span></span><button type="button" class="btn sm" data-fm="lib" data-i="'+i+'">Add to library</button><button type="button" class="btn sm" data-fm="sug" data-i="'+i+'">Suggest</button><button type="button" class="linkbtn" data-fm="done" data-i="'+i+'">Dismiss</button></li>'}).join("")}
+  document.getElementById("formeL").addEventListener("click",function(e){var b=e.target.closest("[data-fm]");if(!b)return;var i=+b.dataset.i,x=SG[i],p=ppr(x.q);
+    if(b.dataset.fm==="sug"){b.dataset.suggest=x.q;return}
+    SG.splice(i,1);drawForMe();setTimeout(refreshBell,0);if(window.LAB)LAB.delSug(x);
+    if(b.dataset.fm==="lib"){tab("lib");openLib(p.t,p.l)}});
+  function drawRG(){setTimeout(refreshBell,0);drawForMe();
     var mine=G.filter(function(g){return g.members.indexOf(me)>=0||g.invited.indexOf(me)>=0}),other=G.filter(function(g){return mine.indexOf(g)<0});
     var out=mine.map(groupHTML).join("");
     if(other.length)out+='<h2 style="font:700 1rem var(--f-display);color:var(--muted);margin:.8rem 0 -.2rem">Other groups in the lab</h2>'+other.map(groupHTML).join("");
@@ -824,8 +913,27 @@ select.freq{font:500 .8rem var(--f-body);border:1px solid var(--line);border-rad
     else if(a==="leave"){var li=g.members.indexOf(me);g.members.splice(li,1);var lt=setTimeout(function(){if(window.LAB)LAB.groupPerson(g,"leave")},6500);toast("You left "+g.name+".",function(){clearTimeout(lt);g.members.splice(li,0,me);drawRG()})}
     else if(a==="delete"){var di=G.indexOf(g);G.splice(di,1);drawRG();var dt=setTimeout(function(){if(window.LAB)LAB.deleteGroup(g)},6500);toast(g.name+" was deleted.",function(){clearTimeout(dt);G.splice(di,0,g);drawRG()});return}
     else if(a==="avail"){var o=g.options[+b.dataset.i],k2=o.v.indexOf(me);if(k2>=0)o.v.splice(k2,1);else o.v.push(me);if(window.LAB)LAB.timeVote(o,k2<0)}
-    else if(a==="vote"){var ss=g.sessions[+b.dataset.s];ss.options.forEach(function(o,j){var k3=o.votes.indexOf(me);if(k3>=0)o.votes.splice(k3,1);if(j===+b.dataset.o&&k3<0)o.votes.push(me)})}
-    drawRG()});
+    else if(a in SA){if(SA[a](g,+b.dataset.day,b)===false)return}
+    drawRG();var f=document.querySelector('#groups .pform input');if(f&&/claim|startvote|pedit|padd/.test(a))f.focus()});
+  // paper for each meeting: someone picks it, or the group votes
+  var SA={
+    claim:function(g,day){var ss={day:day,mode:"pick",by:me,q:null,options:[]};g.sessions.push(ss);edit=g.id+":"+day+":pick";if(window.LAB)LAB.addSession(g,ss)},
+    startvote:function(g,day){var ss={day:day,mode:"vote",by:null,q:null,options:[]};g.sessions.push(ss);edit=g.id+":"+day+":opt";if(window.LAB)LAB.addSession(g,ss)},
+    unclaim:function(g,day){var ss=sessFor(g,day);g.sessions.splice(g.sessions.indexOf(ss),1);edit=null;if(window.LAB)LAB.delSession(ss)},
+    pedit:function(g,day){edit=g.id+":"+day+":pick"},
+    padd:function(g,day){edit=g.id+":"+day+":opt"},
+    pcancel:function(g,day){var ss=sessFor(g,day);edit=null;if(ss&&ss.mode==="vote"&&!ss.options.length){g.sessions.splice(g.sessions.indexOf(ss),1);if(window.LAB)LAB.delSession(ss)}},
+    pvote:function(g,day,b){var ss=sessFor(g,day),j=+b.dataset.o;ss.options.forEach(function(o,i){var k=o.votes.indexOf(me);if(k>=0)o.votes.splice(k,1);if(i===j&&k<0){o.votes.push(me);if(window.LAB)LAB.paperVote(ss,o)}else if(i===j&&window.LAB)LAB.paperVote(ss,null)})}
+  };
+  function useSug(g,v){var k=(g.sugs||[]).findIndex(function(x){return x.q===v});if(k>=0){var x=g.sugs.splice(k,1)[0];if(window.LAB)LAB.delSug(x)}}
+  document.getElementById("groups").addEventListener("submit",function(e){var f=e.target.closest(".pform");if(!f)return;e.preventDefault();
+    var g=G.find(function(x){return x.id===+f.dataset.id}),day=+f.dataset.day,ss=sessFor(g,day),v=f.elements.p.value.trim();
+    if(!v){f.elements.p.focus();return}
+    if(f.dataset.pf==="pick"){ss.q=v;if(window.LAB)LAB.setPaper(ss)}
+    else{if(ss.options.some(function(o){return o.q.toLowerCase()===v.toLowerCase()})){toast("That paper is already in the vote.");return}
+      var o={q:v,by:me,votes:[]};ss.options.push(o);if(window.LAB)LAB.addOption(ss,o)}
+    useSug(g,v);edit=null;drawRG()});
+  document.getElementById("groups").addEventListener("click",function(e){var b=e.target.closest("[data-fill]");if(!b)return;var i=b.closest(".pform").elements.p;i.value=b.dataset.fill;i.focus()});
   document.getElementById("groups").addEventListener("keydown",function(e){if((e.key===" "||e.key==="Enter")&&e.target.matches('[data-g="avail"]')){e.preventDefault();e.target.click()}});
   // start a group
   var gform=document.getElementById("gform"),inv=[];
@@ -852,7 +960,7 @@ select.freq{font:500 .8rem var(--f-body);border:1px solid var(--line);border-rad
     var opts=[].map.call(document.querySelectorAll("#gtimes .row"),function(r){var s=r.querySelectorAll("select"),day=+s[0].value,hh=+s[1].value;return {d:DAYS[day]+", "+HOURS[hh]+" to "+(HOURS[hh+1]||"6 pm"),day:day,hour:9+hh,v:[]}});
     opts=opts.filter(function(o,i){return opts.findIndex(function(x){return x.d===o.d})===i});
     var ng={id:Date.now(),name:String(d.get("name")).trim(),area:d.get("area"),desc:String(d.get("desc")||"").trim(),owner:me,members:[me],invited:inv.slice(),open:!!d.get("open"),state:"scheduling",where:"To decide",options:opts};
-    if(gmode==="set"||opts.length===1){var o0=opts[0];Object.assign(ng,{state:"set",time:o0.d,day:o0.day,hour:o0.hour,justSet:true,options:[],sessions:window.LAB?[]:[{day:o0.day+7,mode:"pick",by:me,q:null}],past:[]})}
+    if(gmode==="set"||opts.length===1){var o0=opts[0];Object.assign(ng,{state:"set",time:o0.d,day:o0.day,hour:o0.hour,justSet:true,options:[],sessions:[],past:[]})}
     G.unshift(ng);
     if(window.LAB)LAB.addGroup(ng).then(function(ok){if(ok)drawRG()});toast(ng.invited.length?"Group started. Invitations sent to "+ng.invited.length+(ng.invited.length===1?" person.":" people."):"Group started.");
     gform.reset();inv=[];document.querySelectorAll("#ginv button").forEach(function(b){b.setAttribute("aria-pressed","false")});document.getElementById("gerr").textContent="";gform.classList.remove("open");drawRG()});
@@ -878,13 +986,13 @@ select.freq{font:500 .8rem var(--f-body);border:1px solid var(--line);border-rad
   var sug={btn:null,t:"",groups:[],people:[],all:false};
   function short(n){return esc(n)}
   function drawSug(){
-    var mine=DASH.groups.filter(function(g){return g.members.indexOf(me)>=0&&g.state==="set"}),ppl=DATA.members.map(function(m){return m.name}).filter(function(n){return n!==me});
+    var mine=DASH.groups.filter(function(g){return g.members.indexOf(me)>=0&&g.state==="set"}),ppl=(DASH.people?DASH.people.filter(function(p){return p.role!=="alumni"}):DATA.members).map(function(m){return m.name}).filter(function(n){return n!==me});
     var shown=sug.all?ppl:ppl.slice(0,4);
     function row(kind,val,label,sub,lead){var on=sug[kind].indexOf(val)>=0;
       return '<button type="button" class="srow'+(on?' on':'')+'" role="checkbox" aria-checked="'+on+'" data-sk="'+kind+'" data-sv="'+esc(val)+'">'+lead+'<span class="sl"><b>'+label+'</b>'+(sub?'<small>'+sub+'</small>':'')+'</span><span class="box">'+(on?'&#10003;':'')+'</span></button>'}
     var n=sug.groups.length+sug.people.length;
-    pop.innerHTML='<p class="sh">Suggest this paper</p><p class="stt">'+esc(sug.t)+'</p>'+
-      '<p class="sk">My reading groups</p>'+(mine.length?mine.map(function(g){return row("groups",String(g.id),esc(g.name),'Adds it to the next paper vote','<span class="gi">'+esc(g.name[0])+'</span>')}).join(""):'<p class="none">Once your reading group has a set time, you can suggest papers to it here.</p>')+
+    pop.innerHTML='<p class="sh">Suggest this paper</p><p class="stt">'+esc(ppr(sug.t).t)+'</p>'+
+      '<p class="sk">My reading groups</p>'+(mine.length?mine.map(function(g){return row("groups",String(g.id),esc(g.name),'Adds it to the group\'s paper vote, or saves it for whoever picks next','<span class="gi">'+esc(g.name[0])+'</span>')}).join(""):'<p class="none">Once your reading group has a set time, you can suggest papers to it here.</p>')+
       '<p class="sk">People</p>'+shown.map(function(n){return row("people",n,short(n),"",face(n))}).join("")+
       (ppl.length>4?'<button type="button" class="more" data-more>'+(sug.all?'Show fewer':'Show all '+ppl.length+' people')+'</button>':'')+
       '<div class="sf"><button type="button" class="btn sm" data-sclose>Cancel</button><button type="button" class="btn sm dark" data-ssend'+(n?'':' disabled')+'>'+(n?'Suggest to '+n:'Suggest')+'</button></div>';
@@ -898,9 +1006,11 @@ select.freq{font:500 .8rem var(--f-body);border:1px solid var(--line);border-rad
     if(e.target.closest("[data-more]")){sug.all=!sug.all;drawSug();place();return}
     if(e.target.closest("[data-sclose]")){closeSug();return}
     if(e.target.closest("[data-ssend]")){
-      sug.groups.forEach(function(id){var g=DASH.groups.find(function(x){return x.id===+id});var vs=g.sessions&&g.sessions.find(function(ss){return ss.mode==="vote"});
-        if(vs&&!vs.options.some(function(x){return pub(x.q).t===sug.t}))vs.options.push({q:sug.t,by:me,votes:[]})});
-      var n=sug.groups.length+sug.people.length;sug.btn.innerHTML="&#10003; Suggested to "+n;sug.btn.classList.add("on");pop.hidden=true;drawRG()}
+      sug.groups.forEach(function(id){var g=DASH.groups.find(function(x){return x.id===+id}),vs=(g.sessions||[]).find(function(ss){return ss.mode==="vote"&&isUpcoming(ss.day)});
+        if(vs){if(!vs.options.some(function(x){return x.q===sug.t})){var o={q:sug.t,by:me,votes:[]};vs.options.push(o);if(window.LAB)LAB.addOption(vs,o)}}
+        else if(!(g.sugs||[]).some(function(x){return x.q===sug.t})){var x={q:sug.t,by:me};(g.sugs=g.sugs||[]).push(x);if(window.LAB)LAB.suggest(x,{to_group:g.id})}});
+      sug.people.forEach(function(n){if(window.LAB)LAB.suggest({q:sug.t},{to_email:n})});
+      var n=sug.groups.length+sug.people.length;if(sug.btn.dataset.fm!=="sug")sug.btn.innerHTML="&#10003; Suggested to "+n;sug.btn.classList.add("on");pop.hidden=true;drawRG();toast("Suggested to "+(n===1?(sug.people[0]||DASH.groups.find(function(x){return x.id===+sug.groups[0]}).name):n)+".")}
   });
   document.addEventListener("click",function(e){if(!pop.hidden&&!pop.contains(e.target))pop.hidden=true});
   document.addEventListener("keydown",function(e){if(e.key==="Escape"&&!pop.hidden)closeSug()});
@@ -911,7 +1021,8 @@ select.freq{font:500 .8rem var(--f-body);border:1px solid var(--line);border-rad
     ["rg","lib","dg"].forEach(function(k){document.getElementById("tab-"+k).hidden=k!==id});history.replaceState(null,"","#"+id)}
   document.querySelector(".tabbar").addEventListener("click",function(e){var b=e.target.closest("[data-tab]");if(b)tab(b.dataset.tab)});
   drawLib();drawRG();drawDG();
-  var h=location.hash.slice(1);if(["rg","lib","dg"].indexOf(h)>=0)tab(h);
+  document.addEventListener("dash:redraw",drawRG);
+  var h=location.hash.slice(1);if(["rg","lib","dg"].indexOf(h)>=0&&!document.querySelector("[data-tab="+h+"]").classList.contains("live-hide"))tab(h);
 })();
 
 });</script>

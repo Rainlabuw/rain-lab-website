@@ -1,4 +1,4 @@
-<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover"></head><body><script src="vendor/supabase-2.117.2.js"></script><script src="lab.js?v=c4051836"></script><style>.lab-loading body{visibility:hidden}.live-hide{display:none!important}</style><!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover"></head><body><title>Today | RAIN Lab members</title><link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Caveat:wght@500;600&family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:wght@400;500;600&family=Urbanist:wght@500;600;700&display=swap"><style>:root{
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover"></head><body><script src="vendor/supabase-2.117.2.js"></script><script src="lab.js?v=1da29cb5"></script><style>.lab-loading body{visibility:hidden}.live-hide{display:none!important}</style><!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover"></head><body><title>Today | RAIN Lab members</title><link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Caveat:wght@500;600&family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:wght@400;500;600&family=Urbanist:wght@500;600;700&display=swap"><style>:root{
   --cloud:#f6f8fb; --white:#ffffff; --ink:#13101d; --muted:#586174; --line:#e1e6ee;
   --blue:#1f6feb; --blue-text:#1a5fcc; --blue-soft:#e7effd;
   --night:#0b0714; --black:#000; --night-ink:#eef1f7; --night-muted:#9aa3b6; --night-line:#231d33;
@@ -290,16 +290,19 @@ var DASH={
   // reading groups: any member can start one, invite people or let others join,
   // then everyone votes on a weekly time; when all members have voted the time is set until the end of the quarter
   quarterEnd:"the end of autumn quarter",
+  // papers other members suggested to you
+  suggested:[{q:"Hidden Star-Convexity in Policy Optimization",by:"Ruiqi Li",ago:1}],
   groups:[
     {id:1,name:"Policy optimization",area:"learning",desc:"Landscape, convergence and data-driven methods for learning controllers.",owner:"Cheng \"Justin\" Chang",
      members:["Cheng \"Justin\" Chang","Shiva Shakeri","Ruiqi Li","Yifu Wang"],invited:[],open:true,state:"set",time:"Tuesdays, 3 to 4 pm",day:1,where:"Guggenheim 218",
      sessions:[
        {day:1,mode:"pick",by:"Ruiqi Li",q:"Global Convergence of Policy Gradient Methods for the Linear"},
-       {day:8,mode:"vote",closes:"Monday at noon",options:[
+       {day:8,mode:"vote",options:[
          {q:"Hidden Star-Convexity in Policy Optimization",by:"Cheng \"Justin\" Chang",votes:["Cheng \"Justin\" Chang","Ruiqi Li"]},
          {q:"Output-Feedback Synthesis Orbit Geometry",by:"Yifu Wang",votes:["Yifu Wang"]}]},
        {day:15,mode:"pick",by:"Yifu Wang",q:null}],
-     past:[{weeks:1,q:"Policy Optimization in Control: Geometry",by:"Shiva Shakeri"},{weeks:2,q:"Data-driven Optimal Filtering",by:"Cheng \"Justin\" Chang"}]},
+     past:[{weeks:1,q:"Policy Optimization in Control: Geometry",by:"Shiva Shakeri"},{weeks:2,q:"Data-driven Optimal Filtering",by:"Cheng \"Justin\" Chang"}],
+     sugs:[{q:"A tutorial on successive convexification",by:"Yifu Wang"}]},
     {id:2,name:"Space autonomy",area:"guidance",desc:"Powered descent, convexification and onboard guidance.",owner:"Joseph Pinkston",
      members:["Joseph Pinkston","Brendan Garwood","Justin Ganiban"],invited:["Shiva Shakeri"],open:false,state:"scheduling",where:"Guggenheim 218",
      options:[{d:"Mondays, 2 to 3 pm",day:0,v:["Joseph Pinkston","Brendan Garwood","Justin Ganiban"]},{d:"Wednesdays, 11 am to noon",day:2,v:["Joseph Pinkston","Justin Ganiban"]},{d:"Thursdays, 4 to 5 pm",day:3,v:["Brendan Garwood"]}]},
@@ -391,6 +394,14 @@ document.addEventListener("click",function(e){var b=e.target.closest("[data-talk
   if(window.LAB){if(t)LAB.talk(t,i<0);else LAB.conf(c,i<0)}});
 function pub(q){return (typeof DATA!=="undefined"&&DATA.pubs||[]).find(function(p){return p.t.toLowerCase().indexOf(q.toLowerCase())===0})||{t:q,a:[],v:"",y:"",l:[],ar:[]}}
 function pubLink(p){return p.l&&p.l.length?p.l[0][1]:null}
+// a paper as people type it: a title, a link, or "Title\nlink"
+function ppr(q){q=String(q||"").trim();var i=q.indexOf("\n"),t=i>=0?q.slice(0,i).trim():q,l=i>=0?q.slice(i+1).trim():"";
+  if(!l&&/^https?:\/\//i.test(t)){l=t;t=t.replace(/^https?:\/\/(www\.)?/i,"").replace(/\/$/,"");if(t.length>60)t=t.slice(0,57)+"..."}
+  if(!l){var p=pub(t);return {t:p.t,l:pubLink(p)}}return {t:t,l:/^https?:\/\//i.test(l)?l:null}}
+// reading group meetings: the next meeting day (days from this Monday) and the paper for a session
+function nextMeet(g){var d=g.day;if(d==null)return null;while(!isUpcoming(d))d+=7;return d}
+function sessFor(g,day){return (g.sessions||[]).find(function(s){return s.day===day})}
+function sessPaper(s){if(!s)return null;if(s.mode==="pick")return s.q||null;var b=null;(s.options||[]).forEach(function(o){if(!b||o.votes.length>b.votes.length)b=o});return b?b.q:null}
 function authorsShort(a){return !a.length?"":a.length>3?a[0]+" et al":a.join(", ")}
 var MON=["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"],DOW=["Mon","Tue","Wed","Thu","Fri","Sat","Sun"];
 
@@ -441,8 +452,11 @@ function needsMe(){var me=DASH.me.name,out=[],fmt=function(iso){var d=new Date(i
     if(g.invited.indexOf(me)>=0)out.push({id:"inv"+g.id,who:g.owner,t:g.owner+" invited you to a reading group",s:g.name,go:"Join or decline",href:"dashboard-reading.html#rg"});
     if(g.members.indexOf(me)<0)return;
     if(g.state==="scheduling"&&!g.options.some(function(o){return o.v.indexOf(me)>=0}))out.push({id:"time"+g.id,ic:"vote",t:"Vote on a weekly time",s:g.name+" reading group",go:"Vote",href:"dashboard-reading.html#rg"});
-    if(g.state==="set")(g.sessions||[]).forEach(function(ss,i){if(ss.mode==="vote"&&!ss.options.some(function(o){return o.votes.indexOf(me)>=0}))out.push({id:"pap"+g.id+"-"+i,ic:"vote",t:"Vote on the next paper",s:g.name+", closes "+ss.closes,go:"Vote",href:"dashboard-reading.html#rg"})});
+    if(g.state==="set")(g.sessions||[]).forEach(function(ss){if(!isUpcoming(ss.day))return;var d=sessDate(ss.day),ds=MON[d.getMonth()]+" "+d.getDate();
+      if(ss.mode==="vote"&&ss.options.length&&!ss.options.some(function(o){return o.votes.indexOf(me)>=0}))out.push({id:"pap"+g.id+"-"+ss.day,ic:"vote",t:"Vote on a paper",s:g.name+", "+ds,go:"Vote",href:"dashboard-reading.html#rg"});
+      if(ss.mode==="pick"&&ss.by===me&&!ss.q)out.push({id:"pick"+g.id+"-"+ss.day,ic:"vote",t:"Pick the paper",s:g.name+", "+ds,go:"Pick",href:"dashboard-reading.html#rg"})});
   });
+  (DASH.suggested||[]).forEach(function(x){out.push({id:"sug"+(x.id||x.q),who:x.by,t:x.by+" suggested a paper to you",s:ppr(x.q).t,go:"See it",href:"dashboard-reading.html#rg"})});
   DASH.changes.forEach(function(c){if(c.by===me&&c.status==="back")out.push({id:"back"+c.id,ic:"back",t:"Your "+c.kind.toLowerCase()+" was sent back",s:c.title,go:"Edit and send again",href:"dashboard-website.html"})});
   if(isAdmin()){var w=DASH.changes.filter(function(c){return c.status==="waiting"}),q=DASH.requests.filter(function(r){return r.status==="open"});
     if(w.length)out.push({id:"adm-w"+w.length,ic:"admin",t:"Website changes to approve",s:w.map(function(c){return (c.by.match(/"([^"]*)"/)||[0,c.by.split(" ")[0]])[1]}).join(", "),go:"Review",href:"dashboard-admin.html"});
@@ -691,8 +705,9 @@ ooEvents();
     var out=mine.map(function(g){
       if(g.state!=="set"){var left=g.members.filter(function(n){return !g.options.some(function(o){return o.v.indexOf(n)>=0})}).length;
         return '<li><span class="k">'+esc(g.name)+'</span><b>Voting on a weekly time</b><span class="x">Waiting for '+left+' of '+g.members.length+' to vote</span></li>'}
-      var s=g.sessions.filter(function(x){return isUpcoming(x.day)})[0];if(!s)return '<li><span class="k">'+esc(g.name)+'</span><b>'+esc(g.time)+'</b><span class="x">Weekly reading group</span></li>';var p=s.q?pub(s.q):null,d=sessDate(s.day);
-      return '<li><span class="k">'+esc(g.name)+', '+DOW[(d.getDay()+6)%7]+' '+MON[d.getMonth()]+' '+d.getDate()+'</span><b>'+esc(s.mode==="vote"?"Paper chosen by group vote":p?p.t:"Paper not picked yet")+'</b><span class="x">'+esc(g.time)+(s.mode==="pick"&&s.by?', picked by '+esc(s.by):'')+'</span></li>'}).join("");
+      var nd=nextMeet(g);if(nd==null)return '<li><span class="k">'+esc(g.name)+'</span><b>'+esc(g.time)+'</b><span class="x">Weekly reading group</span></li>';
+      var s=sessFor(g,nd),pq=sessPaper(s),d=sessDate(nd),st=!s?"Paper not chosen yet":s.mode==="vote"?(pq?"Group vote, leading: "+ppr(pq).t:"Group vote, no papers yet"):pq?ppr(pq).t:"Paper not chosen yet";
+      return '<li><span class="k">'+esc(g.name)+', '+DOW[(d.getDay()+6)%7]+' '+MON[d.getMonth()]+' '+d.getDate()+'</span><b>'+esc(st)+'</b><span class="x">'+esc(g.time)+(s&&s.mode==="pick"&&s.by?', picked by '+esc(s.by===me?"you":s.by):'')+'</span></li>'}).join("");
     document.getElementById("paperwk").innerHTML=out?'<ul class="rq">'+out+'</ul>':'<p class="empty">You are not in a reading group yet. <a href="dashboard-reading.html">Start or join one</a>.</p>';
   })();
   var me=DASH.me.name,doing=DASH.reviews.filter(function(r){return r.reviewers.some(function(x){return x.n===me&&x.st==="accepted"})}),open=DASH.reviews.filter(function(r){return r.open&&r.author!==me&&!r.reviewers.some(function(x){return x.n===me})});
@@ -701,7 +716,7 @@ ooEvents();
     open.slice(0,2).map(function(r){return '<li><span class="k">Open to volunteers</span><b>'+esc(r.title)+'</b><span class="x">'+esc(r.author)+'</span></li>'}).join("")+'</ul>':'<p class="empty">No reviews right now.</p>';
   // optional cards
   document.getElementById("arx").innerHTML=DASH.digest.slice(0,3).map(function(q){var p=pub(q);return '<li><b>'+esc(p.t)+'</b><span class="x">'+esc(authorsShort?authorsShort(p.a):'')+'</span></li>'}).join("");
-  document.getElementById("libr").innerHTML=DASH.library.slice(0,3).map(function(x){var p=pub(x.q);return '<li><span class="k">Added by '+esc(x.by)+'</span><b>'+esc(p.t)+'</b></li>'}).join("");
+  document.getElementById("libr").innerHTML=DASH.library.slice(0,3).map(function(x){var p=x.p||pub(x.q);return '<li><span class="k">Added by '+esc(x.by)+'</span><b>'+esc(p.t)+'</b></li>'}).join("")||'<li class="empty">Nothing in the library yet.</li>';
   document.getElementById("crs").innerHTML=DASH.courses.slice(0,4).map(function(c){return '<li><span class="k">'+esc(c.code)+'</span><b>'+esc(c.name)+'</b><span class="x">'+c.took.length+' in the lab took it</span></li>'}).join("");
 
   // customizing: each person arranges their own Today; the layout is remembered in this browser
