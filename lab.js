@@ -24,11 +24,12 @@ var LAB=(function(){
   function crow(x){var b=x.body||{};return {id:x.id,kind:KIND[x.kind]||x.kind,by:nm(x.author),title:x.title,text:b.text||"",type:b.type,link:b.link,fields:b.fields,venue:b.venue,year:b.year,
     wantsNews:b.wantsNews,from:b.from,photos:b.photos||[],status:x.status,note:x.admin_note||"",when:when(x.created_at)}}
   function cbody(c){return {text:c.text||"",type:c.type||null,link:c.link||null,fields:c.fields||null,venue:c.venue||null,year:c.year||null,wantsNews:!!c.wantsNews,from:c.from||null,photos:c.photos||[]}}
-  function qrow(x){return {id:x.id,name:x.name,note:x.note||"",by:nm(x.email),when:when(x.created_at),size:x.size_bytes}}
+  function qrow(x){var d=new Date(x.created_at);return {id:x.id,name:x.name,note:x.note||"",topic:x.topic||"General",by:nm(x.email),when:MON[d.getMonth()]+" "+d.getFullYear(),t:d.getTime(),size:x.size_bytes}}
   async function helper(fd){var tok=(await sb.auth.getSession()).data.session.access_token;
     var r=await fetch(LAB_CFG.url+"/functions/v1/dropbox-course",{method:"POST",headers:{Authorization:"Bearer "+tok,apikey:LAB_CFG.key},body:fd});
     var j=await r.json().catch(function(){return {}});if(!r.ok)throw new Error(j.error||"Something went wrong. Please try again.");return j}
   function fail(e){console.error(e);if(window.toast)toast("Could not save that. Please try again.")}
+  function takerRow(c,t){return {course_id:c.id,email:DASH.me.email,term:t[1]||null,tip:t[2]||null,professor:t[3]||null,status:t[4]==="now"?"now":"took"}}
   async function q(p){var r=await p;if(r.error)throw r.error;return r.data}
 
   function meetings(talkRows){
@@ -119,7 +120,7 @@ var LAB=(function(){
         if(p.anonymous){var mine=v.indexOf(meRow.name)>=0;v=mine?[meRow.name]:[];for(var k=v.length;k<(cnt[o.id]||0);k++)v.push("anonymous "+o.id+"-"+k)}
         return {id:o.id,t:o.label,v:v}})}});
     DASH.courses=r[22].map(function(c){return {id:c.id,code:c.code,name:c.name,tip:c.tip||"",quals:c.helps_quals,by:nm(c.added_by),url:c.dropbox_url||"",
-      took:r[23].filter(function(t){return t.course_id===c.id}).map(function(t){return [nm(t.email),t.term||"",t.tip||""]})}});
+      took:r[23].filter(function(t){return t.course_id===c.id}).map(function(t){return [nm(t.email),t.term||"",t.tip||"",t.professor||"",t.status||"took"]})}});
     DASH.qualsFiles=r[25].map(qrow);
     DASH.quals=r[24].map(function(x){return {id:x.id,by:nm(x.email),when:x.year||"",text:x.body}});
     DASH.changes=r[26].map(crow);
@@ -212,12 +213,16 @@ var LAB=(function(){
     // courses and quals
     addCourse:function(c){c._p=(async function(){try{
         c.id=(await q(sb.from("courses").insert({code:c.code,name:c.name,tip:c.tip||null,helps_quals:!!c.quals}).select()))[0].id;
-        var mine=c.took.find(function(t){return t[0]===DASH.me.name});if(mine)await q(sb.from("course_takers").insert({course_id:c.id,email:DASH.me.email,term:mine[1]||null}))}catch(e){fail(e)}})();return c._p},
+        var mine=c.took.find(function(t){return t[0]===DASH.me.name});if(mine)await q(sb.from("course_takers").insert(takerRow(c,mine)))}catch(e){fail(e)}})();return c._p},
     updCourse:async function(c){try{await c._p;await q(sb.from("courses").update({code:c.code,name:c.name,tip:c.tip||null,helps_quals:!!c.quals}).eq("id",c.id))}catch(e){fail(e)}},
     delCourse:async function(c){try{await q(sb.from("courses").delete().eq("id",c.id))}catch(e){fail(e)}},
-    took:async function(c,term,tip){try{await c._p;var t=sb.from("course_takers");
-        if(term===null)await q(t.delete().eq("course_id",c.id).eq("email",DASH.me.email));
-        else{var row={course_id:c.id,email:DASH.me.email,term:term||null};if(tip!==undefined)row.tip=tip||null;await q(t.upsert(row))}}catch(e){fail(e)}},
+    // your line on a course: [name, quarter, tip, professor, "took" or "now"], or null to take yourself off
+    took:async function(c,me){try{await c._p;var t=sb.from("course_takers");
+        if(!me)await q(t.delete().eq("course_id",c.id).eq("email",DASH.me.email));
+        else await q(t.upsert(takerRow(c,me)))}catch(e){fail(e)}},
+    listFiles:async function(c){await c._p;var fd=new FormData();fd.append("kind","files");fd.append("course_id",c.id);var j=await helper(fd);if(j.url&&!c.url)c.url=j.url;return j.files||[]},
+    fileLink:async function(c,name){try{var fd=new FormData();fd.append("kind","filelink");fd.append("course_id",c.id);fd.append("name",name);return (await helper(fd)).url}
+      catch(e){console.error(e);if(window.toast)toast(e.message||"Download failed.");return null}},
     courseFiles:async function(c,files){try{await c._p;if(!c.id)return false;
         var fd=new FormData();fd.append("course_id",c.id);files.forEach(function(f){fd.append("files",f)});
         var tok=(await sb.auth.getSession()).data.session.access_token;
@@ -226,9 +231,9 @@ var LAB=(function(){
         if(!r.ok){if(window.toast)toast(j.error||"Upload failed. Please try again.");return false}
         if(j.url&&!c.url){c.url=j.url;if(c.by===DASH.me.name||DASH.me.role==="Admin")sb.from("courses").update({dropbox_url:j.url}).eq("id",c.id).then(function(){})}
         return true}catch(e){console.error(e);if(window.toast)toast("Upload failed. Please try again.");return false}},
-    qualsUpload:async function(files,note){try{var fd=new FormData();fd.append("kind","quals");files.forEach(function(f){fd.append("files",f)});
+    qualsUpload:async function(files,note,topic){try{var fd=new FormData();fd.append("kind","quals");files.forEach(function(f){fd.append("files",f)});
         var j=await helper(fd);
-        var rows=await q(sb.from("quals_materials").insert(j.saved.map(function(x){return {name:x.name,path:x.path,size_bytes:x.size||null,note:note||null}})).select());
+        var rows=await q(sb.from("quals_materials").insert(j.saved.map(function(x){return {name:x.name,path:x.path,size_bytes:x.size||null,note:note||null,topic:topic||null}})).select());
         return rows.map(qrow)}catch(e){console.error(e);if(window.toast)toast(e.message||"Upload failed.");return null}},
     qualsLink:async function(x){try{var fd=new FormData();fd.append("kind","link");fd.append("material_id",x.id);return (await helper(fd)).url}
       catch(e){console.error(e);if(window.toast)toast(e.message||"Download failed.");return null}},

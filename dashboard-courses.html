@@ -1,4 +1,4 @@
-<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover"></head><body><script src="vendor/supabase-2.117.2.js"></script><script src="lab.js?v=15917e9e"></script><style>.lab-loading body{visibility:hidden}.live-hide{display:none!important}</style><!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover"></head><body><title>Courses | RAIN Lab members</title><link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Caveat:wght@500;600&family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:wght@400;500;600&family=Urbanist:wght@500;600;700&display=swap"><style>:root{
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover"></head><body><script src="vendor/supabase-2.117.2.js"></script><script src="lab.js?v=dd203345"></script><style>.lab-loading body{visibility:hidden}.live-hide{display:none!important}</style><!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover"></head><body><title>Courses | RAIN Lab members</title><link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Caveat:wght@500;600&family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:wght@400;500;600&family=Urbanist:wght@500;600;700&display=swap"><style>:root{
   --cloud:#f6f8fb; --white:#ffffff; --ink:#13101d; --muted:#586174; --line:#e1e6ee;
   --blue:#1f6feb; --blue-text:#1a5fcc; --blue-soft:#e7effd;
   --night:#0b0714; --black:#000; --night-ink:#eef1f7; --night-muted:#9aa3b6; --night-line:#231d33;
@@ -569,7 +569,7 @@ ooEvents();
 body{background:#f5f7fb}
 .main::before{display:none}
 .dash{grid-template-columns:232px minmax(0,1fr)}
-.rail.r2{background:var(--rail);color:var(--rail-ink);padding:22px 14px 18px;gap:26px;align-items:stretch}
+.rail.r2{z-index:30;background:var(--rail);color:var(--rail-ink);padding:22px 14px 18px;gap:26px;align-items:stretch}
 .rail.r2 .brand2{display:flex;align-items:center;justify-content:space-between;padding:0 6px}
 .rail.r2 .brand{width:auto;overflow:visible}
 .rail.r2 .brand .logo{height:20px;width:auto}
@@ -623,71 +623,214 @@ labReady(function(){
   document.addEventListener("click",function(e){if(!mm.hidden&&!e.target.closest(".memenu"))set(false)});
   document.addEventListener("keydown",function(e){if(e.key==="Escape"&&!mm.hidden)set(false,last)});
 });
+</script><style>
+/* redesign foundation (approved mockup). Pages that are rebuilt put class="v2" on their main area. */
+.v2 [hidden]{display:none!important}
+:root{--bg:#f5f7fb;--surface:#fff;--line-soft:#eef1f6;--blue-ink:#1a5fcc;--green:#0f8a5f;--green-soft:#e2f5ec;--amber:#a35f00;--amber-soft:#fff3dc;--red:#c0392b;--cse:#5b3fd1;--cse-soft:#efeafd;--aa:#1f6feb;--aa-soft:#e8f0fe;--amath:#0f8a8a;--amath-soft:#e0f4f3;--ee:#c2410c;--ee-soft:#fdece2;--r:12px;--r-sm:9px}
+.v2{font:400 15px/1.5 var(--f-body);color:var(--ink)}
+.v2 button,.v2 input,.v2 select,.v2 textarea{font:inherit;color:inherit}.v2 button{cursor:pointer}
+.v2 .wrap{max-width:1040px;margin:0 auto;display:grid;gap:22px}
+.v2 .head{display:flex;flex-wrap:wrap;align-items:flex-end;justify-content:space-between;gap:16px}
+.v2 .head h1{margin:0;font:700 34px/1.1 var(--f-display);letter-spacing:-.01em}
+.v2 .head p{margin:6px 0 0;color:var(--muted);font-size:15px}
+.v2 .btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;border-radius:10px;padding:10px 16px;font:600 14.5px var(--f-display);border:1px solid transparent;text-decoration:none;white-space:nowrap;transition:background .15s,border-color .15s}
+.v2 .btn svg{width:17px;height:17px}
+.v2 .btn.primary{background:var(--blue);color:#fff}
+.v2 .btn.primary:hover{background:var(--blue-ink)}
+.v2 .btn.secondary{background:var(--surface);border-color:var(--line);color:var(--ink)}
+.v2 .btn.secondary:hover{border-color:#c7d2e4;background:#fafbfd}
+.v2 .btn.quiet{background:transparent;color:var(--muted);padding:10px 12px}
+.v2 .btn.quiet:hover{color:var(--ink);background:var(--line-soft)}
+.v2 .btn.sm{padding:7px 12px;font-size:13.5px;border-radius:9px}
+.v2 .tabs{display:inline-flex;background:#e9edf4;border-radius:12px;padding:4px;gap:2px}
+.v2 .tabs button{border:0;background:transparent;border-radius:9px;padding:8px 16px;font:600 14px var(--f-display);color:var(--muted)}
+.v2 .tabs button[aria-selected="true"]{background:var(--surface);color:var(--ink);box-shadow:0 1px 2px rgba(19,16,29,.08)}
+.v2 .tools{display:flex;flex-wrap:wrap;gap:10px;align-items:center}
+.v2 .search{flex:1 1 260px;display:flex;align-items:center;gap:10px;background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:0 14px}
+.v2 .search svg{width:17px;height:17px;color:var(--muted);flex:none}
+.v2 .search input{border:0;outline:0;background:transparent;padding:11px 0;width:100%}
+.v2 .pills{display:flex;flex-wrap:wrap;gap:6px}
+.v2 .pills button{border:1px solid var(--line);background:var(--surface);border-radius:999px;padding:7px 13px;font-size:13.5px;color:var(--muted)}
+.v2 .pills button[aria-pressed="true"]{background:var(--ink);border-color:var(--ink);color:#fff}
+.v2 .list{background:var(--surface);border:1px solid var(--line);border-radius:var(--r)}
+.v2 .row:first-child{border-radius:var(--r) var(--r) 0 0}.row:last-child{border-radius:0 0 var(--r) var(--r)}
+.v2 .row{display:grid;grid-template-columns:auto minmax(0,1fr) auto auto;gap:16px;align-items:center;padding:16px 18px;border-top:1px solid var(--line-soft);cursor:pointer}
+.v2 .row:first-child{border-top:0}
+.v2 .row:hover{background:#fafbfe}
+.v2 .code{width:96px;text-align:center;font:600 13px var(--f-mono);padding:7px 10px;border-radius:9px;background:var(--aa-soft);color:var(--aa)}
+.v2 .code.CSE{background:var(--cse-soft);color:var(--cse)}.code.AMATH{background:var(--amath-soft);color:var(--amath)}.code.EE{background:var(--ee-soft);color:var(--ee)}
+.v2 .ttl{min-width:0}
+.v2 .ttl b{display:block;font:600 16px/1.3 var(--f-display)}
+.v2 .ttl>span{display:block;color:var(--muted);font-size:13.5px;margin-top:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.v2 .badge-unused{display:inline-flex;align-items:center;gap:5px;font-size:12px;font-weight:600;border-radius:999px;padding:3px 9px;background:var(--green-soft);color:var(--green);vertical-align:2px;margin-left:8px}
+.v2 .qmark{display:inline-grid;place-items:center;width:20px;height:20px;border-radius:6px;background:var(--blue-soft);color:var(--blue-ink);vertical-align:-3px;margin-left:8px}
+.v2 .qmark svg{width:13px;height:13px}
+.v2 .pills .qp{display:inline-flex;align-items:center;gap:6px}
+.v2 .pills .qp svg{width:14px;height:14px}
+.v2 .pills .div{width:1px;background:var(--line);margin:4px 4px}
+.v2 .mini{display:grid;gap:12px;background:var(--bg);border-radius:12px;padding:14px}
+.v2 .mini .two{grid-template-columns:minmax(0,1fr) minmax(0,1fr)}
+.v2 .opt{font-weight:400;color:var(--muted);font-size:13px}
+.v2 .hl{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
+.v2 .hl .lbl{font:700 15px var(--f-display);margin-right:4px}
+.v2 .hl button{border:1px solid var(--line);background:var(--surface);border-radius:9px;padding:6px 10px;font-size:13.5px;display:inline-flex;gap:7px;align-items:center}
+.v2 .hl button b{font:600 12px var(--f-mono);color:var(--blue-ink)}
+.v2 .hl button:hover{border-color:#c7d2e4}
+.v2 .sortsel{border:1px solid var(--line);border-radius:10px;background:var(--surface);padding:9px 12px;font-size:14px}
+.v2 .frow{display:grid;grid-template-columns:auto minmax(0,1fr) auto auto;gap:14px;align-items:center;padding:14px 18px;border-top:1px solid var(--line-soft)}
+.v2 .frow:first-child{border-top:0}
+.v2 .frow .meta{display:block;color:var(--muted);font-size:13px;margin-top:2px}
+.v2 .frow b{display:block;font:600 15.5px/1.3 var(--f-display);overflow-wrap:anywhere}
+.v2 .topic{font-size:12.5px;color:var(--muted);border:1px solid var(--line);border-radius:999px;padding:2px 9px;white-space:nowrap}
+.v2 .faces{display:flex;align-items:center}
+.v2 .faces img,.v2 .faces .more{width:30px;height:30px;border-radius:50%;object-fit:cover;border:2px solid var(--surface);margin-left:-8px;background:var(--line-soft)}
+.v2 .faces img:first-child{margin-left:0}
+.v2 .faces .more{display:grid;place-items:center;font:600 11px var(--f-body);color:var(--muted)}
+.v2 .kebab{width:34px;height:34px;border-radius:9px;border:0;background:transparent;color:var(--muted);display:grid;place-items:center;position:relative}
+.v2 .kebab:hover{background:var(--line-soft);color:var(--ink)}
+.v2 .kebab svg{width:18px;height:18px}
+.v2 .menu{position:absolute;right:0;top:38px;z-index:20;background:var(--surface);border:1px solid var(--line);border-radius:12px;box-shadow:0 12px 32px rgba(19,16,29,.14);padding:6px;min-width:190px;display:grid;text-align:left}
+.v2 .menu button{border:0;background:none;text-align:left;padding:9px 12px;border-radius:8px;font-size:14px;display:flex;gap:10px;align-items:center}
+.v2 .menu button svg{width:16px;height:16px;color:var(--muted)}
+.v2 .menu button:hover{background:var(--line-soft)}
+.v2 .menu .danger{color:var(--red)}.menu .danger svg{color:var(--red)}
+.v2 .menu hr{border:0;border-top:1px solid var(--line-soft);margin:4px 2px}
+.v2 .quals{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.7fr);gap:16px;align-items:start}
+.v2 .panel{background:var(--surface);border:1px solid var(--line);border-radius:var(--r);padding:18px 20px}
+.v2 .panel h2{margin:0 0 12px;font:700 17px var(--f-display);display:flex;align-items:center;justify-content:space-between;gap:10px}
+.v2 .chips{display:flex;flex-wrap:wrap;gap:8px}
+.v2 .chips span{display:inline-flex;gap:8px;align-items:center;border:1px solid var(--line);border-radius:10px;padding:8px 12px;font-size:14px}
+.v2 .chips span b{font:600 12.5px var(--f-mono);color:var(--muted)}
+.v2 .file{display:grid;grid-template-columns:auto minmax(0,1fr) auto;gap:14px;align-items:center;padding:12px 0;border-top:1px solid var(--line-soft)}
+.v2 .file:first-of-type{border-top:0}
+.v2 .ext{width:38px;height:44px;border-radius:8px;background:#fdecea;color:var(--red);display:grid;place-items:center;font:600 11px var(--f-mono)}
+.v2 .file b{display:block;font:600 15px var(--f-display);overflow-wrap:anywhere}
+.v2 .file span{display:block;color:var(--muted);font-size:13px}
+.v2 .scrim{position:fixed;inset:0;background:rgba(11,7,20,.32);z-index:40;opacity:0;pointer-events:none;transition:opacity .2s}
+.v2 .scrim.on{opacity:1;pointer-events:auto}
+.v2 .sheet{visibility:hidden;position:fixed;top:0;right:0;bottom:0;width:min(460px,100%);background:var(--surface);z-index:41;transform:translateX(102%);transition:transform .25s ease,visibility .25s;display:flex;flex-direction:column;box-shadow:-20px 0 50px rgba(11,7,20,.16);padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px);padding-right:env(safe-area-inset-right,0px)}
+.v2 .sheet.on{transform:none;visibility:visible}
+.v2 .sh-head{display:flex;align-items:flex-start;justify-content:space-between;gap:12px;padding:22px 24px 12px}
+.v2 .sh-head h2{margin:0;font:700 22px/1.2 var(--f-display)}
+.v2 .sh-head p{margin:4px 0 0;color:var(--muted);font-size:14px}
+.v2 .x{border:0;background:var(--line-soft);width:34px;height:34px;border-radius:50%;display:grid;place-items:center;color:var(--muted);flex:none}
+.v2 .x svg{width:16px;height:16px}
+.v2 .sh-body{flex:1;overflow:auto;padding:8px 24px 24px;display:grid;gap:18px;align-content:start}
+.v2 .sh-foot{display:flex;gap:10px;justify-content:flex-end;padding:14px 24px;border-top:1px solid var(--line)}
+.v2 .field{display:grid;gap:6px}
+.v2 .field label,.v2 .field .lab{font-weight:600;font-size:14px}
+.v2 .field input,.v2 .field textarea,.v2 .field select{border:1px solid var(--line);border-radius:10px;padding:11px 13px;background:var(--surface);width:100%}
+.v2 .field textarea{min-height:92px;resize:vertical}
+.v2 .field input:focus,.v2 .field textarea:focus,.v2 .field select:focus{outline:2px solid var(--blue);outline-offset:-1px;border-color:transparent}
+.v2 .two{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.6fr);gap:12px}
+.v2 .check{display:flex;gap:10px;align-items:center;font-size:14.5px}
+.v2 .check input{width:18px;height:18px;accent-color:var(--blue)}
+.v2 .drop{border:1.5px dashed #c7d2e4;border-radius:12px;padding:18px;text-align:center;color:var(--muted);font-size:14px}
+.v2 .drop b{color:var(--blue-ink)}
+.v2 .tip{display:grid;grid-template-columns:auto minmax(0,1fr);gap:12px;align-items:start}
+.v2 .tip img{width:34px;height:34px;border-radius:50%;object-fit:cover}
+.v2 .tip p{margin:0;background:var(--bg);border-radius:4px 12px 12px 12px;padding:10px 13px;font-size:14.5px}
+.v2 .tip small{display:block;color:var(--muted);font-size:12.5px;margin-top:4px}
+.v2 .sec{font:700 15px var(--f-display);margin:4px 0 -6px}
+.v2 .people{display:grid;gap:10px}
+.v2 .person{display:flex;align-items:center;gap:10px;font-size:14.5px}
+.v2 .person img{width:30px;height:30px;border-radius:50%;object-fit:cover}
+.v2 .person span{color:var(--muted);font-size:13px;margin-left:auto}
+.v2 .actions{display:flex;flex-wrap:wrap;gap:8px}
+.v2 .empty{padding:40px 20px;text-align:center;color:var(--muted)}
+.v2 .sechead{display:flex;align-items:baseline;justify-content:space-between;gap:10px;margin-bottom:-6px}
+.v2 .sechead h2{margin:0;font:700 17px var(--f-display)}
+.v2 .sechead .count{font:600 12px var(--f-body);color:var(--blue-ink);background:var(--blue-soft);border-radius:999px;padding:2px 8px;margin-left:6px;vertical-align:2px}
+.v2 .tagline{display:inline-flex;gap:6px;align-items:center;font-size:12.5px;font-weight:600;color:#0e7490;background:#dff3f6;border-radius:999px;padding:2px 9px}
+.v2 .flist{display:grid;gap:2px}
+.v2 .fl{display:grid;grid-template-columns:auto minmax(0,1fr) auto;gap:12px;align-items:center;padding:8px 0}
+.v2 .fl .ext{width:32px;height:38px;font-size:10px}
+.v2 .fl b{display:block;font:600 14.5px var(--f-display);overflow-wrap:anywhere}
+.v2 .fl span{font-size:12.5px;color:var(--muted)}
+.v2 .fl b{color:var(--ink)}
+.v2 .ac{position:relative}
+.v2 .acl{position:absolute;left:0;right:0;top:calc(100% + 4px);z-index:5;background:var(--surface);border:1px solid var(--line);border-radius:12px;box-shadow:0 12px 30px rgba(19,16,29,.14);max-height:260px;overflow:auto;padding:6px}
+.v2 .acl button{display:flex;gap:10px;width:100%;border:0;background:none;text-align:left;padding:9px 10px;border-radius:8px;font-size:14px}
+.v2 .acl button b{font:600 12.5px var(--f-mono);color:var(--blue-ink);min-width:76px}
+.v2 .acl button:hover,.v2 .acl button.on{background:var(--line-soft)}
+.v2 .acl .none{padding:10px;color:var(--muted);font-size:13.5px}
+.v2 .chosen{display:flex;align-items:center;gap:10px;border:1px solid var(--line);border-radius:10px;padding:10px 12px;background:var(--bg)}
+.v2 .chosen b{font:600 13px var(--f-mono);color:var(--blue-ink)}
+.v2 .chosen button{margin-left:auto}
+.v2 .seg2{display:flex;gap:8px;flex-wrap:wrap}
+.v2 .seg2 button{border:1px solid var(--line);background:var(--surface);border-radius:10px;padding:9px 14px;font:600 14px var(--f-display)}
+.v2 .seg2 button[aria-pressed="true"]{border-color:var(--blue);background:var(--blue-soft);color:var(--blue-ink)}
+.v2 .ini{display:inline-grid;place-items:center;border-radius:50%;background:var(--blue-soft);color:var(--blue-ink);font:600 12px var(--f-display);flex:none}
+.v2 .faces .ini{width:30px;height:30px;border:2px solid var(--surface);margin-left:-8px;font-size:11px}
+.v2 .faces .ini:first-child{margin-left:0}
+.v2 .person .ini,.v2 .tip .ini{width:30px;height:30px;font-size:12px}
+.v2 .tip .ini{width:34px;height:34px}
+.v2 .btn[disabled]{opacity:.55;cursor:default}
+.v2 .field .err{color:var(--red);font-size:13.5px}
+.v2 .loading{color:var(--muted);font-size:14px;margin:0}
+.v2 .ac{position:relative}
+.v2 .sh-foot:empty{display:none}
+.v2 .person .pm{margin-left:auto;display:flex;align-items:center;gap:4px}
+.v2 .person .pm span{margin:0}
+@media (max-width:860px){.v2 .head h1{font-size:28px}.v2 .row{grid-template-columns:auto minmax(0,1fr) auto;padding:14px}.v2 .row .faces{display:none}.v2 .code{width:auto;min-width:64px;font-size:12px;padding:6px 8px}.v2 .frow{grid-template-columns:auto minmax(0,1fr) auto;padding:12px 14px}.v2 .frow .topic{display:none}.v2 .two{grid-template-columns:minmax(0,1fr)}}
+.scrim{position:fixed;inset:0;background:rgba(11,7,20,.32);z-index:85;opacity:0;pointer-events:none;transition:opacity .2s}
+.scrim.on{opacity:1;pointer-events:auto}
+.sheet{visibility:hidden;position:fixed;top:0;right:0;bottom:0;width:min(460px,100%);background:#fff;z-index:86;transform:translateX(102%);transition:transform .25s ease,visibility .25s;display:flex;flex-direction:column;box-shadow:-20px 0 50px rgba(11,7,20,.16);padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px);padding-right:env(safe-area-inset-right,0px);font:400 15px/1.5 var(--f-body);color:var(--ink)}
+.sheet.on{transform:none;visibility:visible}
+.sh-head{display:flex;align-items:flex-start;justify-content:space-between;gap:12px;padding:22px 24px 12px}
+.sh-head h2{margin:0;font:700 22px/1.2 var(--f-display)}
+.sh-head p{margin:4px 0 0;color:var(--muted);font-size:14px}
+.sh-x{border:0;background:var(--line-soft);width:34px;height:34px;border-radius:50%;display:grid;place-items:center;color:var(--muted);flex:none;cursor:pointer}
+.sh-x svg{width:16px;height:16px}
+.sh-body{flex:1;overflow:auto;padding:8px 24px 24px;display:grid;gap:18px;align-content:start}
+.sh-foot{display:flex;gap:10px;justify-content:flex-end;padding:14px 24px;border-top:1px solid var(--line)}
+@media (prefers-reduced-motion:reduce){.sheet,.scrim{transition:none}}
+</style><style>.v2 .btn.primary:hover{color:#fff;border-color:transparent}.v2 .btn.secondary:hover{color:var(--ink)}.v2 .btn.quiet:hover{border-color:transparent}</style>
+<script>
+/* redesign foundation: one side panel for every form and detail view, and small ⋯ menus */
+var V2={};
+(function(){
+  var sheet,scrim,last=null,on=null;
+  function ensure(){if(sheet)return;
+    scrim=document.createElement("div");scrim.className="scrim";document.body.appendChild(scrim);
+    sheet=document.createElement("aside");sheet.className="sheet v2";sheet.setAttribute("role","dialog");sheet.setAttribute("aria-modal","true");sheet.setAttribute("aria-labelledby","shT");
+    sheet.innerHTML='<div class="sh-head"><div><h2 id="shT"></h2><p id="shS"></p></div><button type="button" class="sh-x" id="shX" aria-label="Close"><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M4 4l8 8M12 4l-8 8" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg></button></div><div class="sh-body" id="shB"></div><div class="sh-foot" id="shF"></div>';
+    document.body.appendChild(sheet);
+    document.getElementById("shX").onclick=close;scrim.onclick=close;
+    sheet.addEventListener("click",function(e){var b=e.target.closest("button,a,[role=button]");if(!b)return;if(b.dataset.close!=null){close();return}if(on)on(b,e)});
+    ["input","keydown","change"].forEach(function(t){sheet.addEventListener(t,function(e){var k={input:"input",keydown:"key",change:"change"}[t];if(on&&on[k])on[k](e)})});
+    sheet.addEventListener("keydown",function(e){if(e.key==="Tab"){var f=[].filter.call(sheet.querySelectorAll("button,a[href],input,select,textarea"),function(x){return !x.disabled&&x.offsetParent!==null});if(!f.length)return;
+      if(e.shiftKey&&document.activeElement===f[0]){e.preventDefault();f[f.length-1].focus()}else if(!e.shiftKey&&document.activeElement===f[f.length-1]){e.preventDefault();f[0].focus()}}});
+    document.addEventListener("keydown",function(e){if(e.key==="Escape"&&sheet.classList.contains("on")){if(V2.menu.close())return;close()}})}
+  function open(t,s,body,foot,handler){ensure();if(!sheet.classList.contains("on"))last=document.activeElement;on=handler||null;
+    document.getElementById("shT").textContent=t;document.getElementById("shS").textContent=s||"";document.getElementById("shB").innerHTML=body;document.getElementById("shF").innerHTML=foot||"";
+    document.getElementById("shB").scrollTop=0;sheet.classList.add("on");scrim.classList.add("on");
+    setTimeout(function(){var f=sheet.querySelector(".sh-body input:not([type=checkbox]),.sh-body textarea,.sh-body button,.sh-foot .btn");(f||document.getElementById("shX")).focus()},60)}
+  function close(){if(!sheet)return;sheet.classList.remove("on");scrim.classList.remove("on");on=null;if(last&&document.body.contains(last))last.focus()}
+  V2.open=open;V2.close=close;V2.isOpen=function(){return !!sheet&&sheet.classList.contains("on")};
+  // ⋯ menus: V2.menu.open(button, [[label, fn, "danger"?], "hr", ...])
+  var mEl=null,mFor=null;
+  V2.menu={open:function(btn,items){if(mEl&&mFor===btn){V2.menu.close();return}V2.menu.close();mFor=btn;mEl=document.createElement("div");mEl.className="menu";mEl.setAttribute("role","menu");
+      items.forEach(function(it){if(it==="hr"){mEl.appendChild(document.createElement("hr"));return}var b=document.createElement("button");b.type="button";b.setAttribute("role","menuitem");if(it[2])b.className=it[2];b.textContent=it[0];
+        b.onclick=function(e){e.stopPropagation();V2.menu.close();it[1]()};mEl.appendChild(b)});
+      btn.parentNode.appendChild(mEl);btn.setAttribute("aria-expanded","true");mEl.querySelector("button").focus()},
+    close:function(){if(!mEl)return false;mEl.remove();mEl=null;if(mFor)mFor.setAttribute("aria-expanded","false");mFor=null;return true}};
+  document.addEventListener("click",function(e){if(mEl&&!e.target.closest(".menu")&&e.target!==mFor&&!(mFor&&mFor.contains(e.target)))V2.menu.close()});
+  document.addEventListener("keydown",function(e){if(e.key==="Escape"&&mEl&&!V2.isOpen()){var f=mFor;V2.menu.close();if(f)f.focus()}});
+})();
 </script>
+
 <style>
-.bar1{display:flex;flex-wrap:wrap;gap:.6rem;align-items:center;margin-bottom:1.1rem}
-.bar1 input{flex:1 1 16rem;font:inherit;font-size:.92rem;border:1px solid var(--line);border-radius:8px;padding:.55rem .75rem;background:#fff}
-.flt{display:flex;flex-wrap:wrap;gap:.35rem}
-.flt button{font:500 .7rem var(--f-mono);letter-spacing:.04em;background:#fff;border:1px solid var(--line);border-radius:999px;padding:.35rem .75rem;cursor:pointer;color:var(--muted)}
-.flt button[aria-pressed="true"]{background:var(--ink);border-color:var(--ink);color:#fff}
-.cgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(19rem,1fr));gap:1rem}
-.course{display:flex;flex-direction:column;gap:.55rem}
-.course .code{display:flex;align-items:center;justify-content:space-between;gap:.5rem}
-.course h3{font:700 1.05rem/1.3 var(--f-display)}
-.course .tip{font-size:.9rem;color:#3e4657;padding-left:.7rem;border-left:2px solid var(--line)}
-.course .took{font-size:.8rem;color:var(--muted)}
-.course .acts{display:flex;flex-wrap:wrap;gap:.4rem;margin-top:auto;padding-top:.4rem}
-.chip.q{background:#efe7fb;color:#6b3fa0}
-.sec-h{margin:2.4rem 0 .8rem;font:700 1.15rem var(--f-display)}
-.qgrid{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr) minmax(0,1fr);gap:1rem}
-.qgrid ul{list-style:none;margin:0;padding:0;display:grid;gap:.6rem}
-.qgrid li{font-size:.88rem}
-.qgrid li small{display:block;color:var(--muted);font-size:.76rem;margin-top:.15rem}
-.qgrid .who{display:flex;align-items:center;gap:.55rem}
-.qgrid .who img,.qgrid .who .ini{width:30px;height:30px;border-radius:50%;object-fit:cover}
-.qgrid .who .ini{display:grid;place-content:center;background:var(--blue-soft);color:var(--blue-text);font:600 .6rem var(--f-mono)}
-.pick{display:grid;gap:.4rem;margin-bottom:.9rem}
-.pick label{display:flex;align-items:center;gap:.6rem;border:1px solid var(--line);border-radius:8px;padding:.45rem .6rem;cursor:pointer;font-size:.9rem}
-.pick label:has(input:checked){border-color:var(--blue);background:var(--blue-soft)}
-.pick img,.pick .ini{width:26px;height:26px;border-radius:50%;object-fit:cover}
-.pick .ini{display:grid;place-content:center;background:#fff;color:var(--blue-text);font:600 .55rem var(--f-mono)}
-.pick small{margin-left:auto;font:500 .66rem var(--f-mono);color:var(--muted)}
-.cform h2{margin-bottom:.9rem}
-.cform .row2{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,2fr);gap:.9rem 1.2rem}
-.cform .chk{display:flex;align-items:center;gap:.5rem;font-size:.9rem;margin:.2rem 0 .4rem}
-.tookf{display:flex;flex-wrap:wrap;gap:.4rem;align-items:center;font-size:.84rem}
-.tookf select{font:inherit;font-size:.84rem;border:1px solid var(--line);border-radius:7px;padding:.3rem .45rem;background:#fff}
-.linkbtn{background:none;border:0;color:var(--blue-text);font:500 .72rem var(--f-mono);cursor:pointer;padding:.2rem 0}
-.linkbtn.danger{color:#b42318}
-.qadd{display:grid;gap:.45rem;margin-top:.9rem;padding-top:.8rem;border-top:1px solid var(--line)}
-.qadd textarea,.qadd input{font:inherit;font-size:.86rem;border:1px solid var(--line);border-radius:7px;padding:.45rem .6rem;width:100%}
-.qadd .r{display:flex;gap:.4rem}
-.qadd .r input{width:6rem}
-.hint{font-size:.78rem;color:var(--muted);margin:-.4rem 0 .7rem}
-.btn[disabled]{opacity:.55;cursor:default}
-#termF select{font:inherit;font-size:.92rem;border:1px solid var(--line);border-radius:8px;padding:.5rem .6rem;background:#fff;width:auto}
-#termF[hidden]{display:none}
-.qgrid2{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,2fr);gap:1rem;align-items:start}
-.mats{list-style:none;margin:0;padding:0;display:grid}
-.mats li{display:grid;grid-template-columns:auto minmax(0,1fr) auto;gap:.75rem;align-items:center;padding:.65rem 0;border-top:1px solid var(--line)}
-.mats li:first-child{border-top:0;padding-top:0}
-.mats .fi{width:34px;height:40px;border-radius:6px;background:var(--blue-soft);color:var(--blue-text);display:grid;place-content:center;font:600 .55rem var(--f-mono);text-transform:uppercase}
-.mats .nm{background:none;border:0;padding:0;font:600 .92rem/1.3 var(--f-display);color:var(--ink);text-align:left;cursor:pointer;overflow-wrap:anywhere}
-.mats .nm:hover{color:var(--blue-text);text-decoration:underline}
-.mats small{display:block;font-size:.76rem;color:var(--muted);margin-top:.15rem}
-.mats .nt{display:block;font-size:.84rem;color:#3e4657;margin-top:.15rem}
-.mats .ac{display:flex;gap:.5rem;align-items:center}
-@media (max-width:900px){.qgrid2{grid-template-columns:minmax(0,1fr)}}
-.tookf{display:grid;gap:.45rem}
-.tookf label{display:flex;flex-wrap:wrap;align-items:center;gap:.4rem}
-.tookf textarea{font:inherit;font-size:.86rem;border:1px solid var(--line);border-radius:7px;padding:.45rem .6rem;width:100%;resize:vertical}
-.tookf .tb{display:flex;flex-wrap:wrap;gap:.4rem;align-items:center}
-.course .tip .tby{display:block;font:500 .66rem var(--f-mono);color:var(--muted);margin-top:.2rem;letter-spacing:.04em}
-.empty-s{font-size:.86rem;color:var(--muted)}
-@media (max-width:640px){.cform .row2{grid-template-columns:minmax(0,1fr)}}
-.qlist{list-style:none;margin:0;padding:0;display:grid;gap:.5rem;font-size:.9rem}
-.copied{font-size:.8rem;color:#11734b;align-self:center;margin-right:auto}
-@media (max-width:900px){.qgrid{grid-template-columns:minmax(0,1fr)}}
+/* Courses, redesigned: one list, a side panel for each course, and Quals prep files */
+.v2 .row .tagline{margin-right:10px}
+.v2 .flist .ext.doc,.v2 .frow .ext.doc{background:var(--blue-soft);color:var(--blue-ink)}
+.v2 .fl .btn{min-width:96px}
+.v2 .sec{display:flex;justify-content:space-between;align-items:center;gap:10px}
+.v2 .uplist{display:grid;gap:4px;font-size:13.5px;color:var(--muted);margin-top:6px}
+.v2 .drop{cursor:pointer;background:var(--surface)}
+.v2 .drop:hover,.v2 .drop:focus-visible{border-color:var(--blue)}
+.v2 .menu{right:0;top:38px}
+.v2 .row>span:last-child{position:relative}
 </style>
 <div class="dash">
   <aside class="rail r2" aria-label="Dashboard"><div class="brand2"><a class="brand" href="dashboard.html" aria-label="RAIN Lab dashboard"><svg class="logo" viewBox="0 0 397 73" role="img" aria-label="RAIN LAB">
@@ -702,179 +845,235 @@ labReady(function(){
 <path d="M127 15H141.693C143.684 15 145.615 15.219 147.486 15.657C149.358 16.0552 151.01 16.7321 152.444 17.6877C153.917 18.6433 155.091 19.8976 155.967 21.4505C156.843 23.0034 157.281 24.8947 157.281 27.1245C157.281 30.1904 156.405 32.699 154.653 34.65C152.941 36.5613 150.592 37.8553 147.606 38.5322L158.894 57.2864H149.816L140.02 39.3684H134.526V57.2864H127V15ZM140.677 33.2166C141.752 33.2166 142.828 33.137 143.903 32.9777C144.978 32.8184 145.933 32.5198 146.769 32.0818C147.645 31.6438 148.362 31.0266 148.92 30.2303C149.477 29.3941 149.756 28.3389 149.756 27.0648C149.756 25.91 149.497 24.9743 148.979 24.2576C148.462 23.5011 147.805 22.9038 147.008 22.4658C146.212 22.0278 145.296 21.7292 144.261 21.5699C143.266 21.4106 142.29 21.331 141.334 21.331H134.526V33.2166H140.677Z" fill="currentColor"/>
 </svg>
 </a><button type="button" class="bell" id="bell" aria-label="Notifications" aria-expanded="false"><svg viewBox="0 0 18 18" aria-hidden="true"><path d="M4.5 12.5V8a4.5 4.5 0 0 1 9 0v4.5l1.3 1.5H3.2zM7.3 15.5a1.8 1.8 0 0 0 3.4 0" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linejoin="round"/></svg><span class="bdot" hidden></span></button></div><nav class="nav2" aria-label="Dashboard pages"><a href="dashboard.html"><svg viewBox="0 0 20 20" aria-hidden="true"><path d="M3.5 9.2L10 3.8l6.5 5.4V16a.8.8 0 0 1-.8.8H12v-4.6H8v4.6H4.3a.8.8 0 0 1-.8-.8z" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"/></svg><span>Today</span></a><a href="dashboard-calendar.html"><svg viewBox="0 0 20 20" aria-hidden="true"><rect x="3" y="4.5" width="14" height="12.5" rx="2" fill="none" stroke="currentColor" stroke-width="1.5"/><path d="M3 8.5h14M7 2.8v3.4M13 2.8v3.4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg><span>Calendar</span></a><a href="dashboard-reading.html"><svg viewBox="0 0 20 20" aria-hidden="true"><path d="M10 5.5C8.3 4.3 6 3.8 3 4v11.5c3-.2 5.3.3 7 1.5 1.7-1.2 4-1.7 7-1.5V4c-3-.2-5.3.3-7 1.5zM10 5.5V17" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"/></svg><span>Reading</span></a><a href="dashboard-reviews.html"><svg viewBox="0 0 20 20" aria-hidden="true"><path d="M5 2.8h7l3.5 3.5V17.2H5z" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"/><path d="M7.5 11.5l2 2 3.5-4" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg><span>Reviews</span></a><a href="dashboard-courses.html" aria-current="page"><svg viewBox="0 0 20 20" aria-hidden="true"><path d="M1.8 7.5L10 3.5l8.2 4L10 11.5zM5 9.2v4.3c1.8 1.9 8.2 1.9 10 0V9.2" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"/></svg><span>Courses</span></a><span class="sep" aria-hidden="true"></span><a class="adm-only adm" href="dashboard-admin.html"><svg viewBox="0 0 20 20" aria-hidden="true"><path d="M10 2.5l6.5 2.7v4.6c0 3.9-2.7 6.5-6.5 7.9-3.8-1.4-6.5-4-6.5-7.9V5.2z" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"/></svg><span>Admin</span></a><button type="button" class="meTab" data-me aria-haspopup="true" aria-expanded="false" aria-label="Your menu"><img alt="" src="shiva-shakeri.jpg"><span>You</span></button></nav><button type="button" class="me" data-me aria-haspopup="true" aria-expanded="false"><img alt="" src="shiva-shakeri.jpg"><div><b>Shiva Shakeri</b><span id="roleLbl">Admin</span></div><svg class="chev" width="16" height="16" viewBox="0 0 16 16" aria-hidden="true"><path d="M4 10l4-4 4 4" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg></button><div class="memenu" id="memenu" role="menu" hidden><a role="menuitem" href="dashboard-website.html#profile"><svg viewBox="0 0 18 18" aria-hidden="true"><circle cx="9" cy="6.5" r="3" fill="none" stroke="currentColor" stroke-width="1.5"/><path d="M3.5 15.5c.7-3 2.8-4.5 5.5-4.5s4.8 1.5 5.5 4.5" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>My profile</a><a role="menuitem" href="dashboard-website.html#share"><svg viewBox="0 0 18 18" aria-hidden="true"><path d="M3 4h9v10H4.5A1.5 1.5 0 0 1 3 12.5zM12 7h3v5.5a1.5 1.5 0 0 1-3 0M5.5 7h4M5.5 10h4" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"/></svg>Share news</a><a role="menuitem" href="dashboard-website.html#addpub"><svg viewBox="0 0 18 18" aria-hidden="true"><path d="M5 2.5h6l3 3v10H5zM8 9.5h4M10 7.5v4" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round" stroke-linecap="round"/></svg>Add a publication</a><a role="menuitem" href="dashboard-polls.html"><svg viewBox="0 0 18 18" aria-hidden="true"><path d="M4 15V9M9 15V4M14 15v-4" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/></svg>Polls</a><a role="menuitem" href="dashboard-resources.html"><svg viewBox="0 0 18 18" aria-hidden="true"><path d="M7.5 10.5l3-3M6 8L4.5 9.5a2.5 2.5 0 0 0 3.5 3.5L9.5 11.5M12 10l1.5-1.5A2.5 2.5 0 0 0 10 5L8.5 6.5" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>Lab links</a><button type="button" role="menuitem" id="reqOpen"><svg viewBox="0 0 18 18" aria-hidden="true"><path d="M3 4h12v8H8l-3.5 3v-3H3z" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"/></svg>Ask the admins</button><span class="adm-only m-only"><a role="menuitem" href="dashboard-admin.html"><svg viewBox="0 0 18 18" aria-hidden="true"><path d="M9 2l6 2.5v4.2c0 3.6-2.5 6-6 7.3-3.5-1.3-6-3.7-6-7.3V4.5z" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"/></svg>Admin</a></span><hr><a role="menuitem" href="index.html"><svg viewBox="0 0 18 18" aria-hidden="true"><circle cx="9" cy="9" r="6.5" fill="none" stroke="currentColor" stroke-width="1.4"/><path d="M2.5 9h13M9 2.5c2 2 2 11 0 13M9 2.5c-2 2-2 11 0 13" fill="none" stroke="currentColor" stroke-width="1.2"/></svg>Public website</a><a role="menuitem" href="members.html" data-signout><svg viewBox="0 0 18 18" aria-hidden="true"><path d="M10.5 3H14v12h-3.5M8 5.5L4.5 9 8 12.5M4.5 9h7" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>Sign out</a></div></aside>
-  <main class="main">
-    
-    <header class="top"><div><h1>Courses</h1><p class="sub">What we took, tips, and where the notes are</p></div>
-      <button type="button" class="btn dark" id="cAdd"><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M8 3v10M3 8h10" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>Add a course</button></header>
-    <div class="bar1"><input id="cq" type="search" placeholder="Search courses" aria-label="Search courses"><div class="flt" id="flt"></div></div>
-    <div class="cgrid" id="cgrid"></div>
-
-    <h2 class="sec-h">Quals prep</h2>
-    <div class="qgrid2">
-      <section class="card"><h2>Courses that help most</h2><ul class="qlist" id="qc"></ul></section>
-      <section class="card"><h2>Materials <button type="button" class="btn sm" id="qUp">Upload</button></h2><ul class="mats" id="mats"></ul></section>
+  <main class="main v2">
+  <div class="wrap">
+    <header class="head">
+      <div><h1>Courses</h1><p>What lab members took, with their tips and notes.</p></div>
+      <button type="button" class="btn primary" id="addBtn"><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M8 3v10M3 8h10" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg><span id="addLbl">Add a course</span></button>
+    </header>
+    <div class="tabs" role="tablist">
+      <button type="button" role="tab" aria-selected="true" data-tab="courses">Courses</button>
+      <button type="button" role="tab" aria-selected="false" data-tab="quals">Quals prep</button>
     </div>
+    <section id="c-courses" style="display:grid;gap:14px">
+      <div class="tools">
+        <label class="search"><svg viewBox="0 0 18 18" aria-hidden="true"><circle cx="8" cy="8" r="5.5" fill="none" stroke="currentColor" stroke-width="1.6"/><path d="M12.2 12.2L16 16" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg><input id="q" type="search" placeholder="Search courses, tips and professors" aria-label="Search courses"></label>
+        <div class="pills" id="pills"></div>
+      </div>
+      <div class="list" id="list"></div>
+    </section>
+    <section id="c-quals" hidden style="display:grid;gap:14px">
+      <div class="hl" id="helps"></div>
+      <div class="tools">
+        <label class="search"><svg viewBox="0 0 18 18" aria-hidden="true"><circle cx="8" cy="8" r="5.5" fill="none" stroke="currentColor" stroke-width="1.6"/><path d="M12.2 12.2L16 16" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg><input id="mq" type="search" placeholder="Search materials" aria-label="Search materials"></label>
+        <div class="pills" id="topics"></div>
+        <select class="sortsel" id="msort" aria-label="Sort"><option value="new">Newest first</option><option value="az">A to Z</option></select>
+      </div>
+      <div class="list" id="files"></div>
+    </section>
+  </div>
   </main>
 </div>
-<div class="modal" id="cmodal" hidden role="dialog" aria-modal="true" aria-labelledby="cfH"><div class="box" style="width:min(38rem,100%)">
-    <form class="cform" id="cform" novalidate>
-      <h2 id="cfH">Add a course</h2>
-      <div class="row2">
-        <label class="fld"><span>Course number</span><input name="code" placeholder="A A 547"></label>
-        <label class="fld"><span>Name</span><input name="name" placeholder="Linear Systems Theory"></label>
-      </div>
-      <label class="fld"><span>Tip for the next person</span><textarea name="tip" placeholder="What to know before taking it"></textarea></label>
-      <label class="chk"><input type="checkbox" name="took" checked> I took this course</label>
-      <label class="fld" id="termF"><span>When did you take it?</span><select name="term"></select></label>
-      <label class="chk"><input type="checkbox" name="quals"> Helps for quals</label>
-      <label class="fld"><span id="filesL">Attach files (optional)</span><input type="file" name="files" multiple></label>
-      <p class="hint">Notes, homework or old exams. Every course gets its own folder in Rain-general &gt; Courses in Dropbox. Up to 20 MB each.</p>
-      <p class="err" id="cerr" role="alert"></p>
-      <div class="mfoot"><button type="button" class="linkbtn danger" id="cDel" hidden style="margin-right:auto">Delete course</button><button type="button" class="btn" id="cCancel">Cancel</button><button class="btn dark" id="cSave">Add course</button></div>
-    </form>
-</div></div>
-<div class="modal" id="qmodal" hidden role="dialog" aria-modal="true" aria-labelledby="qmH"><div class="box">
-  <form id="qform2" novalidate>
-    <h2 id="qmH">Upload quals materials</h2><p class="lead">Past exams, problem sets, summaries, anything that helped. Files go to Rain-general &gt; Quals prep in Dropbox and are listed here for everyone in the lab to download.</p>
-    <label class="fld"><span>Files</span><input type="file" name="files" multiple></label>
-    <label class="fld"><span>What is it? (optional)</span><input name="note" placeholder="For example, linear systems questions from 2023"></label>
-    <p class="hint">Up to 20 MB each.</p>
-    <p class="err" id="qerr" role="alert"></p>
-    <div class="mfoot"><button type="button" class="btn" data-qclose>Cancel</button><button class="btn dark" id="qSend">Upload</button></div>
-  </form>
-</div></div>
-<div class="modal" id="ask" hidden role="dialog" aria-modal="true" aria-labelledby="askH"><div class="box">
-  <h2 id="askH">Ask someone</h2><p class="lead" id="askL"></p>
-  <div class="pick" id="askP"></div>
-  <label class="fld"><span>Message</span><textarea id="askM"></textarea></label>
-  <p class="lead" style="margin:-.3rem 0 .8rem">Nothing is sent from here. Copy it into Slack or an email.</p>
-  <div class="mfoot"><span class="copied" id="askC" hidden>Copied</span><button type="button" class="btn" data-close>Close</button><button type="button" class="btn dark" id="askCopy">Copy message</button></div>
-</div></div>
 <script>labReady(function(){
 
 (function(){
-  var me=DASH.me.name,dept="All",q="",C=DASH.courses,tookAt=null;
-  function first(n){var k=n.match(/"([^"]*)"/);return k?k[1]:n.split(" ")[0]}
-  // course numbers are always written the same way: letters, a space, then the number (CSE546 becomes CSE 546)
+  var ME=DASH.me.name,C=DASH.courses,Q=DASH.qualsFiles||(DASH.qualsFiles=[]),CAT=[["A A 402","Viscous Fluid Mechanics"],["A A 405","Introduction to Aerospace Plasmas"],["A A 406","Electric Propulsion"],["A A 410","Aircraft Design I"],["A A 411","Aircraft Design II"],["A A 419","Aerospace Heat Transfer"],["A A 420","Spacecraft and Space Systems Design I"],["A A 421","Spacecraft and Space System Design II"],["A A 430","Finite Element Analysis in Aerospace"],["A A 447","Control in Aerospace Systems"],["A A 448","Control Systems Sensors and Actuators"],["A A 449","Special Topics in Controls"],["A A 460","Propulsion"],["A A 461","Air Breathing Propulsion"],["A A 462","Rocket Propulsion"],["A A 470","Systems Engineering"],["A A 490","Space Law, Business, and Policy"],["A A 498","Special Topics"],["A A 499","Undergraduate Research"],["A A 501","Advanced Gas Dynamics"],["A A 503","Continuum Mechanics"],["A A 504","Compressible Fluid Mechanics"],["A A 506","Vortex-Dominated Flows"],["A A 507","Incompressible Fluid Mechanics"],["A A 508","Turbulence"],["A A 510","Mathematical Foundations of Systems Theory"],["A A 516","Stability and Control of Flight Vehicles"],["A A 523","Special Topics in Fluid Physics"],["A A 524","Aeroacoustics"],["A A 525","Advanced Airbreathing Propulsion"],["A A 527","Space Power Systems"],["A A 528","Spacecraft Dynamics and Control"],["A A 529","Space Propulsion"],["A A 530","Mechanics of Solids"],["A A 531","Quasibrittle Fracture Mechanics and Scaling"],["A A 532","Mechanics of Composite Materials"],["A A 535","Advanced Composite Structural Analysis"],["A A 538","Introduction to Structural Optimization"],["A A 540","Finite Element Analysis I"],["A A 541","Finite Element Analysis II"],["A A 543","Computational Fluid Dynamics of Compressible Flows"],["A A 544","Computational Fluid Dynamics of Incompressible Flows"],["A A 545","Computational Methods for Plasmas"],["A A 546","Advanced Topics in Control System Theory"],["A A 547","Linear Systems Theory"],["A A 548","Linear Multivariable Control"],["A A 549","Estimation and System Identification"],["A A 550","Nonlinear Optimal Control"],["A A 554","Aeroelasticity"],["A A 556","Space and Laboratory Plasma Physics"],["A A 557","Physics of Fusion Plasmas"],["A A 558","Plasma Theory"],["A A 559","Plasma Science Seminar"],["A A 560","Plasma Diagnostics"],["A A 564","Kinetic Theory/Radiative Transfer"],["A A 565","Fusion Reactor Fundamentals"],["A A 578","Convex Optimization"],["A A 580","Geometric Methods for Non-Linear Control Systems"],["A A 581","Digital Control System Design"],["A A 583","Nonlinear Control Systems"],["A A 585","Learning-Based Control"],["A A 589","Special Topics in Solid Mechanics"],["A A 590","Space Law, Business, and Policy"],["A A 591","Robotics and Control Systems Colloquium"],["A A 593","Feedforward Control"],["A A 594","Robust Control"],["A A 597","Networked Dynamics Systems"],["A A 598","Special Topics in Aeronautics and Astronautics"],["A A 599","Special Projects"],["AMATH 401","Vector Calculus and Complex Variables"],["AMATH 402","Introduction to Dynamical Systems and Chaos"],["AMATH 403","Methods for Partial Differential Equations"],["AMATH 422","Computational Modeling of Biological Systems"],["AMATH 423","Mathematical Analysis in Biology and Medicine"],["AMATH 481","Scientific Computing"],["AMATH 482","Computational Methods for Data Analysis"],["AMATH 483","High-Performance Scientific Computing"],["AMATH 490","Special Topics"],["AMATH 500","Special Studies in Applied Mathematics"],["AMATH 501","Vector Calculus and Complex Variables"],["AMATH 502","Introduction to Dynamical Systems and Chaos"],["AMATH 503","Methods for Partial Differential Equations"],["AMATH 505","Introduction to Fluid Dynamics"],["AMATH 507","Calculus of Variations"],["AMATH 514","Networks and Combinatorial Optimization"],["AMATH 515","Optimization: Fundamentals and Applications"],["AMATH 516","Numerical Optimization"],["AMATH 518","Theory of Optimal Control"],["AMATH 521","Special Topics in Mathematical Biology"],["AMATH 522","Computational Modeling of Biological Systems"],["AMATH 523","Mathematical Analysis in Biology and Medicine"],["AMATH 524","Mathematical Biology: Spatiotemporal Models"],["AMATH 531","Mathematical Theory of Cellular Dynamics"],["AMATH 532","Mathematics of Genome Analysis and Molecular Modeling"],["AMATH 533","Neural Control of Movement: A Computational Perspective"],["AMATH 534","Dynamics of Neurons and Networks"],["AMATH 535","Mathematical Ecology"],["AMATH 536","Mathematical Modeling of Cancer"],["AMATH 561","Introduction to Probability and Random Processes"],["AMATH 562","Advanced Stochastic Processes"],["AMATH 563","Inferring Structure of Complex Systems"],["AMATH 567","Applied Complex Analysis"],["AMATH 568","Advanced Methods for Ordinary Differential Equations"],["AMATH 569","Advanced Methods for Partial Differential Equations"],["AMATH 570","Approximation Theory and Spectral Methods"],["AMATH 571","Intelligent Control through Learning and Optimization"],["AMATH 573","Coherent Structures, Pattern Formation and Solitons"],["AMATH 574","Conservation Laws and Finite Volume Methods"],["AMATH 575","Dynamical Systems"],["AMATH 581","Scientific Computing"],["AMATH 582","Computational Methods for Data Analysis"],["AMATH 583","High-Performance Scientific Computing"],["AMATH 584","Numerical Linear Algebra"],["AMATH 585","Numerical Analysis"],["AMATH 586","Numerical Methods for Partial Differential Equations"],["AMATH 590","Special Topics"],["CSE 401","Introduction to Compiler Construction"],["CSE 403","Software Engineering"],["CSE 412","Introduction to Data Visualization"],["CSE 414","Introduction to Database Systems"],["CSE 415","Introduction to Artificial Intelligence"],["CSE 416","Introduction to Machine Learning"],["CSE 417","Algorithms and Computational Complexity"],["CSE 421","Introduction to Algorithms"],["CSE 422","Toolkit for Modern Algorithms"],["CSE 426","Cryptography"],["CSE 427","Computational Biology"],["CSE 431","Introduction to Theory of Computation"],["CSE 434","Introduction to Quantum Computation"],["CSE 438","Computational Neuroscience"],["CSE 442","Data Visualization"],["CSE 444","Database Systems Internals"],["CSE 446","Machine Learning"],["CSE 447","Natural Language Processing"],["CSE 451","Introduction to Operating Systems"],["CSE 452","Introduction to Distributed Systems"],["CSE 455","Computer Vision"],["CSE 457","Computer Graphics"],["CSE 461","Introduction to Computer-Communication Networks"],["CSE 469","Computer Architecture I"],["CSE 473","Artificial Intelligence"],["CSE 474","Introduction to Embedded Systems"],["CSE 478","Autonomous Robotics"],["CSE 484","Computer Security"],["CSE 490","Special Topics in Computer Science and Engineering"],["CSE 493","Advanced Special Topics in Computer Science and Engineering"],["CSE 501","Programming Language Analysis and Implementation"],["CSE 503","Software Engineering"],["CSE 505","Principles of Programming Languages"],["CSE 507","Computer-Aided Reasoning for Software"],["CSE 510","Advanced Topics in Human-Computer Interaction"],["CSE 512","Data Visualization"],["CSE 515","Statistical Methods in Computer Science"],["CSE 517","Natural Language Processing"],["CSE 521","Design and Analysis of Algorithms I"],["CSE 522","Design and Analysis of Algorithms II"],["CSE 525","Randomized Algorithms and Probabilistic Analysis"],["CSE 526","Cryptography"],["CSE 527","Computational Biology"],["CSE 528","Computational Neuroscience"],["CSE 529","Computational Genomics"],["CSE 531","Computational Complexity I"],["CSE 532","Computational Complexity II"],["CSE 533","Advanced Topics in Complexity Theory"],["CSE 534","Quantum Information and Computation"],["CSE 535","Theory of Optimization and Continuous Algorithms"],["CSE 541","Interactive Learning"],["CSE 542","Reinforcement Learning"],["CSE 543","Deep Learning"],["CSE 544","Principles of Database Systems"],["CSE 546","Machine Learning"],["CSE 547","Machine Learning for Big Data"],["CSE 548","Computer Systems Architecture"],["CSE 550","Computer Systems"],["CSE 551","Operating Systems"],["CSE 552","Distributed and Parallel Systems"],["CSE 554","Systems for Machine Learning"],["CSE 556","Computational Fabrication"],["CSE 557","Computer Graphics"],["CSE 561","Computer Communication and Networks"],["CSE 562","Mobile Systems and Applications"],["CSE 564","Computer Security and Privacy"],["CSE 571","AI-based Mobile Robotics"],["CSE 573","Artificial Intelligence"],["CSE 574","Explainable Artificial Intelligence"],["CSE 576","Computer Vision"],["CSE 577","Special Topics in Computer Vision"],["CSE 578","Convex Optimization"],["CSE 579","Intelligent Control through Learning and Optimization"],["CSE 581","Computer Ethics"],["CSE 582","Ethics in Artificial Intelligence"],["CSE 583","Software Development for Data Scientists"],["CSE 590","Research Seminar"],["CSE 599","Special Topics in Computer Science"],["E E 416","Random Signals for Communications and Signal Processing"],["E E 417","Modern Wireless Communications"],["E E 418","Network Security and Cryptography"],["E E 421","Quantum Mechanics for Engineers"],["E E 440","Introduction to Digital Imaging Systems"],["E E 442","Digital Signals and Filtering"],["E E 443","Machine Learning for Signal Processing Applications"],["E E 445","Fundamentals of Optimization and Machine Learning"],["E E 447","Control System Analysis I"],["E E 448","Control Systems Laboratory"],["E E 449","Robotics and Controls Capstone"],["E E 454","Power System Analysis"],["E E 455","Power System Dynamics and Protection"],["E E 474","Introduction to Embedded Systems"],["E E 484","Sensors and Sensor Systems"],["E E 487","Introduction to Photonics"],["E E 505","Probability and Random Processes"],["E E 506","Fundamentals of Wireless Communication"],["E E 508","Stochastic Processes in Engineering"],["E E 510","Mathematical Foundations of Systems Theory"],["E E 511","Introduction to Statistical Learning"],["E E 512","Graphical Models in Pattern Recognition"],["E E 513","Introduction to Deep Learning Applications in Engineering"],["E E 514","Information Theory I"],["E E 515","Information Theory II"],["E E 516","Computer Speech Processing"],["E E 517","Introduction to Large Language Models"],["E E 518","Digital Signal Processing"],["E E 519","Stochastic Analysis of Data From Physical Systems"],["E E 520","Spectral Analysis of Time Series"],["E E 521","Quantum Mechanics for Engineers"],["E E 530","Wavelets: Data Analysis, Algorithms, and Theory"],["E E 540","Wearable Robotics"],["E E 543","Models of Robot Manipulation"],["E E 546","Advanced Topics in Control System Theory"],["E E 547","Linear Systems Theory"],["E E 548","Linear Multivariable Control"],["E E 549","Estimation and System Identification"],["E E 550","Nonlinear Optimal Control"],["E E 552","Power Systems Dynamics and Control"],["E E 557","Dynamics of Controlled Systems"],["E E 562","Artificial Intelligence for Engineers"],["E E 563","Submodular Functions, Optimization, and Applications"],["E E 565","Computer-Communication Networks"],["E E 568","Digital Image Processing"],["E E 576","Computer Vision"],["E E 577","Special Topics in Computer Vision"],["E E 578","Convex Optimization"],["E E 580","Geometric Methods for Non-Linear Control Systems"],["E E 581","Digital Control System Design"],["E E 583","Nonlinear Control Systems"],["E E 585","Learning-Based Control"],["E E 591","Robotics and Control Systems Colloquium"],["E E 593","Feedforward Control"],["E E 594","Robust Control"],["E E 595","Advanced Topics in Communication Theory"],["E E 596","Advanced Topics in Signal and Image Processing"],["E E 597","Networked Dynamics Systems"],["E E 598","Special topics in Electrical Engineering"],["M E 469","Applications of Dynamics in Engineering"],["M E 470","Mechanical Vibrations"],["M E 471","Automatic Control"],["M E 473","Instrumentation"],["M E 477","Embedded Computing in Mechanical Systems"],["M E 478","Finite Element Analysis"],["M E 503","Continuum Mechanics"],["M E 507","Incompressible Fluid Mechanics"],["M E 510","Mathematical Foundations of Systems Theory"],["M E 518","Engineering AI and Machine Learning Seminar"],["M E 521","Thermodynamics"],["M E 534","Fluid Mechanics II"],["M E 535","Computational Techniques in Mechanical Engineering"],["M E 543","Fluid Turbulence"],["M E 545","Introduction to Control Theory"],["M E 547","Linear Systems Theory"],["M E 548","Linear Multivariable Control"],["M E 549","Estimation and System Identification"],["M E 550","Nonlinear Optimal Control"],["M E 551","Elasticity"],["M E 564","Mechanical Engineering Analysis I"],["M E 565","Mechanical Engineering Analysis II"],["M E 569","Data-Driven Control"],["M E 570","Data-Driven Sensing"],["M E 571","Data-Driven Dynamic Systems"],["M E 574","Introduction to Applied Parallel Computing for Engineers"],["M E 578","Convex Optimization"],["M E 579","Foundations of Dynamics and Controls"],["M E 580","Geometric Methods for Non-Linear Control Systems"],["M E 581","Digital Control System Design"],["M E 583","Nonlinear Control Systems"],["M E 585","Learning-Based Control"],["M E 586","Biology Inspired Robotics"],["M E 588","Dynamics and Vibrations"],["M E 589","Vibrations"],["M E 591","Robotics and Control Systems Colloquium"],["M E 593","Feedforward Control"],["M E 594","Robust Control"],["M E 595","Data-Driven Project"],["M E 597","Networked Dynamics Systems"],["M E 599","Special Topics"],["MATH 402","Introduction to Modern Algebra"],["MATH 407","Linear Optimization"],["MATH 408","Nonlinear Optimization"],["MATH 409","Discrete Optimization"],["MATH 424","Fundamental Concepts of Analysis"],["MATH 427","Complex Analysis"],["MATH 441","Topology"],["MATH 442","Differential Geometry"],["MATH 461","Combinatorial Theory I"],["MATH 464","Numerical Analysis I"],["MATH 465","Numerical Analysis II"],["MATH 491","Introduction to Stochastic Processes I"],["MATH 492","Introduction to Stochastic Processes II"],["MATH 504","Modern Algebra"],["MATH 514","Networks and Combinatorial Optimization"],["MATH 515","Optimization: Fundamentals and Applications"],["MATH 516","Numerical Optimization"],["MATH 518","Theory of Optimal Control"],["MATH 521","Advanced Probability"],["MATH 522","Advanced Probability"],["MATH 523","Advanced Probability"],["MATH 524","Real Analysis"],["MATH 525","Real Analysis"],["MATH 526","Real Analysis"],["MATH 527","Functional Analysis"],["MATH 528","Functional Analysis"],["MATH 529","Functional Analysis"],["MATH 534","Complex Analysis"],["MATH 535","Complex Analysis"],["MATH 536","Complex Analysis"],["MATH 544","Topology and Geometry of Manifolds"],["MATH 545","Topology and Geometry of Manifolds"],["MATH 546","Topology and Geometry of Manifolds"],["MATH 554","Advanced Topics in Linear Algebra I"],["MATH 555","Advanced Topics in Linear Algebra II"],["MATH 557","Introduction to Partial Differential Equations"],["MATH 558","Introduction to Partial Differential Equations"],["MATH 559","Introduction to Partial Differential Equations"],["MATH 561","Foundations of Combinatorics"],["MATH 564","Algebraic Topology"],["MATH 574","Fundamental Concepts of Analysis"],["MATH 577","Lie Groups and Lie Algebras"],["MATH 581","Special Topics in Mathematics"],["MATH 584","Numerical Linear Algebra"],["MATH 585","Numerical Analysis"],["MATH 586","Numerical Methods for Partial Differential Equations"],["STAT 403","Introduction to Resampling Inference"],["STAT 416","Introduction to Machine Learning"],["STAT 435","Introduction to Statistical Machine Learning"],["STAT 491","Introduction to Stochastic Processes I"],["STAT 492","Introduction to Stochastic Processes II"],["STAT 502","Design and Analysis of Experiments"],["STAT 504","Applied Regression"],["STAT 512","Statistical Inference"],["STAT 513","Statistical Inference"],["STAT 516","Stochastic Modeling of Scientific Data I"],["STAT 517","Stochastic Modeling of Scientific Data II"],["STAT 519","Time Series Analysis"],["STAT 520","Spectral Analysis of Time Series"],["STAT 521","Advanced Probability"],["STAT 533","Theory of Linear Models"],["STAT 534","Statistical Computing"],["STAT 535","Statistical Learning: Modeling, Prediction, and Computing"],["STAT 538","Statistical Learning: Modeling, Prediction, and Computing"],["STAT 542","Multivariate Analysis"],["STAT 544","Bayesian Statistical Methods"],["STAT 548","Machine Learning for Big Data"],["STAT 558","Statistical Machine Learning for Data Scientists"],["STAT 559","Measure Theory"],["STAT 566","Causal Modeling"],["STAT 581","Advanced Theory of Statistical Inference I"],["STAT 582","Advanced Theory of Statistical Inference II"],["STAT 583","Advanced Theory of Statistical Inference III"]];
+  var CAP='<svg viewBox="0 0 16 16" aria-hidden="true"><path d="M1.5 6L8 3l6.5 3L8 9z M4 7.3v3.4c1.5 1.5 6.5 1.5 8 0V7.3" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"/></svg>';
+  var DOTS='<svg viewBox="0 0 18 18" aria-hidden="true"><circle cx="4" cy="9" r="1.5" fill="currentColor"/><circle cx="9" cy="9" r="1.5" fill="currentColor"/><circle cx="14" cy="9" r="1.5" fill="currentColor"/></svg>';
+  var TOPICS=["Linear systems","Optimization","Estimation","Control","General"];
+  var dept="All",q="",topic="All",mq="",msort="new";
+  function first(n){var k=String(n).match(/"([^"]*)"/);return k?k[1]:String(n).split(" ")[0]}
   function normCode(v){return String(v).toUpperCase().replace(/\s+/g," ").trim().replace(/([A-Z&])\s*(\d)/,"$1 $2")}
-  function deptOf(code){var m=String(code).match(/^([A-Za-z& ]+?)\s*\d/);return m?m[1].trim().toUpperCase():"Other"}
-  function terms(){var out=[],d=new Date(),y=d.getFullYear(),m=d.getMonth(),Q=["Win","Spr","Sum","Aut"],k=m<3?0:m<6?1:m<9?2:3;
-    for(var i=0;i<16;i++){out.push(Q[k]+" "+y);k--;if(k<0){k=3;y--}}return out}
+  function deptOf(c){var m=String(c.code||c).match(/^([A-Za-z& ]+?)\s*\d/);return m?m[1].replace(/\s/g,"").toUpperCase():"Other"}
   function sortC(){C.sort(function(a,b){return a.code.localeCompare(b.code,undefined,{numeric:true})})}sortC();
-  function drawFlt(){var ds=["All"].concat(C.map(function(c){return c.dept||deptOf(c.code)}).filter(function(d,i,a){return a.indexOf(d)===i}));if(ds.indexOf(dept)<0)dept="All";
-    document.getElementById("flt").innerHTML=ds.length>2?ds.map(function(d){return '<button type="button" data-d="'+esc(d)+'" aria-pressed="'+(d===dept)+'">'+esc(d)+'</button>'}).join(""):""}
-  // tips: the one from whoever added the course, then one per person who took it
-  function tipsHTML(c){var out=[];if(c.tip)out.push([c.tip,c.by]);c.took.forEach(function(t){if(t[2])out.push([t[2],t[0]])});
-    return out.map(function(x){return '<p class="tip">'+esc(x[0])+(x[1]?'<small class="tby">'+esc(first(x[1]))+'</small>':'')+'</p>'}).join("")}
-  function tookForm(c,i){var mt=c.took.find(function(t){return t[0]===me})||[me,"",""],ts=terms();if(mt[1]&&ts.indexOf(mt[1])<0)ts.push(mt[1]);
-    return '<div class="tookf"><label>When did you take it? <select aria-label="Quarter">'+ts.map(function(t){return '<option'+(t===mt[1]?' selected':'')+'>'+t+'</option>'}).join("")+'</select></label>'+
-      '<textarea rows="2" placeholder="Your tip for the next person (optional)" aria-label="Your tip">'+esc(mt[2]||"")+'</textarea>'+
-      '<span class="tb"><button type="button" class="btn sm dark" data-tooksave="'+i+'">Save</button><button type="button" class="btn sm" data-tookx>Cancel</button>'+
-      (c.took.some(function(t){return t[0]===me})?'<button type="button" class="linkbtn danger" data-tookrm="'+i+'">I did not take it</button>':'')+'</span></div>'}
-  function draw(){drawFlt();
-    var list=C.filter(function(c){return (dept==="All"||(c.dept||deptOf(c.code))===dept)&&(!q||(c.code+" "+c.name+" "+(c.tip||"")+" "+c.took.map(function(t){return t[2]||""}).join(" ")).toLowerCase().indexOf(q)>=0)});
-    document.getElementById("cgrid").innerHTML=list.map(function(c){var i=C.indexOf(c),mine=c.took.some(function(t){return t[0]===me}),others=c.took.filter(function(t){return t[0]!==me});
-      return '<section class="card course"><div class="code"><span class="k">'+esc(c.code)+'</span>'+(c.quals?'<span class="chip q">Helps for quals</span>':'')+'</div><h3>'+esc(c.name)+'</h3>'+tipsHTML(c)+
-        (c.took.length?'<div class="ppl">'+c.took.map(function(t){return face(t[0])}).join("")+'<span class="c">'+c.took.map(function(t){return esc(first(t[0]))+(t[1]?' '+esc(t[1]):'')}).join(", ")+'</span></div>':'<p class="took">Nobody has marked this one yet.</p>')+
-        (tookAt===i?tookForm(c,i):'')+
-        '<div class="acts"><a class="btn sm" href="'+esc(c.url||"https://www.dropbox.com/home/Rain-general")+'" target="_blank" rel="noopener">'+(c.url?'Course folder':c.uploading?'Making folder...':'Notes in Dropbox')+'</a>'+
-        '<button type="button" class="btn sm" data-cup="'+i+'"'+(c.uploading?' disabled':'')+'>'+(c.uploading?'Uploading...':'Add files')+'</button>'+(others.length?'<button type="button" class="btn sm" data-ask="'+i+'">Ask someone</button>':'')+
-        ((c.by===me||isAdmin())?'<button type="button" class="btn sm" data-cedit="'+i+'">Edit</button>':(tookAt===i?'':'<button type="button" class="btn sm'+(mine?' on':'')+'" data-took="'+i+'" aria-pressed="'+mine+'">'+(mine?'&#10003; I took this':'I took this')+'</button>'))+
-        '</div></section>'}).join("")||
-      (C.length?'<p class="empty">No courses match.</p>':'<p class="empty">No courses yet. Add the ones you took, with a tip for whoever takes them next.</p>');
-    var qc=C.filter(function(c){return c.quals});
-    document.getElementById("qc").innerHTML=qc.map(function(c){return '<li><b>'+esc(c.code)+'</b> '+esc(c.name)+'</li>'}).join("")||'<li class="empty-s">Mark a course as "Helps for quals" when you add it.</li>';
-  }
-  document.getElementById("flt").addEventListener("click",function(e){var b=e.target.closest("[data-d]");if(!b)return;dept=b.dataset.d;draw()});
-  document.getElementById("cq").addEventListener("input",function(){q=this.value.trim().toLowerCase();draw()});
-  // add or edit a course
-  var cf=document.getElementById("cform"),cm=document.getElementById("cmodal"),editing=null,cOpener=null;
-  cf.elements.term.innerHTML=terms().map(function(t){return '<option>'+t+'</option>'}).join("");
-  function syncTerm(){document.getElementById("termF").hidden=!cf.elements.took.checked}
-  cf.elements.took.addEventListener("change",syncTerm);
-  cf.elements.code.addEventListener("blur",function(){if(this.value.trim())this.value=normCode(this.value)});
-  function openCF(c){editing=c||null;cf.reset();document.getElementById("cerr").textContent="";
-    document.getElementById("cfH").textContent=c?"Edit "+c.code:"Add a course";document.getElementById("cSave").textContent=c?"Save changes":"Add course";
-    document.getElementById("filesL").textContent=c?"Add more files (optional)":"Attach files (optional)";document.getElementById("cDel").hidden=!c;
-    if(c){var mt=c.took.find(function(t){return t[0]===me});cf.elements.code.value=c.code;cf.elements.name.value=c.name;cf.elements.tip.value=c.tip||"";cf.elements.quals.checked=!!c.quals;cf.elements.took.checked=!!mt;
-      if(mt&&mt[1]){if(![].some.call(cf.elements.term.options,function(o){return o.value===mt[1]}))cf.elements.term.insertAdjacentHTML("beforeend",'<option>'+esc(mt[1])+'</option>');cf.elements.term.value=mt[1]}}
-    syncTerm();cm.hidden=false;cf.elements.code.focus()}
-  document.getElementById("cAdd").onclick=function(){cOpener=this;openCF(null)};
-  function closeCF(){cm.hidden=true;cf.reset();editing=null;document.getElementById("cerr").textContent="";if(cOpener&&document.body.contains(cOpener))cOpener.focus()}
-  cm.addEventListener("mousedown",function(e){if(e.target===cm)closeCF()});
-  document.getElementById("cCancel").onclick=closeCF;
-  document.getElementById("cDel").onclick=function(){var c=editing,ri=C.indexOf(c);closeCF();
-    later(function(){return c.code+" was deleted. Its Dropbox folder and files stay in Dropbox."},function(){C.splice(ri,1);draw()},function(){C.splice(ri,0,c);draw()},function(){if(window.LAB&&c.id)LAB.delCourse(c)})};
-  cf.addEventListener("keydown",function(e){if(e.key==="Escape")closeCF()});
-  cf.addEventListener("submit",function(e){e.preventDefault();var code=normCode(cf.elements.code.value),name=cf.elements.name.value.trim(),err=document.getElementById("cerr");
-    if(!code){err.textContent="Add the course number.";cf.elements.code.focus();return}
-    if(!name){err.textContent="Add the course name.";cf.elements.name.focus();return}
-    if(C.some(function(c){return c!==editing&&c.code.replace(/\s/g,"")===code.replace(/\s/g,"")})){err.textContent=code+" is already on the list.";return}
-    var fl=[].slice.call(cf.elements.files.files||[]),big=fl.find(function(f){return f.size>20*1024*1024});
-    if(big){err.textContent=big.name+" is over 20 MB. Put it in Dropbox directly.";return}
-    var took=cf.elements.took.checked,term=cf.elements.term.value,c=editing;
-    if(c){var wasTook=c.took.findIndex(function(t){return t[0]===me});
-      Object.assign(c,{code:code,dept:deptOf(code),name:name,tip:cf.elements.tip.value.trim(),quals:cf.elements.quals.checked});if(window.LAB)LAB.updCourse(c);
-      if(took){if(wasTook>=0)c.took[wasTook][1]=term;else c.took.push([me,term]);if(window.LAB)LAB.took(c,term)}
-      else if(wasTook>=0){c.took.splice(wasTook,1);if(window.LAB)LAB.took(c,null)}
-      sortC();closeCF();draw();toast("Saved.");if(fl.length)upload(c,fl);return}
-    c={code:code,dept:deptOf(code),name:name,tip:cf.elements.tip.value.trim(),quals:cf.elements.quals.checked,by:me,took:took?[[me,term]]:[],url:""};
-    C.push(c);sortC();if(window.LAB)LAB.addCourse(c);closeCF();dept="All";draw();upload(c,fl,true)});
-  // course files go to the lab Dropbox
-  var picker=document.createElement("input");picker.type="file";picker.multiple=true;picker.hidden=true;document.body.appendChild(picker);var upFor=null;
-  function upload(c,files,makeFolder){files=[].slice.call(files||[]);if(!files.length&&!makeFolder)return;
-    var big=files.find(function(f){return f.size>20*1024*1024});if(big){toast(big.name+" is over 20 MB. Put it in Dropbox directly.");return}
-    if(!window.LAB){if(files.length)toast("Uploads to Dropbox work on the live dashboard.");else toast(c.code+" added.");return}
-    c.uploading=true;draw();toast(files.length?"Uploading "+files.length+(files.length===1?" file":" files")+" to Dropbox...":c.code+" added. Making its Dropbox folder...");
-    LAB.courseFiles(c,files).then(function(ok){c.uploading=false;draw();if(ok)toast(files.length?"Saved to Dropbox, in the "+c.code+" folder.":c.code+" is ready, with its own Dropbox folder.")})}
-  picker.addEventListener("change",function(){if(upFor)upload(upFor,picker.files);picker.value=""});
-  var m=document.getElementById("ask"),cur=null,opener=null;
-  function msg(){var p=m.querySelector("input:checked");return 'Hi '+(p?first(p.value):'')+', I am thinking about taking '+cur.code+' ('+cur.name+'). Since you took it, do you have 15 minutes sometime this week to tell me how it went?'}
-  document.getElementById("cgrid").addEventListener("click",function(e){
-    var up=e.target.closest("[data-cup]");if(up){upFor=C[+up.dataset.cup];picker.click();return}
-    var ed=e.target.closest("[data-cedit]");if(ed){cOpener=ed;openCF(C[+ed.dataset.cedit]);return}
-    var t=e.target.closest("[data-took]");if(t){var i=+t.dataset.took,c=C[i],k=c.took.findIndex(function(x){return x[0]===me});
-      tookAt=i;draw();var sl=document.querySelector(".tookf select");if(sl)sl.focus();return}
-    var tr=e.target.closest("[data-tookrm]");if(tr){var c3=C[+tr.dataset.tookrm],k3=c3.took.findIndex(function(x){return x[0]===me});if(k3>=0){c3.took.splice(k3,1);if(window.LAB)LAB.took(c3,null)}tookAt=null;draw();return}
-    var ts=e.target.closest("[data-tooksave]");if(ts){var box=ts.closest(".tookf"),c2=C[+ts.dataset.tooksave],term=box.querySelector("select").value,tip=box.querySelector("textarea").value.trim(),k2=c2.took.findIndex(function(x){return x[0]===me});
-      if(k2>=0){c2.took[k2][1]=term;c2.took[k2][2]=tip}else c2.took.push([me,term,tip]);if(window.LAB)LAB.took(c2,term,tip);tookAt=null;draw();toast("Saved.");return}
-    if(e.target.closest("[data-tookx]")){tookAt=null;draw();return}
-    var a=e.target.closest("[data-ask]");if(!a)return;cur=C[+a.dataset.ask];opener=a;
-    document.getElementById("askL").textContent=cur.code+", "+cur.name+". Pick who to ask.";
-    document.getElementById("askP").innerHTML=cur.took.filter(function(x){return x[0]!==me}).map(function(x,i){return '<label><input type="radio" name="who" value="'+esc(x[0])+'"'+(i?'':' checked')+'>'+face(x[0])+esc(x[0])+'<small>'+esc(x[1])+'</small></label>'}).join("");
-    edited=false;document.getElementById("askM").value=msg();document.getElementById("askC").hidden=true;m.hidden=false;m.querySelector("input").focus()});
-  var edited=false;document.getElementById("askM").addEventListener("input",function(){edited=true});
-  document.getElementById("askP").addEventListener("change",function(){var t=document.getElementById("askM");if(!edited)t.value=msg();else{var p=m.querySelector("input:checked");t.value=t.value.replace(/^Hi [^,]+,/,"Hi "+first(p.value)+",")}});
-  document.getElementById("askCopy").onclick=function(){var t=document.getElementById("askM").value;try{navigator.clipboard.writeText(t)}catch(e){}document.getElementById("askC").hidden=false};
-  function close(){m.hidden=true;if(opener)opener.focus()}
-  m.addEventListener("click",function(e){if(e.target===m||e.target.closest("[data-close]"))close()});
-  document.addEventListener("keydown",function(e){if(e.key==="Escape"&&!m.hidden)close()});
-  // quals materials: files in Dropbox, listed here to download
-  var Q=DASH.qualsFiles||(DASH.qualsFiles=[]),qm=document.getElementById("qmodal"),qf2=document.getElementById("qform2");
+  function took(c){return c.took.filter(function(t){return t[4]!=="now"})}
+  function now_(c){return c.took.filter(function(t){return t[4]==="now"})}
+  function tipOf(c){var t=c.took.find(function(x){return x[2]});return t?t[2]:(c.tip||"No tips yet")}
+  function when(t){return [t[3],t[1]].filter(Boolean).join(", ")}
+  function ext(n){var m=String(n).match(/\.([a-z0-9]+)$/i);return m?m[1].toUpperCase().slice(0,4):"FILE"}
+  function extCls(e){return /^(DOC|DOCX|TXT|MD|TEX)$/.test(e)?" doc":""}
   function fsize(b){return !b?"":b<1024*1024?Math.max(1,Math.round(b/1024))+" KB":(b/1048576).toFixed(1)+" MB"}
-  function drawMats(){document.getElementById("mats").innerHTML=Q.map(function(x,i){var ext=(x.name.match(/\.([a-z0-9]{1,4})$/i)||[0,"file"])[1];
-      return '<li><span class="fi">'+esc(ext)+'</span><span><button type="button" class="nm" data-qdl="'+i+'">'+esc(x.name)+'</button>'+(x.note?'<span class="nt">'+esc(x.note)+'</span>':'')+
-        '<small>'+esc(x.by)+(x.when?', '+esc(x.when):'')+(x.size?', '+fsize(x.size):'')+'</small></span><span class="ac"><button type="button" class="btn sm" data-qdl="'+i+'">Download</button>'+
-        ((x.by===me||isAdmin())?'<button type="button" class="linkbtn danger" data-qrm2="'+i+'">Remove</button>':'')+'</span></li>'}).join("")||'<li class="empty-s">Nothing yet. Upload past exams, notes or summaries that helped you.</li>'}
-  document.getElementById("qUp").onclick=function(){qf2.reset();document.getElementById("qerr").textContent="";qm.hidden=false;qf2.elements.files.focus()};
-  function closeQ(){qm.hidden=true;document.getElementById("qUp").focus()}
-  qm.addEventListener("mousedown",function(e){if(e.target===qm)closeQ()});
-  qm.addEventListener("click",function(e){if(e.target.closest("[data-qclose]"))closeQ()});
-  qm.addEventListener("keydown",function(e){if(e.key==="Escape")closeQ()});
-  qf2.addEventListener("submit",function(e){e.preventDefault();var fl=[].slice.call(qf2.elements.files.files||[]),note=qf2.elements.note.value.trim(),err=document.getElementById("qerr");
-    if(!fl.length){err.textContent="Pick at least one file.";return}
-    var big=fl.find(function(f){return f.size>20*1024*1024});if(big){err.textContent=big.name+" is over 20 MB. Put it in Dropbox directly.";return}
-    closeQ();
-    if(!window.LAB){fl.forEach(function(f){Q.unshift({name:f.name,note:note,by:me,when:"today",size:f.size})});drawMats();toast("Added. On the live dashboard the files go to Dropbox.");return}
-    var b=document.getElementById("qUp");b.disabled=true;b.textContent="Uploading...";toast("Uploading "+fl.length+(fl.length===1?" file":" files")+" to Dropbox...");
-    LAB.qualsUpload(fl,note).then(function(rows){b.disabled=false;b.textContent="Upload";if(rows){rows.forEach(function(r){Q.unshift(r)});drawMats();toast("Uploaded. Everyone in the lab can download "+(rows.length===1?"it":"them")+" now.")}})});
-  document.getElementById("mats").addEventListener("click",function(e){
-    var d=e.target.closest("[data-qdl]");if(d){var x=Q[+d.dataset.qdl];if(!window.LAB){toast("Downloads work on the live dashboard.");return}
-      var w=window.open("","_blank");LAB.qualsLink(x).then(function(u){if(u&&w)w.location.href=u;else if(u)location.href=u;else if(w)w.close()});return}
-    var r=e.target.closest("[data-qrm2]");if(r){var i=+r.dataset.qrm2,x2;
-      later(function(){return x2.name+" was removed from the list. The file stays in Dropbox."},function(){x2=Q.splice(i,1)[0];drawMats()},function(){Q.splice(i,0,x2);drawMats()},function(){if(window.LAB&&x2.id)LAB.delQualsFile(x2)})}});
-  drawMats();
-  draw();
+  function canEdit(c){return c.by===ME||isAdmin()}
+  function terms(){var out=[],d=new Date(),y=d.getFullYear(),m=d.getMonth(),QQ=["Win","Spr","Sum","Aut"],k=m<3?0:m<6?1:m<9?2:3;
+    for(var i=0;i<24;i++){out.push(QQ[k]+" "+y);k--;if(k<0){k=3;y--}}return out}
+  function open(url){var w=window.open("","_blank");url.then(function(u){if(u&&w)w.location.href=u;else if(u)location.href=u;else if(w)w.close()})}
+
+  /* ---------- list ---------- */
+  function draw(){
+    var ds=["All"].concat(C.map(deptOf).filter(function(d,i,a){return a.indexOf(d)===i}));
+    function lab(d){return {AA:"A A",EE:"E E",ME:"M E"}[d]||d}
+    document.getElementById("pills").innerHTML=ds.map(function(d){return '<button type="button" aria-pressed="'+(d===dept)+'" data-d="'+d+'">'+lab(d)+'</button>'}).join("")+
+      '<span class="div" aria-hidden="true"></span><button type="button" class="qp" aria-pressed="'+(dept==="Q")+'" data-d="Q">'+CAP+'Good for quals</button>';
+    var L=C.filter(function(c){return (dept==="All"||(dept==="Q"?c.quals:deptOf(c)===dept))&&(!q||(c.code+" "+c.code.replace(/\s/g,"")+" "+c.name+" "+(c.tip||"")+" "+c.took.map(function(t){return t[0]+" "+t[2]+" "+t[3]}).join(" ")).toLowerCase().indexOf(q)>=0)});
+    document.getElementById("list").innerHTML=L.map(function(c){var i=C.indexOf(c),tk=took(c),nw=now_(c),sh=tk.slice(0,3);
+      return '<div class="row" data-open="'+i+'" tabindex="0" role="button" aria-label="Open '+esc(c.code)+'"><span class="code '+deptOf(c)+'">'+esc(c.code)+'</span>'+
+        '<span class="ttl"><b>'+esc(c.name)+(c.quals?'<span class="qmark" title="Good for quals" aria-label="Good for quals">'+CAP+'</span>':'')+'</b><span>'+esc(tipOf(c))+'</span></span>'+
+        '<span class="faces" aria-label="'+tk.length+' took it">'+(nw.length?'<span class="tagline">'+nw.length+' taking now</span>':'')+sh.map(function(t){return face(t[0])}).join("")+(tk.length>3?'<span class="more">+'+(tk.length-3)+'</span>':'')+'</span>'+
+        '<span><button type="button" class="kebab" data-menu="'+i+'" aria-label="More for '+esc(c.code)+'" aria-haspopup="true" aria-expanded="false">'+DOTS+'</button></span></div>'}).join("")||
+      '<div class="empty">'+(C.length?'No courses match.':'No courses yet. Add the first one.')+'</div>';
+    drawQuals()}
+
+  /* ---------- your line on a course ---------- */
+  function mineFields(t,status){t=t||["","","","",status||"took"];if(t[4]==="now"&&!t[1])t=[t[0],terms()[0],t[2],t[3],t[4]];
+    return '<div class="field"><span class="lab">You</span><div class="seg2" id="f-status"><button type="button" data-st="took" aria-pressed="'+(t[4]!=="now")+'">Took it</button><button type="button" data-st="now" aria-pressed="'+(t[4]==="now")+'">Taking it now</button></div></div>'+
+      '<div class="two"><div class="field"><label for="f-prof">Professor <span class="opt">optional</span></label><input id="f-prof" value="'+esc(t[3])+'" placeholder="Prof. Mesbahi"></div>'+
+      '<div class="field"><label for="f-term">Quarter <span class="opt">optional</span></label><select id="f-term"><option value="">Not sure</option>'+terms().concat(t[1]&&terms().indexOf(t[1])<0?[t[1]]:[]).map(function(x){return '<option'+(t[1]===x?' selected':'')+'>'+esc(x)+'</option>'}).join("")+'</select></div></div>'+
+      '<div class="field"><label for="f-tip">Your tip <span class="opt">optional</span></label><textarea id="f-tip" placeholder="What to know before taking it">'+esc(t[2])+'</textarea></div>'+
+      '<div class="drop" role="button" tabindex="0" data-pick><b>Add files</b> <span class="opt">optional</span><br>Notes, homework or old exams, saved to the course folder in Dropbox. Up to 20 MB each.<div class="uplist" id="f-files"></div></div>'}
+  function readMine(){var st=document.querySelector('#f-status [aria-pressed="true"]');return [ME,document.getElementById("f-term").value,document.getElementById("f-tip").value.trim(),document.getElementById("f-prof").value.trim(),st?st.dataset.st:"took"]}
+  function statusClick(b){if(!b.dataset.st)return false;document.querySelectorAll("#f-status button").forEach(function(x){x.setAttribute("aria-pressed",String(x===b))});if(b.dataset.st==="now"){var s=document.getElementById("f-term");if(!s.value)s.value=terms()[0]}return true}
+  // files picked in a form, uploaded when it is saved
+  var picked=[],picker=document.createElement("input");picker.type="file";picker.multiple=true;picker.hidden=true;document.body.appendChild(picker);
+  picker.addEventListener("change",function(){var fl=[].slice.call(picker.files||[]),big=fl.find(function(f){return f.size>20*1024*1024});picker.value="";
+    if(big){toast(big.name+" is over 20 MB. Put it in Dropbox directly.");fl=fl.filter(function(f){return f!==big})}
+    picked=picked.concat(fl);var u=document.getElementById("f-files");if(u)u.innerHTML=picked.map(function(f){return '<span>'+esc(f.name)+', '+fsize(f.size)+'</span>'}).join("")});
+  function pickKeys(e){if((e.key==="Enter"||e.key===" ")&&e.target.matches("[data-pick]")){e.preventDefault();picker.click();return true}return false}
+  function uploadFiles(c){var fl=picked;picked=[];if(!fl.length)return;
+    toast("Uploading "+fl.length+(fl.length===1?" file":" files")+" to Dropbox...");
+    LAB.courseFiles(c,fl).then(function(ok){if(ok){toast("Saved to Dropbox, in the "+c.code+" folder.");c._files=null;if(V2.isOpen()&&cur===c)detail(c)}})}
+
+  /* ---------- add or edit a course, with the UW catalog ---------- */
+  var pick=null,acIdx=-1;
+  function pickerHTML(c){return c?'<div class="two"><div class="field"><label for="f-code">Course number</label><input id="f-code" value="'+esc(c.code)+'"></div><div class="field"><label for="f-name">Name</label><input id="f-name" value="'+esc(c.name)+'"></div></div>':
+    '<div class="field ac"><label for="f-find">Course</label><input id="f-find" autocomplete="off" placeholder="Search the UW catalog: 546, machine learning, convex..." role="combobox" aria-expanded="false" aria-controls="f-acl" aria-autocomplete="list"><div class="acl" id="f-acl" role="listbox" hidden></div></div><div id="f-chosen"></div>'}
+  function acDraw(v){var l=document.getElementById("f-acl"),f=document.getElementById("f-find");v=v.trim().toLowerCase();if(!v){l.hidden=true;f.setAttribute("aria-expanded","false");return}
+    var words=v.split(/\s+/),res=CAT.filter(function(x){var s=(x[0]+" "+x[0].replace(/\s/g,"")+" "+x[1]).toLowerCase();return words.every(function(w){return s.indexOf(w)>=0})}).slice(0,8);acIdx=-1;
+    l.innerHTML=res.map(function(x){return '<button type="button" role="option" data-ac="'+esc(x[0])+'|'+esc(x[1])+'"><b>'+esc(x[0])+'</b>'+esc(x[1])+'</button>'}).join("")+'<button type="button" data-manual><span style="color:var(--muted)">Not in the list? Type it in yourself</span></button>';
+    l.hidden=false;f.setAttribute("aria-expanded","true")}
+  function choose(code,name){var exist=C.find(function(c){return c.code.replace(/\s/g,"")===code.replace(/\s/g,"")});
+    if(exist){toast(code+" is already here. Opening it.");detail(exist);return}
+    pick=[code,name];document.getElementById("f-find").parentNode.hidden=true;
+    document.getElementById("f-chosen").innerHTML='<div class="chosen"><b>'+esc(code)+'</b><span>'+esc(name)+'</span><button type="button" class="btn quiet sm" data-repick>Change</button></div>'}
+  function courseForm(c){var mine=c?c.took.find(function(t){return t[0]===ME}):null;pick=c?[c.code,c.name]:null;picked=[];
+    return pickerHTML(c)+'<label class="check"><input type="checkbox" id="f-quals" '+(c&&c.quals?"checked":"")+'> Good for quals</label>'+
+      '<label class="check"><input type="checkbox" id="f-took" '+(!c||mine?"checked":"")+'> I took this course, or I am taking it now</label>'+
+      '<div id="f-mine" class="mini"'+(c&&!mine?' hidden':'')+'>'+mineFields(mine)+'</div>'}
+  function courseHandler(c){var h=function(b){
+      if(statusClick(b))return;
+      if(b.dataset.pick!=null){picker.click();return}
+      if(b.dataset.ac){var p=b.dataset.ac.split("|");choose(p[0],p[1]);return}
+      if(b.dataset.manual!=null){var box=document.getElementById("f-find").parentNode;box.outerHTML='<div class="two"><div class="field"><label for="f-code">Course number</label><input id="f-code" placeholder="A A 547"></div><div class="field"><label for="f-name">Name</label><input id="f-name" placeholder="Linear Systems Theory"></div></div>';pick=null;document.getElementById("f-code").focus();return}
+      if(b.dataset.repick!=null){pick=null;document.getElementById("f-chosen").innerHTML="";document.getElementById("f-find").parentNode.hidden=false;var f=document.getElementById("f-find");f.value="";f.focus();return}
+      if(b.dataset.save==null)return;
+      var code,name;if(pick){code=pick[0];name=pick[1]}if(document.getElementById("f-code")){code=normCode(document.getElementById("f-code").value);name=document.getElementById("f-name").value.trim()}
+      if(!code||!name){toast(c?"Add the course number and name.":"Pick a course first.");var ff=document.getElementById("f-find")||document.getElementById("f-code");if(ff)ff.focus();return}
+      if(C.some(function(x){return x!==c&&x.code.replace(/\s/g,"")===code.replace(/\s/g,"")})){toast(code+" is already on the list.");return}
+      var tk=document.getElementById("f-took").checked,me=tk?readMine():null,quals=document.getElementById("f-quals").checked;
+      if(c){if(c.by===ME||isAdmin()){c.code=code;c.name=name;c.quals=quals;LAB.updCourse(c)}
+        var k=c.took.findIndex(function(t){return t[0]===ME});
+        if(me){if(k>=0)c.took[k]=me;else c.took.push(me)}else if(k>=0)c.took.splice(k,1);
+        if(me||k>=0)LAB.took(c,me);sortC();V2.close();draw();toast("Saved.");uploadFiles(c);return}
+      c={code:code,name:name,tip:"",quals:quals,by:ME,took:me?[me]:[],url:""};
+      C.push(c);sortC();LAB.addCourse(c);dept="All";V2.close();draw();
+      var fl=picked.length;if(fl)uploadFiles(c);else{toast(code+" added. Making its Dropbox folder...");LAB.courseFiles(c,[]).then(function(ok){if(ok)toast(code+" is ready, with its own Dropbox folder.")})}};
+    h.input=function(e){if(e.target.id==="f-find")acDraw(e.target.value)};
+    h.key=function(e){if(pickKeys(e))return;if(e.target.id!=="f-find")return;var bs=[].slice.call(document.querySelectorAll("#f-acl button"));if(!bs.length)return;
+      if(e.key==="ArrowDown"||e.key==="ArrowUp"){e.preventDefault();acIdx=(acIdx+(e.key==="ArrowDown"?1:-1)+bs.length)%bs.length;bs.forEach(function(x,j){x.classList.toggle("on",j===acIdx)});bs[acIdx].scrollIntoView({block:"nearest"})}
+      if(e.key==="Enter"){e.preventDefault();bs[acIdx<0?0:acIdx].click()}};
+    h.change=function(e){if(e.target.id==="f-took")document.getElementById("f-mine").hidden=!e.target.checked};
+    return h}
+  function addCourse(){V2.open("Add a course","It gets its own folder in the lab Dropbox.",courseForm(null),'<button type="button" class="btn quiet" data-close>Cancel</button><button type="button" class="btn primary" data-save>Add course</button>',courseHandler(null))}
+  function editCourse(c){V2.open("Edit "+c.code,c.name,courseForm(c),'<button type="button" class="btn quiet" data-close>Cancel</button><button type="button" class="btn primary" data-save>Save</button>',courseHandler(c))}
+  function delCourse(c){var i=C.indexOf(c);
+    later(function(){return c.code+" deleted. Its Dropbox folder stays."},function(){C.splice(i,1);draw()},function(){C.splice(i,0,c);draw()},function(){LAB.delCourse(c)})}
+
+  /* ---------- your entry: change it, or take yourself off ---------- */
+  function editEntry(c){var k=c.took.findIndex(function(t){return t[0]===ME});picked=[];
+    V2.open("Your entry for "+c.code,c.name,'<div class="mini">'+mineFields(c.took[k])+'</div>',
+      '<button type="button" class="btn quiet" data-rmme style="margin-right:auto">Remove me from this course</button><button type="button" class="btn quiet" data-back>Cancel</button><button type="button" class="btn primary" data-save>Save</button>',
+      Object.assign(function(b){if(statusClick(b))return;if(b.dataset.pick!=null){picker.click();return}var k2=c.took.findIndex(function(t){return t[0]===ME});
+        if(b.dataset.back!=null){detail(c);return}
+        if(b.dataset.save!=null){c.took[k2]=readMine();LAB.took(c,c.took[k2]);draw();detail(c);toast("Saved.");uploadFiles(c);return}
+        if(b.dataset.rmme!=null){var old=c.took[k2];
+          later(function(){return "You are no longer listed on "+c.code+"."},function(){c.took.splice(k2,1);draw();detail(c)},function(){c.took.splice(k2,0,old);draw();detail(c)},function(){LAB.took(c,null)})}},{key:pickKeys}))}
+
+  /* ---------- course panel ---------- */
+  var cur=null;
+  function prow(t){var me=t[0]===ME;return '<div class="person">'+face(t[0])+esc(t[0])+(me?' <span style="margin:0 0 0 4px;color:var(--blue-ink);font-weight:600">(you)</span>':'')+'<span class="pm"><span>'+esc(when(t))+'</span>'+(me?'<button type="button" class="btn quiet sm" data-entry>Edit</button>':'')+'</span></div>'}
+  function filesHTML(c){if(!c.id)return '<p class="loading">The folder is being made...</p>';
+    if(!c._files)return '<p class="loading" id="f-load">Loading files...</p>';
+    if(c._files.err)return '<p class="loading">Could not load the files. <button type="button" class="btn quiet sm" data-reload>Try again</button></p>';
+    return c._files.length?'<div class="flist">'+c._files.map(function(f,j){var e=ext(f.name);return '<div class="fl"><span class="ext'+extCls(e)+'">'+esc(e)+'</span><span><b>'+esc(f.name)+'</b><span>'+fsize(f.size)+'</span></span><button type="button" class="btn secondary sm" data-dl="'+j+'">Download</button></div>'}).join("")+'</div>':
+      '<p class="loading">No files yet. People add them when they mark that they took it.</p>'}
+  function loadFiles(c){if(c._files||c._loading||!c.id)return;c._loading=true;
+    LAB.listFiles(c).then(function(fs){c._files=fs},function(e){console.error(e);c._files={err:1}}).then(function(){c._loading=false;if(V2.isOpen()&&cur===c&&!joining)detail(c)})}
+  var joining=null;
+  function detail(c,join){cur=c;joining=join||null;picked=[];
+    var mt=c.took.find(function(t){return t[0]===ME}),tips=c.took.filter(function(t){return t[2]}),tk=took(c),nw=now_(c);
+    var sub=tk.length+(tk.length===1?" person":" people")+" took it"+(nw.length?", "+nw.length+" taking it now":"")+(c.quals?". Good for quals.":".");
+    if(c.tip&&!tips.length)tips=[[c.by,"",c.tip,"",""]];
+    V2.open(c.code+" "+c.name,sub,
+      (mt||join?'':'<div class="actions"><button type="button" class="btn primary" data-join="took">I took this</button><button type="button" class="btn secondary" data-join="now">I am taking it now</button></div>')+
+      (join?'<div class="mini"><b style="font:700 15px var(--f-display)">Add yourself to '+esc(c.code)+'</b>'+mineFields(null,join)+'<div class="actions" style="justify-content:flex-end"><button type="button" class="btn quiet" data-back>Cancel</button><button type="button" class="btn primary" data-joinsave>Add me</button></div></div>':'')+
+      '<p class="sec">Files'+(c.url?'<a class="btn quiet sm" href="'+esc(c.url)+'" target="_blank" rel="noopener">Open in Dropbox</a>':'')+'</p>'+filesHTML(c)+
+      '<p class="sec">Tips</p>'+(tips.length?tips.map(function(t){return '<div class="tip">'+face(t[0])+'<div><p>'+esc(t[2])+'</p><small>'+esc(first(t[0]))+(when(t)?', '+esc(when(t)):'')+'</small></div></div>'}).join(""):'<p class="loading">No tips yet.</p>')+
+      (nw.length?'<p class="sec">Taking it now</p><div class="people">'+nw.map(prow).join("")+'</div>':'')+
+      (tk.length?'<p class="sec">Took it</p><div class="people">'+tk.map(prow).join("")+'</div>':''),
+      '',
+      Object.assign(function(b){if(statusClick(b))return;
+        if(b.dataset.pick!=null){picker.click();return}
+        if(b.dataset.join){detail(c,b.dataset.join);return}
+        if(b.dataset.back!=null){detail(c);return}
+        if(b.dataset.entry!=null){editEntry(c);return}
+        if(b.dataset.reload!=null){c._files=null;detail(c);return}
+        if(b.dataset.dl){var f=c._files[+b.dataset.dl];open(LAB.fileLink(c,f.name));return}
+        if(b.dataset.joinsave!=null){var me=readMine();c.took.push(me);LAB.took(c,me);draw();detail(c);toast("Added you to "+c.code+".");uploadFiles(c);return}},{key:pickKeys}));
+    loadFiles(c)}
+
+  /* ---------- list events ---------- */
+  document.getElementById("list").addEventListener("click",function(e){var k=e.target.closest("[data-menu]");
+    if(k){e.stopPropagation();var c=C[+k.dataset.menu],items=[];
+      if(c.url)items.push(["Open in Dropbox",function(){window.open(c.url,"_blank","noopener")}]);
+      items.push(["Open",function(){detail(c)}]);
+      if(canEdit(c))items.push(["Edit",function(){editCourse(c)}],"hr",["Delete course",function(){delCourse(c)},"danger"]);
+      V2.menu.open(k,items);return}
+    var r=e.target.closest("[data-open]");if(r)detail(C[+r.dataset.open])});
+  document.getElementById("list").addEventListener("keydown",function(e){if((e.key==="Enter"||e.key===" ")&&e.target.matches(".row")){e.preventDefault();detail(C[+e.target.dataset.open])}});
+  document.getElementById("pills").addEventListener("click",function(e){var b=e.target.closest("[data-d]");if(b){dept=b.dataset.d;draw()}});
+  document.getElementById("q").addEventListener("input",function(){q=this.value.trim().toLowerCase();draw()});
+
+  /* ---------- quals prep ---------- */
+  function drawQuals(){
+    var qc=C.filter(function(c){return c.quals});
+    document.getElementById("helps").innerHTML=qc.length?'<span class="lbl">Good for quals</span>'+qc.map(function(c){return '<button type="button" data-goc="'+C.indexOf(c)+'"><b>'+esc(c.code)+'</b>'+esc(c.name)+'</button>'}).join(""):'';
+    document.getElementById("topics").innerHTML=["All"].concat(TOPICS).map(function(t){return '<button type="button" aria-pressed="'+(t===topic)+'" data-t="'+t+'">'+t+'</button>'}).join("");
+    var ML=Q.filter(function(f){return (topic==="All"||f.topic===topic)&&(!mq||(f.name+" "+f.note+" "+f.by).toLowerCase().indexOf(mq)>=0)}).sort(function(a,b){return msort==="az"?a.name.localeCompare(b.name):(b.t||0)-(a.t||0)});
+    document.getElementById("files").innerHTML=ML.map(function(f){var i=Q.indexOf(f),e=ext(f.name),own=f.by===ME||isAdmin();
+      return '<div class="frow"><span class="ext'+extCls(e)+'">'+esc(e)+'</span><span style="min-width:0"><b>'+esc(f.note||f.name)+'</b><span class="meta">'+(f.note?esc(f.name)+', ':'')+esc(first(f.by))+', '+esc(f.when)+(f.size?', '+fsize(f.size):'')+'</span></span><span class="topic">'+esc(f.topic)+'</span>'+
+        '<span style="display:flex;gap:4px;align-items:center;position:relative"><button type="button" class="btn secondary sm" data-qdl="'+i+'">Download</button>'+(own?'<button type="button" class="kebab" data-qmenu="'+i+'" aria-label="More for '+esc(f.name)+'" aria-haspopup="true" aria-expanded="false">'+DOTS+'</button>':'')+'</span></div>'}).join("")||
+      '<div class="empty">'+(Q.length?'No materials match.':'No materials yet. Upload past exams, summaries, anything that helped.')+'</div>'}
+  document.getElementById("helps").addEventListener("click",function(e){var b=e.target.closest("[data-goc]");if(b)detail(C[+b.dataset.goc])});
+  document.getElementById("topics").addEventListener("click",function(e){var b=e.target.closest("[data-t]");if(b){topic=b.dataset.t;drawQuals()}});
+  document.getElementById("mq").addEventListener("input",function(){mq=this.value.trim().toLowerCase();drawQuals()});
+  document.getElementById("msort").addEventListener("change",function(){msort=this.value;drawQuals()});
+  document.getElementById("files").addEventListener("click",function(e){
+    var d=e.target.closest("[data-qdl]");if(d){open(LAB.qualsLink(Q[+d.dataset.qdl]));return}
+    var k=e.target.closest("[data-qmenu]");if(k){e.stopPropagation();var x=Q[+k.dataset.qmenu];
+      V2.menu.open(k,[["Remove from the list",function(){var i=Q.indexOf(x);later(function(){return x.name+" removed from the list. The file stays in Dropbox."},function(){Q.splice(i,1);drawQuals()},function(){Q.splice(i,0,x);drawQuals()},function(){LAB.delQualsFile(x)})},"danger"]])}});
+  var qPicked=[],qPicker=document.createElement("input");qPicker.type="file";qPicker.multiple=true;qPicker.hidden=true;document.body.appendChild(qPicker);
+  qPicker.addEventListener("change",function(){var fl=[].slice.call(qPicker.files||[]),big=fl.find(function(f){return f.size>20*1024*1024});qPicker.value="";
+    if(big){toast(big.name+" is over 20 MB. Put it in Dropbox directly.");fl=fl.filter(function(f){return f!==big})}
+    qPicked=qPicked.concat(fl);var u=document.getElementById("q-files");if(u)u.innerHTML=qPicked.map(function(f){return '<span>'+esc(f.name)+', '+fsize(f.size)+'</span>'}).join("")});
+  function upload(){qPicked=[];
+    V2.open("Upload materials","Past exams, summaries, anything that helped.",
+      '<div class="drop" role="button" tabindex="0" data-qpick style="padding:34px"><b>Choose files</b><br>Up to 20 MB each<div class="uplist" id="q-files"></div></div>'+
+      '<div class="field"><label for="f-topic">Topic</label><select id="f-topic">'+TOPICS.map(function(t){return '<option>'+t+'</option>'}).join("")+'</select></div>'+
+      '<div class="field"><label for="f-note">What is it? <span class="opt">optional</span></label><input id="f-note" placeholder="For example, linear systems questions from 2023"></div>',
+      '<button type="button" class="btn quiet" data-close>Cancel</button><button type="button" class="btn primary" data-up>Upload</button>',
+      Object.assign(function(b){if(b.dataset.qpick!=null){qPicker.click();return}
+        if(b.dataset.up!=null){if(!qPicked.length){toast("Choose at least one file.");return}
+          var fl=qPicked,note=document.getElementById("f-note").value.trim(),tp=document.getElementById("f-topic").value;b.disabled=true;b.textContent="Uploading...";
+          LAB.qualsUpload(fl,note,tp).then(function(rows){b.disabled=false;b.textContent="Upload";if(rows){rows.forEach(function(r){Q.unshift(r)});V2.close();drawQuals();toast("Uploaded. Everyone in the lab can download it now.")}})}},
+        {key:function(e){if((e.key==="Enter"||e.key===" ")&&e.target.matches("[data-qpick]")){e.preventDefault();qPicker.click()}}}))}
+
+  /* ---------- tabs and the main button ---------- */
+  function tab(id){document.querySelectorAll(".tabs [data-tab]").forEach(function(x){x.setAttribute("aria-selected",String(x.dataset.tab===id))});
+    document.getElementById("c-courses").hidden=id!=="courses";document.getElementById("c-quals").hidden=id!=="quals";
+    document.getElementById("addLbl").textContent=id==="quals"?"Upload materials":"Add a course";try{history.replaceState(null,"",id==="quals"?"#quals":location.pathname)}catch(e){}}
+  document.querySelector(".tabs").addEventListener("click",function(e){var b=e.target.closest("[data-tab]");if(b)tab(b.dataset.tab)});
+  document.getElementById("addBtn").onclick=function(){if(!document.getElementById("c-quals").hidden)upload();else addCourse()};
+  draw();if(location.hash==="#quals")tab("quals");
+  document.addEventListener("dash:redraw",draw);
 })();
 
 });</script>
