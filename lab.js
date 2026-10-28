@@ -5,7 +5,10 @@
 var LAB_CFG={
   url:"https://oetcmtyqxsiznjkzpthl.supabase.co",
   key:"sb_publishable_BFwGDxrQtwCcW3pSZtQ-0A_f661pXMo",
-  meeting:{weekday:3,start:"10:30",end:"12:30",where:"GUG 211D"} // group meeting: Thursdays (0 = Monday)
+  meeting:{weekday:3,start:"10:30",end:"12:30",where:"GUG 211D"}, // group meeting: Thursdays (0 = Monday)
+  // UW quarters: first and last day of instruction, and the last day of finals (from the UW academic calendar)
+  quarters:[{name:"Autumn 2026",start:"2026-09-30",end:"2026-12-11",finals:"2026-12-18"},{name:"Winter 2027",start:"2027-01-04",end:"2027-03-12",finals:"2027-03-19"},
+    {name:"Spring 2027",start:"2027-03-29",end:"2027-06-04",finals:"2027-06-11"},{name:"Summer 2027",start:"2027-06-21",end:"2027-08-20",finals:"2027-08-20"},{name:"Autumn 2027",start:"2027-09-29",end:"2027-12-10",finals:"2027-12-17"}]
 };
 var LAB_CARDS=["needs","pinned","week","oneone","talks","reading","reviews","confs","library","polls","courses"]; // Today cards that are connected so far
 var sb=supabase.createClient(LAB_CFG.url,LAB_CFG.key);
@@ -74,7 +77,8 @@ var LAB=(function(){
       q(sb.from("site_changes").select("*").order("created_at",{ascending:false})),
       // added in update 11 (Reading); empty until that update is run
       q(sb.from("reading_plan").select("*").order("pos")).catch(function(){return []}),
-      q(sb.from("library_saves").select("*").eq("email",meRow.email)).catch(function(){return []})
+      q(sb.from("library_saves").select("*").eq("email",meRow.email)).catch(function(){return []}),
+      q(sb.from("reading_continue_votes").select("*")).catch(function(){return []})
     ]);
     var people=r[0];people.forEach(function(p){N[p.email]=p.name;E[p.name]=p.email});
     var pub=((typeof DATA!=="undefined"&&DATA.members)||[]).find(function(m){return m.name===meRow.name})||{};
@@ -108,6 +112,7 @@ var LAB=(function(){
           options:r[14].filter(function(o){return o.session_id===x.id}).map(function(o){return {id:o.id,q:o.paper,by:nm(o.suggested_by),
             votes:r[15].filter(function(v){return v.option_id===o.id}).map(function(v){return nm(v.email)})}})}}),
         sugs:r[17].filter(function(x){return x.to_group===g.id}).map(function(x){return {id:x.id,q:x.paper,by:nm(x.from_email)}}),
+        cont:r[29].filter(function(v){return v.group_id===g.id}).map(function(v){return {n:nm(v.email),yes:!!v.continue_next}}),
         takeTurns:!!g.take_turns,leadOrder:(g.lead_order||[]).map(nm),rotStart:g.rotation_start||null,
         plan:r[27].filter(function(x){return x.group_id===g.id}).map(function(x){return {id:x.id,kind:x.kind,body:x.body,by:nm(x.added_by),pos:x.pos}}),
         past:[]}});
@@ -223,6 +228,10 @@ var LAB=(function(){
       catch(e){console.error(e);if(window.toast)toast(e.message||"Download failed.");return null}},
     arxiv:async function(id){var fd=new FormData();fd.append("kind","arxiv");fd.append("id",id);return await helper(fd)},
     seenSug:async function(ids){try{if(ids.length)await q(sb.from("suggestions").update({seen:true}).in("id",ids))}catch(e){console.error(e)}},
+    // end of quarter: keep going? (null takes your answer back)
+    contVote:async function(g,yes){try{var t=sb.from("reading_continue_votes");if(yes===null)await q(t.delete().eq("group_id",g.id).eq("email",DASH.me.email));
+        else await q(t.upsert({group_id:g.id,email:DASH.me.email,continue_next:!!yes}))}catch(e){fail(e)}},
+    finishQuarter:async function(g){try{var r=await sb.rpc("finish_quarter",{gid:g.id});if(r.error)throw r.error;return r.data}catch(e){fail(e);return null}},
     // reading plans, meeting papers and group settings
     planAdd:function(g,it){it._p=(async function(){try{it.id=(await q(sb.from("reading_plan").insert({group_id:g.id,pos:it.pos,kind:it.kind,body:it.body}).select()))[0].id}catch(e){fail(e)}})();return it._p},
     planUpd:async function(it){try{await it._p;await q(sb.from("reading_plan").update({pos:it.pos,body:it.body}).eq("id",it.id))}catch(e){fail(e)}},

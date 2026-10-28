@@ -1,4 +1,4 @@
-<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover"></head><body><script src="vendor/supabase-2.117.2.js"></script><script src="lab.js?v=54712fd7"></script><style>.lab-loading body{visibility:hidden}.live-hide{display:none!important}</style><!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover"></head><body><title>Reading | RAIN Lab members</title><link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Caveat:wght@500;600&family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:wght@400;500;600&family=Urbanist:wght@500;600;700&display=swap"><style>:root{
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover"></head><body><script src="vendor/supabase-2.117.2.js"></script><script src="lab.js?v=dfdc561f"></script><style>.lab-loading body{visibility:hidden}.live-hide{display:none!important}</style><!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover"></head><body><title>Reading | RAIN Lab members</title><link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Caveat:wght@500;600&family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:wght@400;500;600&family=Urbanist:wght@500;600;700&display=swap"><style>:root{
   --cloud:#f6f8fb; --white:#ffffff; --ink:#13101d; --muted:#586174; --line:#e1e6ee;
   --blue:#1f6feb; --blue-text:#1a5fcc; --blue-soft:#e7effd;
   --night:#0b0714; --black:#000; --night-ink:#eef1f7; --night-muted:#9aa3b6; --night-line:#231d33;
@@ -402,6 +402,15 @@ function ppr(q){q=String(q||"").trim();var i=q.indexOf("\n"),t=i>=0?q.slice(0,i)
   if(!l){var p=pub(t);return {t:p.t,l:pubLink(p)}}return {t:t,l:/^https?:\/\//i.test(l)?l:null}}
 // reading group meetings: the next meeting day (days from this Monday) and the paper for a session
 function rawTitle(q){q=String(q||"").trim();var t=q.split("\n")[0].trim();return /^https?:\/\//i.test(t)?t.replace(/^https?:\/\/(www\.)?/i,""):t}
+// UW quarters (LAB_CFG.quarters): the one we are in, the next one, and the "keep going?" window
+// (three weeks before the last day of instruction until two weeks into the next quarter)
+function quarterNow(){var Q=(typeof LAB_CFG!=="undefined"&&LAB_CFG.quarters)||[],n=new Date(),t=n.getFullYear()+"-"+("0"+(n.getMonth()+1)).slice(-2)+"-"+("0"+n.getDate()).slice(-2);
+  var add=function(s,k){var d=new Date(s+"T12:00");d.setDate(d.getDate()+k);return d.getFullYear()+"-"+("0"+(d.getMonth()+1)).slice(-2)+"-"+("0"+d.getDate()).slice(-2)};
+  for(var i=0;i<Q.length;i++){var q=Q[i],nx=Q[i+1];if(t<q.start&&i===0)return {today:t};
+    var until=nx?add(nx.start,14):add(q.finals,21);
+    if(t>=q.start&&t<=until&&(t<=q.finals||!nx||t<nx.start)){return {today:t,q:q,next:nx||null,vote:t>=add(q.end,-21),after:t>q.end}}}
+  return {today:t}}
+function contMine(g){var me=DASH.me.name,v=(g.cont||[]).find(function(x){return x.n===me});return v?v.yes:null}
 function todayOffset(){var n=new Date();return Math.round((new Date(n.getFullYear(),n.getMonth(),n.getDate())-monday(n))/864e5)}
 // taking turns leading: the saved order (people still in the group), then everyone else by name; turns move one person each week
 function leadOrder(g){var o=(g.leadOrder||[]).filter(function(n,i,a){return g.members.indexOf(n)>=0&&a.indexOf(n)===i});return o.concat(g.members.filter(function(n){return o.indexOf(n)<0}).sort())}
@@ -460,6 +469,8 @@ function needsMe(){var me=DASH.me.name,out=[],fmt=function(iso){var d=new Date(i
     if(g.invited.indexOf(me)>=0)out.push({id:"inv"+g.id,who:g.owner,t:g.owner+" invited you to a reading group",s:g.name,go:"Join or decline",href:"dashboard-reading.html#g"+g.id});
     if(g.members.indexOf(me)<0)return;
     if(g.options.length&&!g.options.some(function(o){return o.v.indexOf(me)>=0}))out.push({id:"time"+g.id,ic:"vote",t:g.state==="set"?"Vote on a new weekly time":"Vote on a weekly time",s:g.name+" reading group",go:"Vote",href:"dashboard-reading.html#g"+g.id});
+    var qn=quarterNow();if(g.state==="set"&&qn.vote&&qn.next){if(contMine(g)===null)out.push({id:"cont"+g.id,ic:"vote",t:"Keep going with "+g.name+" in "+qn.next.name.split(" ")[0]+"?",s:"Answer before the quarter ends so the group can plan",go:"Answer",href:"dashboard-reading.html#g"+g.id});
+      if(qn.after&&(g.owner===me)&&(g.cont||[]).length)out.push({id:"wrap"+g.id,ic:"vote",t:"Wrap up "+g.name+"'s keep-going vote",s:(g.cont||[]).filter(function(x){return x.yes}).length+" in, "+(g.cont||[]).filter(function(x){return !x.yes}).length+" out",go:"Wrap up",href:"dashboard-reading.html#g"+g.id})}
     if(g.state==="set"&&g.takeTurns){var n0=nextMeet(g);if(n0!=null)[n0,n0+7].forEach(function(nd){if(nd-todayOffset()>8||leadFor(g,nd)!==me)return;var ss0=sessFor(g,nd);if(ss0&&(ss0.q||ss0.mode==="vote"))return;
       var dd=sessDate(nd),top=(g.plan||[]).slice().sort(function(a,b){return a.pos-b.pos}).find(function(x){return x.kind==="paper"});
       out.push({id:"lead"+g.id+"-"+nd,ic:"vote",t:"You lead "+g.name+" on "+["Sun","Mon","Tue","Wed","Thu","Fri","Sat"][dd.getDay()]+" "+MON[dd.getMonth()]+" "+dd.getDate(),s:top?"Next in the plan: "+rawTitle(top.body):"Pick the paper for the meeting",go:"See plan",href:"dashboard-reading.html#g"+g.id})})}
@@ -1269,11 +1280,26 @@ var V2={};
     if(g.state!=="set")return invite+(g.desc?'<p class="quote">'+esc(g.desc)+'</p>':'')+'<p class="sec">Which weekly times work for you?</p><div style="display:grid;gap:8px">'+g.options.map(function(o){return optBtn(g,o,mem)}).join("")+'</div>'+
       '<p class="meta" style="margin:0">'+(mem?'Pick every time that works. ':'Join to vote. ')+'The time is set once everyone has voted'+(g.invited.length?' and everyone invited has answered':'')+'.</p>'+ppl;
     var rv=g.options.length?'<div class="banner"><b>Voting on a new weekly time</b>'+g.options.map(function(o){return optBtn(g,o,mem)}).join("")+'<span class="meta" style="margin:0">'+voters(g).length+' of '+g.members.length+' voted. The time changes once everyone has voted.</span></div>':'';
-    var ps=past(g);
+    var ps=past(g);rv+=contHTML(g);
     var n1=nextMeet(g),s1=n1==null?null:sessFor(g,n1),after=n1!=null&&s1&&(s1.q||s1.mode==="vote")?'<p class="sec">The week after</p>'+nextCard(g,n1+7):'';
     return invite+rv+'<p class="sec">Next meeting</p>'+nextCard(g,n1)+after+planHTML(g)+
       (ps.length?'<p class="sec">Read so far</p><div class="plan">'+ps.map(function(s){var p=curPaper(s),d=sessDate(s.day),led=leadFor(g,s.day)||(s.mode==="pick"?s.by:null);
         return '<div class="pitem past"><span class="num">'+MON[d.getMonth()]+' '+d.getDate()+'</span><span class="pt">'+paperLink(p)+(led?'<small>Led by '+(led===ME?'you':esc(first(led)))+'</small>':'')+'</span>'+(libFor(p)?'<span></span>':'<button type="button" class="btn quiet sm" data-tolib="'+esc(p)+'">Add to library</button>')+'</div>'}).join("")+'</div>':'')+ppl}
+  function contHTML(g){var qn=quarterNow(),mem=g.members.indexOf(ME)>=0,boss=g.owner===ME||isAdmin();if(!qn.vote||!qn.next||!(mem||boss))return "";
+    var yes=(g.cont||[]).filter(function(x){return x.yes}).map(function(x){return x.n}),no=(g.cont||[]).filter(function(x){return !x.yes}).map(function(x){return x.n}),mine=contMine(g),nm=qn.next.name.split(" ")[0];
+    var btn=function(v,label,who){var on=mine===v;return '<button type="button" class="opt2'+(on?' on':'')+'" data-cont="'+(v?1:0)+'"'+(mem?'':' disabled')+'><span class="bx">'+(on?'&#10003;':'')+'</span><span>'+label+'</span><span class="ppl">'+who.map(face).join("")+'</span></button>'};
+    var d=new Date(qn.q.end+"T12:00"),wait=g.members.filter(function(n){return yes.indexOf(n)<0&&no.indexOf(n)<0});
+    return '<div class="banner" style="border-color:#c9daf8;background:#f6f9ff"><b>Keep going in '+esc(qn.next.name)+'?</b>'+btn(true,"Yes, I am in",yes)+btn(false,"No, I am out",no)+
+      '<span class="meta" style="margin:0">'+(wait.length?'Waiting on '+wait.map(function(n){return esc(n.split(" ")[0])}).join(", ")+'. ':'Everyone answered. ')+(qn.after?'':'Classes end '+MON[d.getMonth()]+' '+d.getDate()+'. ')+'People who say no leave the group when it is wrapped up. If nobody says yes, the group ends.</span>'+
+      (boss?'<button type="button" class="btn secondary sm" data-wrap style="justify-self:start">Wrap up the vote</button>':'')+'</div>'}
+  function wrapUp(g){var yes=(g.cont||[]).filter(function(x){return x.yes}).map(function(x){return x.n}),no=(g.cont||[]).filter(function(x){return !x.yes}).map(function(x){return x.n}),ends=!yes.length;
+    V2.open("Wrap up "+g.name,"This cannot be undone.",'<p class="quote">'+(ends?'Nobody said yes, so the group ends. It moves out of everyone\'s list, and nothing is deleted.':(no.length?esc(no.join(", "))+(no.length===1?' leaves':' leave')+' the group. ':'Everyone who answered is staying. ')+'The group keeps its weekly time. People who did not answer stay in.')+'</p>'+
+      (!ends&&no.indexOf(g.owner)>=0?'<p class="meta" style="margin:0">'+esc(g.owner)+' started the group and said no, so '+esc(yes.slice().sort()[0])+' takes it over.</p>':''),
+      '<button type="button" class="btn quiet" data-back>Back</button><button type="button" class="btn primary" data-go>'+(ends?'End the group':'Wrap up')+'</button>',function(b){
+        if(b.dataset.back!=null){groupPanel(g);return}if(b.dataset.go==null)return;b.disabled=true;
+        LAB.finishQuarter(g).then(function(r){if(!r){b.disabled=false;return}
+          if(r==="ended"){G.splice(G.indexOf(g),1);V2.close();draw();toast(g.name+" has ended.");return}
+          g.members=g.members.filter(function(n){return no.indexOf(n)<0});if(no.indexOf(g.owner)>=0&&yes.length)g.owner=yes.slice().sort()[0];g.cont=[];draw();groupPanel(g);toast(g.name+" keeps going.");document.dispatchEvent(new Event("bell:refresh"))})})}
   var cur=null;
   function groupFoot(g){var mem=g.members.indexOf(ME)>=0,inv=g.invited.indexOf(ME)>=0;
     return mem?'<button type="button" class="btn quiet" data-gleave style="margin-right:auto">Leave group</button>'+(g.state==="set"?'<button type="button" class="btn secondary" data-gedit>Edit group</button>':(g.owner===ME||isAdmin()?'<button type="button" class="btn secondary" data-gedit>Edit group</button>':'')):(!inv&&g.open?'<button type="button" class="btn primary" data-gj>Join group</button>':'')}
@@ -1299,6 +1325,8 @@ var V2={};
       if(b.dataset.gd!=null){var k0=g.invited.indexOf(ME);g.invited.splice(k0,1);LAB.groupPerson(g,"decline");V2.close();draw();toast("Declined.");return}
       if(b.dataset.gleave!=null){var k2=g.members.indexOf(ME);V2.close();later(function(){return "You left "+g.name+"."},function(){g.members.splice(k2,1);draw()},function(){g.members.splice(k2,0,ME);draw()},function(){LAB.groupPerson(g,"leave")});return}
       if(b.dataset.tv){if(!mem)return;var o=g.options.find(function(x){return x.id===+b.dataset.tv}),k3=o.v.indexOf(ME);if(k3>=0)o.v.splice(k3,1);else o.v.push(ME);LAB.timeVote(o,k3<0);settleLocal(g);redraw(g);document.dispatchEvent(new Event("bell:refresh"));return}
+      if(b.dataset.cont!=null){var v=b.dataset.cont==="1",was=contMine(g);g.cont=(g.cont||[]).filter(function(x){return x.n!==ME});if(was!==v)g.cont.push({n:ME,yes:v});LAB.contVote(g,was===v?null:v);redraw(g);document.dispatchEvent(new Event("bell:refresh"));return}
+      if(b.dataset.wrap!=null){wrapUp(g);return}
       if(b.dataset.lopen){libPanel(libById(b.dataset.lopen),[g.name,function(){groupPanel(g)}]);return}
       var nd=b.dataset.day!=null?+b.dataset.day:nextMeet(g);
       if(b.dataset.usetop!=null){var top=planView(g).find(function(x){return x.kind==="paper"});if(!top)return;setPick(g,nd,top.body);toast("Set from the plan.");return}

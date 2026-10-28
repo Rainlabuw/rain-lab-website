@@ -1,4 +1,6 @@
-<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover"><style>.mast nav{align-items:center}.mast nav a.signin{display:inline-flex;align-items:center;gap:.4rem;color:#fff;border:1px solid rgba(255,255,255,.3);border-radius:999px;padding:.3rem .8rem;font-size:.86rem}.mast nav a.signin:hover{border-color:#fff;background:rgba(255,255,255,.08)}.mast nav a.signin svg{width:14px;height:14px}</style></head><body><title>News | RAIN Lab</title><link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Caveat:wght@500;600&family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:wght@400;500;600&family=Urbanist:wght@500;600;700&display=swap"><style>:root{
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover"><style>.mast nav{align-items:center}.mast nav a.signin{display:inline-flex;align-items:center;gap:.4rem;color:#fff;border:1px solid rgba(255,255,255,.3);border-radius:999px;padding:.3rem .8rem;font-size:.86rem}.mast nav a.signin:hover{border-color:#fff;background:rgba(255,255,255,.08)}.mast nav a.signin svg{width:14px;height:14px}
+.story .simg{display:block;width:100%;max-height:14rem;object-fit:cover;margin:.5rem 0 .6rem}
+</style></head><body><title>News | RAIN Lab</title><link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Caveat:wght@500;600&family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:wght@400;500;600&family=Urbanist:wght@500;600;700&display=swap"><style>:root{
   --cloud:#f6f8fb; --white:#ffffff; --ink:#13101d; --muted:#586174; --line:#e1e6ee;
   --blue:#1f6feb; --blue-text:#1a5fcc; --blue-soft:#e7effd;
   --night:#0b0714; --black:#000; --night-ink:#eef1f7; --night-muted:#9aa3b6; --night-line:#231d33;
@@ -197,7 +199,7 @@ p{margin:0}
   var people=[{name:D.pi.name,photo:"mehran.jpg"}].concat(D.members,D.allAlumni).map(function(m){return {name:m.name,photo:m.photo?labPic(m.photo):null}});
   var plain=function(t){return t.replace(/<[^>]+>/g,"")};
   var all=D.allNews.map(function(n,i){var s=String(n.date),y=+s.slice(0,4),m=s.length>4?+s.slice(5,7):0;
-    return {y:y,m:m,h:n.headline,sec:n.section,text:n.text,order:i}});
+    return {y:y,m:m,h:n.headline,sec:n.section,text:n.text,img:n.img||null,order:i}});
   var byYear={};all.forEach(function(s){(byYear[s.y]=byYear[s.y]||[]).push(s)});
 
   // Fill thin years from the alumni list: a doctorate that no news item mentions becomes its own story.
@@ -220,7 +222,7 @@ p{margin:0}
   function rank(s){if(s.sec in RANK)return RANK[s.sec];if(s.sec==="MILESTONES"&&/Ph\.D\.|Doctora|Dissertation/.test(s.h))return 2;return 3}
   function stories(y){return byYear[y].slice().sort(function(a,b){return rank(a)-rank(b)||(b.m-a.m)||(a.order-b.order)})}
   function when(s){return s.m?MONTHS[s.m-1]+" "+s.y:String(s.y)}
-  function photoFor(s){var t=plain(s.text),out=[];
+  function photoFor(s){if(s.img)return [{name:s.h,photo:s.img,own:true}];var t=plain(s.text),out=[];
     people.forEach(function(p){if(!p.photo||out.length>=2||out.some(function(o){return o.name===p.name}))return;
       if(new RegExp("\\b"+p.name.split(" ")[0]+"\\b").test(t)||t.indexOf(p.name)>=0||t.indexOf("Prof. "+p.name.split(" ").slice(-1)[0])>=0)out.push(p)});
     return out.length?out:null}
@@ -242,14 +244,14 @@ p{margin:0}
     return '<section class="box deg"><h4>Degrees Conferred</h4><p class="sub">Class of '+y+'</p><ul>'+ds.map(function(a){
       return '<li><span class="n">'+esc(a.name)+(a.now?'<span class="w">'+(a.now.indexOf(", ")<0?"Now at ":"")+esc(a.now)+'</span>':'')+'</span><span class="d sc">'+(a.degree==="phd"?"Ph.D.":"M.S.")+'</span></li>'}).join("")+'</ul></section>';
   }
-  function story(s){return '<div class="story"><p class="sec">'+esc(s.sec)+'</p><h3>'+esc(s.h)+'</h3><p class="copy"><span class="dl sc">'+esc(when(s))+'.</span> '+s.text+'</p></div>'}
+  function story(s){return '<div class="story"><p class="sec">'+esc(s.sec)+'</p><h3>'+esc(s.h)+'</h3>'+(s.img?'<img class="simg" src="'+esc(s.img)+'" alt="" loading="lazy">':'')+'<p class="copy"><span class="dl sc">'+esc(when(s))+'.</span> '+s.text+'</p></div>'}
 
   function render(y){
     var ss=stories(y),lead=ss[0],rest=ss.slice(1),ph=photoFor(lead),latest=ss.filter(function(s){return s.m}).sort(function(a,b){return b.m-a.m})[0];
     return '<p class="folio sc"><span>Vol. '+roman(y-2001)+', No. '+(y-2001)+'</span><span>Seattle, Washington, '+(latest&&y===years[0]?MONTHS[latest.m-1]+" ":"")+y+'</span><span>University of Washington</span></p>'+
       '<div class="fp"><header class="banner"><h2>'+esc(lead.h)+'</h2></header>'+
       '<div class="leadcol"><p class="byline sc">'+esc(lead.sec.toLowerCase())+', '+esc(when(lead))+'</p>'+
-      '<div class="lead'+(ph?"":" solo")+'">'+(ph?'<figure class="n'+ph.length+'"><div class="imgs">'+ph.map(function(p){return '<img src="'+esc(p.photo)+'" alt="'+esc(p.name)+'">'}).join("")+'</div><figcaption>'+ph.map(function(p){return esc(p.name)}).join(" and ")+'</figcaption></figure>':'')+
+      '<div class="lead'+(ph?"":" solo")+'">'+(ph?'<figure class="n'+ph.length+'"><div class="imgs">'+ph.map(function(p){return '<img src="'+esc(p.photo)+'" alt="'+esc(p.name)+'">'}).join("")+'</div><figcaption>'+ph.filter(function(p){return !p.own}).map(function(p){return esc(p.name)}).join(" and ")+'</figcaption></figure>':'')+
       '<div><p class="copy leadcopy">'+lead.text+'</p>'+(ph&&rest.length?'<div class="more">'+rest.map(story).join("")+'</div>':'')+'</div></div>'+
       (!ph&&rest.length?'<div class="more'+(rest.length>=5?' three':'')+'">'+rest.map(story).join("")+'</div>':'')+
       '</div><aside class="rail">'+press(y)+degrees(y)+'</aside></div>'+
@@ -310,7 +312,7 @@ p{margin:0}
     .then(function(r){return r.ok?r.json():[]}).then(function(items){
       if(!Array.isArray(items)||typeof DATA==="undefined")return;var D=DATA;
       items.forEach(function(x){var d=new Date(x.at),ym=d.getFullYear()+"-"+("0"+(d.getMonth()+1)).slice(-2),f=x.fields||{};
-        if(x.kind==="news"){var n={date:ym,headline:x.title,section:SEC[x.type]||"PEOPLE",text:esc(x.text||"")+(x.link&&/^https?:\/\//.test(x.link)?' <a href="'+esc(x.link)+'">Read more</a>.':"")};
+        if(x.kind==="news"){var n={date:ym,headline:x.title,section:SEC[x.type]||"PEOPLE",text:esc(x.text||"")+(x.link&&/^https?:\/\//.test(x.link)?' <a href="'+esc(x.link)+'">Read more</a>.':""),img:x.photos&&x.photos.length?raw(x.photos[0]):null};
           if(D.allNews)D.allNews.unshift(n);if(D.news)D.news.unshift(n)}
         else if(x.kind==="paper"&&D.pubs){if(D.pubs.some(function(p){return p.t.toLowerCase()===String(x.title).toLowerCase()}))return;
           D.pubs.unshift({t:x.title,a:f.authors?f.authors.split(/\s*,\s*/):[x.by],v:x.venue||"",y:+x.year||d.getFullYear(),k:"Conference",l:f.link&&/^https?:\/\//.test(f.link)?[["Link",f.link]]:[],ar:[],aw:null,b:""})}

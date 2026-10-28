@@ -1,4 +1,4 @@
-<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover"></head><body><script src="vendor/supabase-2.117.2.js"></script><script src="lab.js?v=54712fd7"></script><style>.lab-loading body{visibility:hidden}.live-hide{display:none!important}</style><!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover"></head><body><title>Admin | RAIN Lab members</title><link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Caveat:wght@500;600&family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:wght@400;500;600&family=Urbanist:wght@500;600;700&display=swap"><style>:root{
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover"></head><body><script src="vendor/supabase-2.117.2.js"></script><script src="lab.js?v=dfdc561f"></script><style>.lab-loading body{visibility:hidden}.live-hide{display:none!important}</style><!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover"></head><body><title>Admin | RAIN Lab members</title><link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Caveat:wght@500;600&family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:wght@400;500;600&family=Urbanist:wght@500;600;700&display=swap"><style>:root{
   --cloud:#f6f8fb; --white:#ffffff; --ink:#13101d; --muted:#586174; --line:#e1e6ee;
   --blue:#1f6feb; --blue-text:#1a5fcc; --blue-soft:#e7effd;
   --night:#0b0714; --black:#000; --night-ink:#eef1f7; --night-muted:#9aa3b6; --night-line:#231d33;
@@ -402,6 +402,15 @@ function ppr(q){q=String(q||"").trim();var i=q.indexOf("\n"),t=i>=0?q.slice(0,i)
   if(!l){var p=pub(t);return {t:p.t,l:pubLink(p)}}return {t:t,l:/^https?:\/\//i.test(l)?l:null}}
 // reading group meetings: the next meeting day (days from this Monday) and the paper for a session
 function rawTitle(q){q=String(q||"").trim();var t=q.split("\n")[0].trim();return /^https?:\/\//i.test(t)?t.replace(/^https?:\/\/(www\.)?/i,""):t}
+// UW quarters (LAB_CFG.quarters): the one we are in, the next one, and the "keep going?" window
+// (three weeks before the last day of instruction until two weeks into the next quarter)
+function quarterNow(){var Q=(typeof LAB_CFG!=="undefined"&&LAB_CFG.quarters)||[],n=new Date(),t=n.getFullYear()+"-"+("0"+(n.getMonth()+1)).slice(-2)+"-"+("0"+n.getDate()).slice(-2);
+  var add=function(s,k){var d=new Date(s+"T12:00");d.setDate(d.getDate()+k);return d.getFullYear()+"-"+("0"+(d.getMonth()+1)).slice(-2)+"-"+("0"+d.getDate()).slice(-2)};
+  for(var i=0;i<Q.length;i++){var q=Q[i],nx=Q[i+1];if(t<q.start&&i===0)return {today:t};
+    var until=nx?add(nx.start,14):add(q.finals,21);
+    if(t>=q.start&&t<=until&&(t<=q.finals||!nx||t<nx.start)){return {today:t,q:q,next:nx||null,vote:t>=add(q.end,-21),after:t>q.end}}}
+  return {today:t}}
+function contMine(g){var me=DASH.me.name,v=(g.cont||[]).find(function(x){return x.n===me});return v?v.yes:null}
 function todayOffset(){var n=new Date();return Math.round((new Date(n.getFullYear(),n.getMonth(),n.getDate())-monday(n))/864e5)}
 // taking turns leading: the saved order (people still in the group), then everyone else by name; turns move one person each week
 function leadOrder(g){var o=(g.leadOrder||[]).filter(function(n,i,a){return g.members.indexOf(n)>=0&&a.indexOf(n)===i});return o.concat(g.members.filter(function(n){return o.indexOf(n)<0}).sort())}
@@ -460,6 +469,8 @@ function needsMe(){var me=DASH.me.name,out=[],fmt=function(iso){var d=new Date(i
     if(g.invited.indexOf(me)>=0)out.push({id:"inv"+g.id,who:g.owner,t:g.owner+" invited you to a reading group",s:g.name,go:"Join or decline",href:"dashboard-reading.html#g"+g.id});
     if(g.members.indexOf(me)<0)return;
     if(g.options.length&&!g.options.some(function(o){return o.v.indexOf(me)>=0}))out.push({id:"time"+g.id,ic:"vote",t:g.state==="set"?"Vote on a new weekly time":"Vote on a weekly time",s:g.name+" reading group",go:"Vote",href:"dashboard-reading.html#g"+g.id});
+    var qn=quarterNow();if(g.state==="set"&&qn.vote&&qn.next){if(contMine(g)===null)out.push({id:"cont"+g.id,ic:"vote",t:"Keep going with "+g.name+" in "+qn.next.name.split(" ")[0]+"?",s:"Answer before the quarter ends so the group can plan",go:"Answer",href:"dashboard-reading.html#g"+g.id});
+      if(qn.after&&(g.owner===me)&&(g.cont||[]).length)out.push({id:"wrap"+g.id,ic:"vote",t:"Wrap up "+g.name+"'s keep-going vote",s:(g.cont||[]).filter(function(x){return x.yes}).length+" in, "+(g.cont||[]).filter(function(x){return !x.yes}).length+" out",go:"Wrap up",href:"dashboard-reading.html#g"+g.id})}
     if(g.state==="set"&&g.takeTurns){var n0=nextMeet(g);if(n0!=null)[n0,n0+7].forEach(function(nd){if(nd-todayOffset()>8||leadFor(g,nd)!==me)return;var ss0=sessFor(g,nd);if(ss0&&(ss0.q||ss0.mode==="vote"))return;
       var dd=sessDate(nd),top=(g.plan||[]).slice().sort(function(a,b){return a.pos-b.pos}).find(function(x){return x.kind==="paper"});
       out.push({id:"lead"+g.id+"-"+nd,ic:"vote",t:"You lead "+g.name+" on "+["Sun","Mon","Tue","Wed","Thu","Fri","Sat"][dd.getDay()]+" "+MON[dd.getMonth()]+" "+dd.getDate(),s:top?"Next in the plan: "+rawTitle(top.body):"Pick the paper for the meeting",go:"See plan",href:"dashboard-reading.html#g"+g.id})})}
