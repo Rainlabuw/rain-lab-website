@@ -604,6 +604,7 @@ ooEvents();
 .qadd .r input{width:6rem}
 .empty-s{font-size:.86rem;color:var(--muted)}
 @media (max-width:640px){.cform .row2{grid-template-columns:minmax(0,1fr)}}
+.qlist{list-style:none;margin:0;padding:0;display:grid;gap:.5rem;font-size:.9rem}
 .copied{font-size:.8rem;color:#11734b;align-self:center;margin-right:auto}
 @media (max-width:900px){.qgrid{grid-template-columns:minmax(0,1fr)}}
 </style>
@@ -640,12 +641,7 @@ ooEvents();
     <div class="cgrid" id="cgrid"></div>
 
     <h2 class="sec-h">Quals prep</h2>
-    <div class="qgrid">
-      <section class="card"><h2>Courses that help most</h2><ul id="qc"></ul></section>
-      <section class="card"><h2>How people prepared</h2><ul id="qhow"></ul>
-        <form class="qadd" id="qform"><textarea name="t" rows="2" placeholder="How did you prepare? One or two lines" aria-label="How you prepared"></textarea><div class="r"><input name="y" placeholder="Year" aria-label="Year you passed"><button class="btn sm dark">Share</button></div></form></section>
-      <section class="card"><h2>Who to ask <a href="https://www.dropbox.com/home/Rain-general" target="_blank" rel="noopener">Study folder</a></h2><ul id="qwho"></ul></section>
-    </div>
+    <section class="card"><h2>Courses that help most <a href="https://www.dropbox.com/home/Rain-general" target="_blank" rel="noopener">Study folder</a></h2><ul class="qlist" id="qc"></ul></section>
   </main>
 </div>
 <div class="modal" id="ask" hidden role="dialog" aria-modal="true" aria-labelledby="askH"><div class="box">
@@ -677,9 +673,6 @@ ooEvents();
       (C.length?'<p class="empty">No courses match.</p>':'<p class="empty">No courses yet. Add the ones you took, with a tip for whoever takes them next.</p>');
     var qc=C.filter(function(c){return c.quals});
     document.getElementById("qc").innerHTML=qc.map(function(c){return '<li><b>'+esc(c.code)+'</b> '+esc(c.name)+'</li>'}).join("")||'<li class="empty-s">Mark a course as "Helps for quals" when you add it.</li>';
-    document.getElementById("qhow").innerHTML=DASH.quals.map(function(x,i){return '<li>'+esc(x.text)+'<small>'+esc(x.by)+(x.when?', '+esc(x.when):'')+(x.by===me?' <button type="button" class="linkbtn danger" data-qrm="'+i+'">Remove</button>':'')+'</small></li>'}).join("")||'<li class="empty-s">Nothing yet. If you passed, share how you prepared.</li>';
-    var who=DASH.quals.filter(function(x,i,a){return a.findIndex(function(y){return y.by===x.by})===i});
-    document.getElementById("qwho").innerHTML=who.map(function(x){return '<li class="who">'+face(x.by)+'<span>'+esc(x.by)+(x.when?'<small>Passed in '+esc(x.when)+'</small>':'')+'</span></li>'}).join("")||'<li class="empty-s">People who share how they prepared show up here.</li>';
   }
   document.getElementById("flt").addEventListener("click",function(e){var b=e.target.closest("[data-d]");if(!b)return;dept=b.dataset.d;draw()});
   document.getElementById("cq").addEventListener("input",function(){q=this.value.trim().toLowerCase();draw()});
@@ -715,12 +708,6 @@ ooEvents();
   function close(){m.hidden=true;if(opener)opener.focus()}
   m.addEventListener("click",function(e){if(e.target===m||e.target.closest("[data-close]"))close()});
   document.addEventListener("keydown",function(e){if(e.key==="Escape"&&!m.hidden)close()});
-  // quals: how people prepared
-  var qf=document.getElementById("qform");
-  qf.addEventListener("submit",function(e){e.preventDefault();var t=qf.elements.t.value.trim();if(!t){qf.elements.t.focus();return}
-    var x={by:me,when:qf.elements.y.value.trim(),text:t};DASH.quals.unshift(x);if(window.LAB)LAB.addQual(x);qf.reset();draw();toast("Thanks for sharing.")});
-  document.getElementById("qhow").addEventListener("click",function(e){var b=e.target.closest("[data-qrm]");if(!b)return;var i=+b.dataset.qrm,x;
-    later(function(){return "Removed."},function(){x=DASH.quals.splice(i,1)[0];draw()},function(){DASH.quals.splice(i,0,x);draw()},function(){if(window.LAB&&x.id)LAB.delQual(x)})});
   draw();
 })();
 
