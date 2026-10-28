@@ -78,7 +78,14 @@ var LAB=(function(){
       // added in update 11 (Reading); empty until that update is run
       q(sb.from("reading_plan").select("*").order("pos")).catch(function(){return []}),
       q(sb.from("library_saves").select("*").eq("email",meRow.email)).catch(function(){return []}),
-      q(sb.from("reading_continue_votes").select("*")).catch(function(){return []})
+      q(sb.from("reading_continue_votes").select("*")).catch(function(){return []}),
+      // added in update 15 (1:1s and group meetings); empty until that update is run
+      q(sb.from("oneone_schedule").select("*").order("starts_on",{ascending:false}).order("id",{ascending:false})).catch(function(){return []}),
+      q(sb.from("oneone_days").select("*")).catch(function(){return []}),
+      q(sb.from("oneone_away").select("*").order("from_date")).catch(function(){return []}),
+      q(sb.from("oneone_kept").select("*")).catch(function(){return []}),
+      q(sb.from("meeting_cancellations").select("*")).catch(function(){return []}),
+      q(sb.from("notices").select("*").eq("email",meRow.email).eq("seen",false).order("created_at",{ascending:false})).catch(function(){return []})
     ]);
     var people=r[0];people.forEach(function(p){N[p.email]=p.name;E[p.name]=p.email});
     var pub=((typeof DATA!=="undefined"&&DATA.members)||[]).find(function(m){return m.name===meRow.name})||{};
@@ -118,6 +125,13 @@ var LAB=(function(){
         past:[]}});
     var now=Date.now();
     var saved=r[28].map(function(x){return x.library_id});
+    var hhmm=function(t){return String(t||"").slice(0,5)};
+    DASH.ooSched=r[30].map(function(x){return {starts:x.starts_on,wd:x.weekday,start:hhmm(x.start_time),end:hhmm(x.end_time),slot:x.slot_minutes}});
+    DASH.ooDays={};r[31].forEach(function(x){DASH.ooDays[x.day]={status:x.status,note:x.note||"",to:x.moved_to,start:hhmm(x.start_time),end:hhmm(x.end_time),prev:x.prev||null}});
+    DASH.ooAway=r[32].map(function(x){return {id:x.id,from:x.from_date,to:x.to_date,note:x.note||""}});
+    DASH.ooKept=r[33].map(function(x){return new Date(x.slot_start).getTime()});
+    DASH.gmOff={};r[34].forEach(function(x){DASH.gmOff[x.day]={note:x.note||"",by:nm(x.created_by)}});
+    DASH.notices=r[35].map(function(x){return {id:x.id,title:x.title,body:x.body||"",link:x.link||"",ref:x.ref||"",by:nm(x.created_by)}});
     DASH.library=r[16].map(function(x){var d=new Date(x.added_at);return {id:x.id,t:x.title,a:x.authors||"",ar:x.area||"",link:x.link||"",note:x.note||"",by:nm(x.added_by),mine:x.added_by===meRow.email,
       when:MON[d.getMonth()]+" "+d.getDate()+(d.getFullYear()!==new Date().getFullYear()?", "+d.getFullYear():""),t0:d.getTime(),pdf:x.pdf_path||"",pdfName:x.pdf_name||"",pdfSize:x.pdf_size||0,saved:saved.indexOf(x.id)>=0}});
     DASH.suggested=r[17].filter(function(x){return x.to_email===meRow.email}).map(function(x){return {id:x.id,q:x.paper,by:nm(x.from_email),seen:!!x.seen}});
@@ -228,6 +242,22 @@ var LAB=(function(){
       catch(e){console.error(e);if(window.toast)toast(e.message||"Download failed.");return null}},
     arxiv:async function(id){var fd=new FormData();fd.append("kind","arxiv");fd.append("id",id);return await helper(fd)},
     seenSug:async function(ids){try{if(ids.length)await q(sb.from("suggestions").update({seen:true}).in("id",ids))}catch(e){console.error(e)}},
+    // 1:1s managed by Prof. Mesbahi or an admin
+    ooSaveSched:async function(s){try{await q(sb.from("oneone_schedule").insert({starts_on:s.starts,weekday:s.wd,start_time:s.start,end_time:s.end,slot_minutes:s.slot}));return true}catch(e){fail(e);return false}},
+    ooSetDay:async function(day,x){try{await q(sb.from("oneone_days").upsert({day:day,status:x.status,note:x.note||null,moved_to:x.to||null,start_time:x.start||null,end_time:x.end||null,prev:x.prev||null}));return true}catch(e){fail(e);return false}},
+    ooClearDay:async function(day){try{await q(sb.from("oneone_days").delete().eq("day",day))}catch(e){fail(e)}},
+    ooAwayAdd:async function(a){try{a.id=(await q(sb.from("oneone_away").insert({from_date:a.from,to_date:a.to,note:a.note||null}).select()))[0].id;return true}catch(e){fail(e);return false}},
+    ooAwayDel:async function(a){try{await q(sb.from("oneone_away").delete().eq("id",a.id))}catch(e){fail(e)}},
+    ooKeep:async function(ms,on){try{var t=sb.from("oneone_kept"),iso=new Date(ms).toISOString();if(on)await q(t.insert({slot_start:iso}));else await q(t.delete().eq("slot_start",iso))}catch(e){fail(e)}},
+    ooDrop:async function(list){try{for(var i=0;i<list.length;i++)await q(sb.from("office_hours").delete().eq("slot_start",new Date(list[i].start).toISOString()))}catch(e){fail(e)}},
+    ooAdd:async function(list){try{if(list.length)await q(sb.from("office_hours").insert(list.map(function(b){return {slot_start:new Date(b.start).toISOString(),email:b.email,note:b.note||null}})))}catch(e){fail(e)}},
+    notify:async function(rows){try{if(rows.length)await q(sb.from("notices").insert(rows.map(function(x){return {email:x.email,title:x.title,body:x.body||null,link:x.link||null,ref:x.ref||null,created_by:DASH.me.email}})))}catch(e){console.error(e)}},
+    unnotify:async function(ref){try{await q(sb.from("notices").delete().eq("ref",ref))}catch(e){console.error(e)}},
+    seenNotice:async function(id){try{await q(sb.from("notices").update({seen:true}).eq("id",id))}catch(e){console.error(e)}},
+    gmCancel:async function(day,note){try{await q(sb.from("meeting_cancellations").upsert({day:day,note:note||null,created_by:DASH.me.email}));return true}catch(e){fail(e);return false}},
+    gmRestore:async function(day){try{await q(sb.from("meeting_cancellations").delete().eq("day",day))}catch(e){fail(e)}},
+    dropTalks:async function(day){try{await q(sb.from("talks").delete().eq("meeting_date",day))}catch(e){fail(e)}},
+    addTalks:async function(day,rows){try{if(rows.length)await q(sb.from("talks").insert(rows.map(function(x){var r={meeting_date:day,email:x.email};if(x.title)r.title=x.title;return r})))}catch(e){fail(e)}},
     // end of quarter: keep going? (null takes your answer back)
     contVote:async function(g,yes){try{var t=sb.from("reading_continue_votes");if(yes===null)await q(t.delete().eq("group_id",g.id).eq("email",DASH.me.email));
         else await q(t.upsert({group_id:g.id,email:DASH.me.email,continue_next:!!yes}))}catch(e){fail(e)}},

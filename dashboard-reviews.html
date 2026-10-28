@@ -1,4 +1,4 @@
-<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover"></head><body><script src="vendor/supabase-2.117.2.js"></script><script src="lab.js?v=dfdc561f"></script><style>.lab-loading body{visibility:hidden}.live-hide{display:none!important}</style><!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover"></head><body><title>Reviews | RAIN Lab members</title><link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Caveat:wght@500;600&family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:wght@400;500;600&family=Urbanist:wght@500;600;700&display=swap"><style>:root{
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover"></head><body><script src="vendor/supabase-2.117.2.js"></script><script src="lab.js?v=cbd41e61"></script><style>.lab-loading body{visibility:hidden}.live-hide{display:none!important}</style><!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover"></head><body><title>Reviews | RAIN Lab members</title><link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Caveat:wght@500;600&family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:wght@400;500;600&family=Urbanist:wght@500;600;700&display=swap"><style>:root{
   --cloud:#f6f8fb; --white:#ffffff; --ink:#13101d; --muted:#586174; --line:#e1e6ee;
   --blue:#1f6feb; --blue-text:#1a5fcc; --blue-soft:#e7effd;
   --night:#0b0714; --black:#000; --night-ink:#eef1f7; --night-muted:#9aa3b6; --night-line:#231d33;
@@ -460,6 +460,8 @@ document.addEventListener("click",function(e){var b=e.target.closest("[data-pv]"
 
 // prototype role preview: admins can look at the dashboard the way a member sees it
 
+// opening a note from Prof. Mesbahi or an admin marks it read
+document.addEventListener("click",function(e){var a=e.target.closest("[data-nid]");if(!a||!window.LAB)return;var id=+a.dataset.nid;DASH.notices=(DASH.notices||[]).filter(function(x){return x.id!==id});LAB.seenNotice(id)});
 function refreshBell(){document.dispatchEvent(new Event("bell:refresh"))}
 function isAdmin(){return DASH.me.role==="Admin"}
 // things that need you: invitations, votes, review requests, and for admins the approval inbox
@@ -478,6 +480,7 @@ function needsMe(){var me=DASH.me.name,out=[],fmt=function(iso){var d=new Date(i
       if(ss.mode==="vote"&&ss.options.length&&!ss.options.some(function(o){return o.votes.indexOf(me)>=0}))out.push({id:"pap"+g.id+"-"+ss.day,ic:"vote",t:"Vote on a paper",s:g.name+", "+ds,go:"Vote",href:"dashboard-reading.html#g"+g.id});
       if(ss.mode==="pick"&&ss.by===me&&!ss.q)out.push({id:"pick"+g.id+"-"+ss.day,ic:"vote",t:"Pick the paper",s:g.name+", "+ds,go:"Pick",href:"dashboard-reading.html#g"+g.id})});
   });
+  (DASH.notices||[]).forEach(function(x){out.push({id:"note"+x.id,nid:x.id,ic:"back",t:x.title,s:x.body,go:/#talk/.test(x.link)?"Pick a week":/moved to/i.test(x.title)?"See it":"Book another time",href:x.link||"dashboard.html"})});
   (DASH.suggested||[]).forEach(function(x){if(x.seen)return;out.push({id:"sug"+(x.id||x.q),who:x.by,t:x.by+" suggested a paper to you",s:rawTitle(x.q),go:"See it",href:"dashboard-reading.html#lib"})});
   DASH.changes.forEach(function(c){if(c.by===me&&c.status==="back")out.push({id:"back"+c.id,ic:"back",t:"Your "+c.kind.toLowerCase()+" was sent back",s:c.title,go:"Edit and send again",href:"#p-profile"})});
   if(isAdmin()){var w=DASH.changes.filter(function(c){return c.status==="waiting"}),q=DASH.requests.filter(function(r){return r.status==="open"});
@@ -526,19 +529,37 @@ document.addEventListener("keydown",function(e){if(e.key!=="Tab")return;var m=[]
   if(e.shiftKey&&document.activeElement===a){e.preventDefault();z.focus()}else if(!e.shiftKey&&document.activeElement===z){e.preventDefault();a.focus()}});
 
 // ---- Prof. Mesbahi's 1:1 slots: Fridays 2:30 to 4:30, 30 minutes each, one person per slot
-var OO={weekday:4,start:[14,30],end:[16,30],mins:30,weeks:4};
-function ooFridays(){var out=[],now=new Date(),d=new Date(now);d.setHours(0,0,0,0);d.setDate(d.getDate()+((OO.weekday+1)%7-d.getDay()+7)%7);
-  var endToday=new Date(d);endToday.setHours(OO.end[0],OO.end[1]);if(endToday<=now)d.setDate(d.getDate()+7);
-  for(var i=0;i<OO.weeks;i++){var x=new Date(d);x.setDate(d.getDate()+7*i);out.push(x)}return out}
-function ooSlots(day){var out=[],t=new Date(day);t.setHours(OO.start[0],OO.start[1],0,0);var e=new Date(day);e.setHours(OO.end[0],OO.end[1],0,0);
-  while(t<e){out.push(new Date(t));t=new Date(t.getTime()+OO.mins*6e4)}return out}
+var OO={weeks:4};
+// the weekly time in use on a date: the newest schedule row that has started (weekday 0 = Monday)
+function ooIso(d){d=new Date(d);return d.getFullYear()+"-"+("0"+(d.getMonth()+1)).slice(-2)+"-"+("0"+d.getDate()).slice(-2)}
+function ooAddDays(s,k){var d=new Date(s+"T12:00");d.setDate(d.getDate()+k);return ooIso(d)}
+function ooSched(day){var L=(DASH.ooSched||[]).slice().sort(function(a,b){return a.starts<b.starts?1:-1}),r=L.find(function(x){return x.starts<=day});return r||L[L.length-1]||{wd:4,start:"14:30",end:"16:30",slot:30}}
+function ooMinsAt(t){return ooSched(ooIso(t)).slot}
+// regular 1:1 days from a date on (each week may follow a different schedule row)
+function ooRegDays(from,n){var out=[],d=from,guard=0;while(out.length<n&&guard++<400){var sc=ooSched(d);if(((new Date(d+"T12:00").getDay()+6)%7)===sc.wd)out.push(d);d=ooAddDays(d,1)}return out}
+function ooAwayOn(day){return (DASH.ooAway||[]).find(function(a){return day>=a.from&&day<=a.to})}
+// what really happens for one regular day: off, moved, or as usual
+function ooInfo(reg){var sc=ooSched(reg),e=(DASH.ooDays||{})[reg],a=ooAwayOn(reg),base={reg:reg,d:reg,start:sc.start,end:sc.end,slot:sc.slot};
+  if(e&&e.status==="off")return Object.assign(base,{off:true,note:e.note});
+  if(a)return Object.assign(base,{off:true,away:true,note:a.note});
+  if(e&&e.status==="moved")return Object.assign(base,{moved:true,d:e.to,start:e.start,end:e.end});
+  return base}
+// the 1:1 day that falls on a date, if any (a moved day lands on its new date)
+function ooDayFor(day){var regs=ooRegDays(ooAddDays(day,-14),5);for(var i=0;i<regs.length;i++){var x=ooInfo(regs[i]);if(x.d===day&&!(x.moved&&x.reg!==day&&false))return x}return null}
+function ooSlotsOf(x){var out=[],p=x.start.split(":"),q=x.end.split(":"),d=new Date(x.d+"T00:00"),t=new Date(d),e=new Date(d);t.setHours(+p[0],+p[1],0,0);e.setHours(+q[0],+q[1],0,0);
+  while(t.getTime()+x.slot*6e4<=e.getTime()){out.push(new Date(t));t=new Date(t.getTime()+x.slot*6e4)}return out}
+function ooKept(t){return (DASH.ooKept||[]).indexOf(+new Date(t))>=0}
+function ooDayBookings(x){return DASH.oneone.filter(function(b){return ooIso(b.start)===x.d})}
+// upcoming days that are open, as dates (older code calls these)
+function ooFridays(){var now=new Date(),out=[];ooRegDays(ooIso(now),OO.weeks+4).forEach(function(r){var x=ooInfo(r);if(x.off)return;var e=new Date(x.d+"T00:00"),q=x.end.split(":");e.setHours(+q[0],+q[1]);if(e>now&&out.length<OO.weeks)out.push(new Date(x.d+"T00:00"))});return out}
+function ooSlots(day){var x=ooDayFor(ooIso(day));return x&&!x.off?ooSlotsOf(x):[]}
 function ooAt(t){return DASH.oneone.find(function(b){return +new Date(b.start)===+t})}
 function ooMine(){var now=new Date();return DASH.oneone.filter(function(b){return b.email===DASH.me.email&&new Date(b.start)>now}).sort(function(a,b){return new Date(a.start)-new Date(b.start)})}
 function ooLabel(t){var d=new Date(t);return DOW[(d.getDay()+6)%7]+' '+MON[d.getMonth()]+' '+d.getDate()+', '+fmtTime(("0"+d.getHours()).slice(-2)+":"+("0"+d.getMinutes()).slice(-2))}
 function ooIsProf(){return DASH.me.email==="mesbahi@uw.edu"}
 // calendar events for bookings
 function ooEvents(){DASH.events=DASH.events.filter(function(e){return e.t!=="oneone"});var m=monday(new Date());
-  DASH.oneone.forEach(function(b){var d=new Date(b.start),day=Math.round((new Date(d.getFullYear(),d.getMonth(),d.getDate())-m)/864e5),s=("0"+d.getHours()).slice(-2)+":"+("0"+d.getMinutes()).slice(-2),en=new Date(d.getTime()+OO.mins*6e4);
+  DASH.oneone.forEach(function(b){var d=new Date(b.start),day=Math.round((new Date(d.getFullYear(),d.getMonth(),d.getDate())-m)/864e5),s=("0"+d.getHours()).slice(-2)+":"+("0"+d.getMinutes()).slice(-2),en=new Date(d.getTime()+ooMinsAt(d)*6e4);
     var mine=b.email===DASH.me.email;DASH.events.push({t:"oneone",start:b.start,mine:mine,title:mine?"1:1 with Prof. Mesbahi":ooIsProf()||isAdmin()?"1:1 with "+b.name:"1:1 with Prof. Mesbahi (booked)",day:day,s:s,e:("0"+en.getHours()).slice(-2)+":"+("0"+en.getMinutes()).slice(-2),where:"Prof. Mesbahi's office",who:mine||ooIsProf()||isAdmin()?(b.note||b.name):"Booked"})})}
 // Today card
 function ooCardHTML(){var mine=ooMine();
@@ -1042,6 +1063,213 @@ var V2={};
   function fromHash(){var m=location.hash.match(/^#p-(\w+)$/);if(m&&OPEN[m[1]]){try{history.replaceState(null,"",location.pathname)}catch(x){}OPEN[m[1]]()}}
   window.addEventListener("hashchange",fromHash);labReady(function(){setTimeout(fromHash,0)});
   document.addEventListener("dash:redraw",function(){if(!V2.isOpen())return;if(cur==="polls"&&document.getElementById("shT").textContent==="Polls")polls()});
+})();
+</script>
+<style>
+/* 1:1s with Prof. Mesbahi: his list and the panels to change it (Today and Calendar) */
+.v2 .oolist{display:grid;gap:6px}
+.v2 .oorow{display:grid;grid-template-columns:96px auto minmax(0,1fr) auto;gap:10px;align-items:center;padding:8px 10px;border-radius:10px;background:var(--bg);font-size:14.5px}
+.v2 .oorow .tm{font:600 13px var(--f-mono);color:var(--muted);white-space:nowrap}
+.v2 .oorow img,.v2 .oorow .ini{width:28px;height:28px;border-radius:50%;object-fit:cover;font-size:11px}
+.v2 .oorow .ow{min-width:0}
+.v2 .oorow .ow b{font-weight:600;display:block}
+.v2 .oorow .ow span{display:block;font-size:13px;color:var(--muted);overflow-wrap:anywhere}
+.v2 .oorow.open{background:transparent;border:1.5px dashed #cdd6e6;color:var(--muted)}
+.v2 .oorow.kept{background:#f1f3f7;color:var(--muted)}
+.v2 .oorow.past{opacity:.55}
+.v2 .oorow .gap{width:28px}
+.v2 .oorow .act{position:relative;display:flex;gap:4px;align-items:center}
+.v2 .oorow .menu{right:0;top:34px}
+.v2 .dayhead{display:flex;justify-content:space-between;align-items:baseline;gap:10px;margin:2px 0 8px}
+.v2 .dayhead b{font:600 15px var(--f-display)}
+.v2 .dayhead span{color:var(--muted);font-size:13px}
+.v2 .offday{border:1px solid #f3c9c4;background:#fdf1ef;color:#8a1c12;border-radius:10px;padding:10px 12px;font-size:14px}
+.v2 .offday b{display:block}
+.v2 .movedday{border:1px solid #c9daf8;background:#f6f9ff;border-radius:10px;padding:10px 12px;font-size:14px;margin-bottom:10px}
+.v2 .cardfoot{display:flex;flex-wrap:wrap;gap:8px;margin-top:12px}
+.v2 .nextline{font-size:13.5px;color:var(--muted);margin:10px 0 0}
+.v2 .lk2{font:inherit;color:var(--blue-ink);background:none;border:0;padding:0;cursor:pointer}
+.v2 .radio{display:grid;gap:8px}
+.v2 .radio label{display:flex;gap:10px;align-items:flex-start;border:1px solid var(--line);border-radius:10px;padding:10px 12px;font-size:14.5px;cursor:pointer}
+.v2 .radio label:has(input:checked){border-color:var(--blue);background:var(--blue-soft)}
+.v2 .radio input{margin-top:3px;accent-color:var(--blue);width:auto!important;flex:none}
+.v2 .radio small{display:block;color:var(--muted);font-size:13px}
+.v2 .who2{display:flex;flex-wrap:wrap;gap:8px}
+.v2 .who2 span{display:inline-flex;align-items:center;gap:6px;border:1px solid var(--line);border-radius:999px;padding:3px 10px 3px 3px;font-size:13.5px}
+.v2 .who2 img,.v2 .who2 .ini{width:24px;height:24px;border-radius:50%;object-fit:cover;font-size:10px}
+.v2 .chgl{display:grid;gap:8px}
+.v2 .chgl .r{display:flex;align-items:center;gap:10px;justify-content:space-between;border:1px solid var(--line);border-radius:10px;padding:10px 12px;font-size:14px}
+.v2 .chgl .r b{font-weight:600;display:block}
+.v2 .chgl .r span span{display:block;color:var(--muted);font-size:13px}
+.v2 .trow2{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+.v2 .trow2 select,.v2 .trow2 input{border:1px solid var(--line);border-radius:10px;padding:9px 10px;background:var(--surface);width:auto!important}
+.v2 .chips2{display:flex;flex-wrap:wrap;gap:8px}
+.v2 .chips2 button{border:1px solid var(--line);background:var(--surface);border-radius:999px;padding:7px 13px;font-size:14px}
+.v2 .chips2 button[aria-pressed="true"]{border-color:var(--blue);background:var(--blue-soft);color:var(--blue-ink)}
+.v2 .slotrow{display:flex;align-items:center;gap:10px;padding:10px 12px;border:1px solid var(--line);border-radius:10px}
+.v2 .slotrow b{font:600 14.5px var(--f-display);min-width:110px}
+.v2 .slotrow .who{display:flex;align-items:center;gap:8px;color:var(--muted);font-size:14px}
+.v2 .slotrow .who img,.v2 .slotrow .who .ini{width:26px;height:26px;border-radius:50%;object-fit:cover;font-size:11px}
+.v2 .slotrow .btn{margin-left:auto}
+.v2 .slotrow.mine{border-color:#0e7490;background:#e6f5f8}
+.v2 .slotrow.past{opacity:.55}
+@media (max-width:860px){.v2 .oorow{grid-template-columns:44px auto minmax(0,1fr) auto}.v2 .oorow .tto{display:none}}
+</style>
+<script>
+/* 1:1s: what Prof. Mesbahi (and admins) can change, and the booking panel for everyone else */
+var V2OO=(function(){
+  var DOWS=["Sun","Mon","Tue","Wed","Thu","Fri","Sat"],DOWL=["Sunday","Monday","Tuesday","Wednesday","Thursday","Friday","Saturday"],MONL=["January","February","March","April","May","June","July","August","September","October","November","December"];
+  var DOTS='<svg viewBox="0 0 18 18" aria-hidden="true"><circle cx="4" cy="9" r="1.5" fill="currentColor"/><circle cx="9" cy="9" r="1.5" fill="currentColor"/><circle cx="14" cy="9" r="1.5" fill="currentColor"/></svg>';
+  function first(n){var k=String(n).match(/"([^"]*)"/);return k?k[1]:String(n).split(" ")[0]}
+  function D(s){return new Date(s+"T12:00")}
+  function dl(s){var d=D(s);return DOWS[d.getDay()]+" "+MON[d.getMonth()]+" "+d.getDate()}
+  function dlong(s){var d=D(s);return DOWL[d.getDay()]+", "+MONL[d.getMonth()]+" "+d.getDate()}
+  function t12(t){var p=String(t).split(":");return (+p[0]%12||12)+":"+p[1].slice(0,2)}
+  function tD(d){return (d.getHours()%12||12)+":"+("0"+d.getMinutes()).slice(-2)}
+  function mins(t){var p=t.split(":");return +p[0]*60+ +p[1]}
+  function boss(){return ooIsProf()||isAdmin()}
+  function today(){return ooIso(new Date())}
+  function redraw(){document.dispatchEvent(new Event("dash:redraw"));document.dispatchEvent(new Event("bell:refresh"))}
+  function emailOf(n){var p=(DASH.people||[]).find(function(x){return x.name===n});return p?p.email:null}
+  function tell(list,title,body,ref,link){LAB.notify(list.map(function(b){return {email:b.email,title:title(b),body:body(b),ref:ref,link:link||"dashboard-calendar.html#oneone"}}))}
+
+  /* ---------- his list for one day ---------- */
+  function rows(x){var now=new Date();return ooSlotsOf(x).map(function(t){var b=ooAt(t),k=ooKept(t),en=new Date(t.getTime()+x.slot*6e4),tl='<span class="tm">'+tD(t)+'<span class="tto"> to '+tD(en)+'</span></span>',past=en<now?' past':'';
+    if(b)return '<div class="oorow'+past+'">'+tl+face(b.name)+'<span class="ow"><b>'+esc(b.name)+'</b><span>'+esc(b.note||"No topic given")+'</span></span><span class="act">'+(past?'':'<button type="button" class="kebab" data-oom="'+esc(b.start)+'" aria-label="More for '+esc(b.name)+'" aria-haspopup="true" aria-expanded="false">'+DOTS+'</button>')+'</span></div>';
+    if(k)return '<div class="oorow kept'+past+'">'+tl+'<span class="gap"></span><span class="ow">Kept for you</span><span class="act">'+(past?'':'<button type="button" class="btn quiet sm" data-oounkeep="'+t.getTime()+'">Open it</button>')+'</span></div>';
+    return '<div class="oorow open'+past+'">'+tl+'<span class="gap"></span><span class="ow">Open</span><span class="act">'+(past?'':'<button type="button" class="btn quiet sm" data-ookeep="'+t.getTime()+'">Keep for me</button>')+'</span></div>'}).join("")}
+  function block(x){var nm=DOWL[D(x.reg).getDay()];
+    if(x.off)return '<div class="offday"><b>'+(x.away?'Away. No 1:1s on '+dl(x.reg)+'.':'1:1s on '+dl(x.reg)+' are cancelled.')+'</b>'+(x.note?'Note to students: '+esc(x.note):'Students see that you are away.')+'</div>'+
+      (x.away?'<p class="nextline">Change away dates in Manage.</p>':'<div class="cardfoot"><button type="button" class="btn secondary sm" data-oorestore="'+x.reg+'">Bring them back</button></div>');
+    var nb=ooDayBookings(x).length;
+    return (x.moved?'<div class="movedday">Moved from '+dl(x.reg)+' to <b>'+dl(x.d)+', '+t12(x.start)+' to '+t12(x.end)+'</b>. <button type="button" class="btn quiet sm" data-oorestore="'+x.reg+'">Undo the move</button></div>':'')+
+      '<div class="dayhead"><b>'+dl(x.d)+', '+t12(x.start)+' to '+t12(x.end)+'</b><span>'+nb+' booked</span></div><div class="oolist">'+rows(x)+'</div>'+
+      '<div class="cardfoot"><button type="button" class="btn secondary sm" data-oomoveday="'+x.reg+'">Move '+(x.moved?'again':nm)+'</button><button type="button" class="btn secondary sm" data-oocancelday="'+x.reg+'">Cancel '+(x.moved?'this day':nm)+'</button></div>'}
+  // the Today card: the next 1:1 day that has not ended, then the one after
+  function upcoming(){var now=new Date();return ooRegDays(ooAddDays(today(),-6),8).map(ooInfo).filter(function(x){var q=x.end.split(":"),e=new Date(x.d+"T00:00");e.setHours(+q[0],+q[1]);return e>now||x.reg>=today()&&x.off})}
+  function card(){var u=upcoming(),x=u[0],nx=u[1];if(!x)return '<p class="meta" style="margin:0">No 1:1 days coming up.</p>';
+    return block(x)+(nx?'<p class="nextline">Next: <button type="button" class="lk2" data-ooday="'+nx.reg+'">'+(nx.off?dl(nx.reg)+', cancelled':dl(nx.d)+', '+ooDayBookings(nx).length+' booked')+'</button></p>':'')}
+
+  /* ---------- clicks inside his list (Today card or panel) ---------- */
+  function handle(b,back){var d=b.dataset;
+    if(d.ookeep){var ms=+d.ookeep;DASH.ooKept.push(ms);LAB.ooKeep(ms,true);back();redraw();toast("Kept for you. Students see it as taken.");return true}
+    if(d.oounkeep){var m2=+d.oounkeep;DASH.ooKept=DASH.ooKept.filter(function(x){return x!==m2});LAB.ooKeep(m2,false);back();redraw();toast("Open for booking again.");return true}
+    if(d.oocancelday){cancelDay(d.oocancelday,back);return true}
+    if(d.oomoveday){moveDay(d.oomoveday,back);return true}
+    if(d.oorestore){restore(d.oorestore);back();return true}
+    if(d.ooday){dayPanel(d.ooday);return true}
+    if(d.oom){var bk=DASH.oneone.find(function(x){return x.start===d.oom});if(!bk)return true;
+      V2.menu.open(b,[["Move to another time",function(){moveBooking(bk,back)}],"hr",["Cancel this 1:1",function(){cancelBooking(bk,back)},"danger"]]);return true}
+    return false}
+
+  /* ---------- panels ---------- */
+  function dayPanel(reg){if(!boss()){studentPanel(ooInfo(reg).d);return}var x=ooInfo(reg),me=function(){dayPanel(reg)};
+    V2.open("1:1s, "+dl(x.d),x.off?"Cancelled":"Your office, "+x.slot+" minutes each",block(x),"",function(b){handle(b,me)})}
+  function restore(reg){var e=DASH.ooDays[reg];if(!e)return;var p=e.prev||{};
+    if(p.dropped&&p.dropped.length){p.dropped.forEach(function(b){if(!ooAt(new Date(b.start)))DASH.oneone.push(b)});LAB.ooAdd(p.dropped)}
+    if(p.moved&&p.moved.length){var olds=p.moved.map(function(m){return m.now}),news=p.moved.map(function(m){return m.was});
+      DASH.oneone=DASH.oneone.filter(function(b){return !olds.some(function(o){return o.start===b.start})}).concat(news);LAB.ooDrop(olds).then(function(){LAB.ooAdd(news)})}
+    delete DASH.ooDays[reg];LAB.ooClearDay(reg);LAB.unnotify("ooday:"+reg);ooEvents();redraw();toast("Back to the usual time. The notes to students are gone.")}
+  function cancelDay(reg,back){var x=ooInfo(reg),who=ooDayBookings(x);
+    V2.open("Cancel 1:1s on "+dl(x.d),"For when you are out of town",
+      (who.length?'<div class="field"><span class="lab">'+who.length+(who.length===1?' person is':' people are')+' booked. They get a note on Today.</span><div class="who2">'+who.map(function(b){return '<span>'+face(b.name)+esc(first(b.name))+', '+tD(new Date(b.start))+'</span>'}).join("")+'</div></div>':'<p class="meta" style="margin:0">Nobody is booked yet. The day closes for booking.</p>')+
+      '<div class="field"><label for="cd-n">Note to students <span class="opt">optional</span></label><input id="cd-n" placeholder="For example, away at a conference"></div>',
+      '<button type="button" class="btn quiet" data-back>Back</button><button type="button" class="btn primary" data-go>Cancel 1:1s</button>',function(b){
+        if(b.dataset.back!=null){back();return}if(b.dataset.go==null)return;var n=document.getElementById("cd-n").value.trim();b.disabled=true;
+        var row={status:"off",note:n,prev:{dropped:who.map(function(y){return {start:y.start,email:y.email,name:y.name,note:y.note}})}};
+        LAB.ooSetDay(reg,row).then(function(ok){if(!ok){b.disabled=false;return}
+          DASH.ooDays[reg]=row;DASH.oneone=DASH.oneone.filter(function(y){return who.indexOf(y)<0});LAB.ooDrop(who);ooEvents();
+          tell(who,function(){return "Your 1:1 on "+dl(x.d)+" was cancelled"},function(){return "Prof. Mesbahi is away"+(n?": "+n:"")+". Pick another time."},"ooday:"+reg);
+          V2.close();redraw();toast(who.length?"Cancelled. "+who.map(function(y){return first(y.name)}).join(" and ")+(who.length===1?" gets":" get")+" a note on Today.":"Cancelled.",function(){restore(reg)})})})}
+  function moveDay(reg,back){var x=ooInfo(reg),who=ooDayBookings(x).sort(function(a,b){return a.start<b.start?-1:1}),wk=ooIso(monday(D(x.reg))),t0=today();
+    var opts=[];for(var i=0;i<12;i++){var s=ooAddDays(wk,i),wd=D(s).getDay();if(wd>0&&wd<6&&s>=t0)opts.push(s)}
+    var times=[];for(var h=8;h<=18;h++)["00","30"].forEach(function(m){times.push(("0"+h).slice(-2)+":"+m)});
+    var defD=opts.indexOf(ooAddDays(x.reg,-1))>=0?ooAddDays(x.reg,-1):opts[0];
+    V2.open("Move 1:1s from "+dl(x.reg),"Pick the new day and time",
+      '<div class="field"><span class="lab">New time</span><div class="trow2"><select id="mv-d" aria-label="Day">'+opts.map(function(s){return '<option value="'+s+'"'+(s===defD?' selected':'')+'>'+dl(s)+'</option>'}).join("")+'</select><select id="mv-s" aria-label="Start">'+times.map(function(t){return '<option value="'+t+'"'+(t===x.start?' selected':'')+'>'+t12(t)+'</option>'}).join("")+'</select><span>to</span><select id="mv-e" aria-label="End">'+times.map(function(t){return '<option value="'+t+'"'+(t===x.end?' selected':'')+'>'+t12(t)+'</option>'}).join("")+'</select></div></div>'+
+      (who.length?'<div class="field"><span class="lab">'+who.length+(who.length===1?' person is':' people are')+' booked</span><div class="radio"><label><input type="radio" name="mv-b" value="move" checked><span>Move their bookings with it<small>Same order and length. They get a note with the new time.</small></span></label><label><input type="radio" name="mv-b" value="ask"><span>Cancel their bookings and ask them to rebook<small>They get a note and pick a new time themselves.</small></span></label></div></div>':'<p class="meta" style="margin:0">Nobody is booked yet.</p>'),
+      '<button type="button" class="btn quiet" data-back>Back</button><button type="button" class="btn primary" data-go>Move</button>',function(b){
+        if(b.dataset.back!=null){back();return}if(b.dataset.go==null)return;
+        var nd=document.getElementById("mv-d").value,ns=document.getElementById("mv-s").value,ne=document.getElementById("mv-e").value;if(mins(ne)-mins(ns)<x.slot){toast("The end has to be after the start.");return}
+        var mode=(document.querySelector('#shB input[name="mv-b"]:checked')||{}).value||"move",slots=ooSlotsOf({d:nd,start:ns,end:ne,slot:x.slot}),moved=[],dropped=[];
+        who.forEach(function(y,i){if(mode==="move"&&slots[i])moved.push({was:{start:y.start,email:y.email,name:y.name,note:y.note},now:{start:slots[i].toISOString(),email:y.email,name:y.name,note:y.note}});else dropped.push({start:y.start,email:y.email,name:y.name,note:y.note})});
+        var row={status:"moved",to:nd,start:ns,end:ne,prev:{moved:moved,dropped:dropped}};b.disabled=true;
+        LAB.ooSetDay(reg,row).then(function(ok){if(!ok){b.disabled=false;return}DASH.ooDays[reg]=row;
+          var olds=moved.map(function(m){return m.was}).concat(dropped),news=moved.map(function(m){return m.now});
+          DASH.oneone=DASH.oneone.filter(function(y){return !olds.some(function(o){return o.start===y.start})}).concat(news);LAB.ooDrop(olds).then(function(){LAB.ooAdd(news)});ooEvents();
+          if(moved.length)tell(moved.map(function(m){return m.now}),function(y){return "Your 1:1 moved to "+dl(nd)+" at "+tD(new Date(y.start))},function(){return "Prof. Mesbahi moved this week's 1:1s. It is on your calendar."},"ooday:"+reg);
+          if(dropped.length)tell(dropped,function(){return "Your 1:1 on "+dl(x.reg)+" was moved"},function(){return "This week the 1:1s are on "+dl(nd)+", "+t12(ns)+" to "+t12(ne)+". Pick a new time."},"ooday:"+reg);
+          V2.close();redraw();toast("Moved to "+dl(nd)+"."+(who.length?" "+who.map(function(y){return first(y.name)}).join(" and ")+(who.length===1?" gets":" get")+" a note.":""),function(){restore(reg)})})})}
+  function openSlots(skip){var out=[],now=new Date();upcoming().slice(0,3).forEach(function(x){if(x.off)return;ooSlotsOf(x).forEach(function(t){if(t>now&&!ooAt(t)&&!ooKept(t)&&t.toISOString()!==skip)out.push(t)})});return out}
+  function moveBooking(bk,back){var list=openSlots(new Date(bk.start).toISOString()),pick=0;
+    V2.open("Move "+first(bk.name)+"'s 1:1","Now "+dl(ooIso(bk.start))+" at "+tD(new Date(bk.start)),list.length?'<div class="field"><span class="lab">Open times</span><div class="chips2">'+list.slice(0,12).map(function(t,i){return '<button type="button" data-pk="'+i+'" aria-pressed="'+(i===0)+'">'+dl(ooIso(t))+', '+tD(t)+'</button>'}).join("")+'</div></div><p class="meta" style="margin:0">'+esc(first(bk.name))+' gets a note on Today with the new time.</p>':'<p class="meta" style="margin:0">No open times in the next weeks.</p>',
+      '<button type="button" class="btn quiet" data-back>Back</button>'+(list.length?'<button type="button" class="btn primary" data-go>Move</button>':''),function(b){
+        if(b.dataset.back!=null){back();return}
+        if(b.dataset.pk){pick=+b.dataset.pk;document.querySelectorAll("#shB [data-pk]").forEach(function(y){y.setAttribute("aria-pressed",String(y===b))});return}
+        if(b.dataset.go==null)return;var t=list[pick],was={start:bk.start,email:bk.email,name:bk.name,note:bk.note},now={start:t.toISOString(),email:bk.email,name:bk.name,note:bk.note};
+        DASH.oneone.splice(DASH.oneone.indexOf(bk),1,now);ooEvents();LAB.ooDrop([was]).then(function(){LAB.ooAdd([now])});
+        var ref="oob:"+now.start;tell([now],function(){return "Your 1:1 moved to "+dl(ooIso(t))+" at "+tD(t)},function(){return "Prof. Mesbahi moved it. It is on your calendar."},ref);
+        back();redraw();toast("Moved. "+first(bk.name)+" gets a note.",function(){var i=DASH.oneone.indexOf(now);if(i>=0)DASH.oneone.splice(i,1,was);ooEvents();LAB.ooDrop([now]).then(function(){LAB.ooAdd([was])});LAB.unnotify(ref);back();redraw()})})}
+  function cancelBooking(bk,back){V2.open("Cancel "+first(bk.name)+"'s 1:1",dl(ooIso(bk.start))+" at "+tD(new Date(bk.start))+(bk.note?", "+bk.note:""),'<div class="field"><label for="cb-n">Note to '+esc(first(bk.name))+' <span class="opt">optional</span></label><input id="cb-n" placeholder="For example, can we do next week instead?"></div>',
+    '<button type="button" class="btn quiet" data-back>Back</button><button type="button" class="btn primary" data-go>Cancel 1:1</button>',function(b){if(b.dataset.back!=null){back();return}if(b.dataset.go==null)return;var n=document.getElementById("cb-n").value.trim(),i=DASH.oneone.indexOf(bk);
+      later(function(){return first(bk.name)+" gets a note."},function(){DASH.oneone.splice(DASH.oneone.indexOf(bk),1);ooEvents();back();redraw()},function(){DASH.oneone.splice(i,0,bk);ooEvents();back();redraw()},
+        function(){LAB.ooDrop([bk]);tell([bk],function(){return "Prof. Mesbahi cancelled your 1:1 on "+dl(ooIso(bk.start))},function(){return n||"Pick another time that works."},"oob:"+bk.start)})})}
+  function manage(){var sc=ooSched(ooAddDays(today(),7)),sl=sc.slot;
+    var times=[];for(var h=8;h<=18;h++)["00","30"].forEach(function(m){times.push(("0"+h).slice(-2)+":"+m)});
+    function body(){var up=Object.keys(DASH.ooDays).filter(function(r){return r>=ooAddDays(today(),-6)}).sort().map(function(r){var e=DASH.ooDays[r];return '<div class="r"><span><b>'+dl(r)+'</b><span>'+(e.status==="off"?'Cancelled'+(e.note?': '+esc(e.note):''):'Moved to '+dl(e.to)+', '+t12(e.start)+' to '+t12(e.end))+'</span></span><button type="button" class="btn quiet sm" data-oorestore="'+r+'">Undo</button></div>'});
+      return '<p class="sec" style="margin-top:0">Every week</p><div class="field"><div class="trow2"><select id="mg-d" aria-label="Day">'+[0,1,2,3,4].map(function(w){return '<option value="'+w+'"'+(w===sc.wd?' selected':'')+'>'+DOWL[w+1]+'s</option>'}).join("")+'</select><select id="mg-s" aria-label="Start">'+times.map(function(t){return '<option value="'+t+'"'+(t===sc.start?' selected':'')+'>'+t12(t)+'</option>'}).join("")+'</select><span>to</span><select id="mg-e" aria-label="End">'+times.map(function(t){return '<option value="'+t+'"'+(t===sc.end?' selected':'')+'>'+t12(t)+'</option>'}).join("")+'</select></div></div>'+
+        '<div class="field"><span class="lab">Each 1:1</span><div class="seg2"><button type="button" data-sl="15" aria-pressed="'+(sl===15)+'">15 minutes</button><button type="button" data-sl="30" aria-pressed="'+(sl===30)+'">30 minutes</button></div></div>'+
+        '<p class="meta" style="margin:0">A new weekly time starts next week. This week stays as it is.</p>'+
+        '<p class="sec">Away</p><div class="chgl">'+((DASH.ooAway||[]).filter(function(a){return a.to>=today()}).map(function(a){return '<div class="r"><span><b>'+dl(a.from)+' to '+dl(a.to)+'</b><span>'+(a.note?esc(a.note):'No 1:1s')+'</span></span><button type="button" class="btn quiet sm" data-unaway="'+a.id+'">Remove</button></div>'}).join("")||'<p class="meta" style="margin:0">No away dates. Add them once, and every 1:1 day inside closes on its own.</p>')+'</div>'+
+        '<div class="trow2"><input type="date" id="aw-f" aria-label="Away from"><span>to</span><input type="date" id="aw-t" aria-label="Away until"><input id="aw-n" placeholder="Note, optional" aria-label="Note" style="flex:1;min-width:140px"><button type="button" class="btn secondary sm" data-addaway>Add</button></div>'+
+        (up.length?'<p class="sec">Changes coming up</p><div class="chgl">'+up.join("")+'</div>':'')}
+    function show(){var b=document.getElementById("shB"),st=b.scrollTop;b.innerHTML=body();b.scrollTop=st}
+    V2.open("Manage 1:1s","Weekly office hours with Prof. Mesbahi",body(),'<button type="button" class="btn quiet" data-close>Close</button><button type="button" class="btn primary" data-save>Save weekly time</button>',function(b){
+      if(b.dataset.sl){sl=+b.dataset.sl;document.querySelectorAll("#shB [data-sl]").forEach(function(y){y.setAttribute("aria-pressed",String(y===b))});return}
+      if(b.dataset.oorestore){restore(b.dataset.oorestore);show();return}
+      if(b.dataset.unaway){var a=DASH.ooAway.find(function(y){return String(y.id)===b.dataset.unaway});DASH.ooAway.splice(DASH.ooAway.indexOf(a),1);LAB.ooAwayDel(a);LAB.unnotify("away:"+a.id);show();redraw();toast("Away dates removed. Those days are open again.");return}
+      if(b.dataset.addaway!=null){var f=document.getElementById("aw-f").value,t=document.getElementById("aw-t").value,n=document.getElementById("aw-n").value.trim();if(!f||!t||t<f){toast("Pick the first and last day you are away.");return}
+        var aw={from:f,to:t,note:n},hit=DASH.oneone.filter(function(y){var s=ooIso(y.start);return s>=f&&s<=t});b.disabled=true;
+        LAB.ooAwayAdd(aw).then(function(ok){b.disabled=false;if(!ok)return;DASH.ooAway.push(aw);DASH.oneone=DASH.oneone.filter(function(y){return hit.indexOf(y)<0});LAB.ooDrop(hit);ooEvents();
+          tell(hit,function(y){return "Your 1:1 on "+dl(ooIso(y.start))+" was cancelled"},function(){return "Prof. Mesbahi is away"+(n?": "+n:"")+". Pick another time."},"away:"+aw.id);
+          show();redraw();toast("Away "+dl(f)+" to "+dl(t)+"."+(hit.length?" "+hit.map(function(y){return first(y.name)}).join(" and ")+" get a note.":""))});return}
+      if(b.dataset.save!=null){var s=document.getElementById("mg-s").value,e=document.getElementById("mg-e").value,wd=+document.getElementById("mg-d").value;if(mins(e)-mins(s)<sl){toast("The end has to be after the start.");return}
+        var nm=ooIso(monday(D(ooAddDays(today(),7)))),row={starts:nm,wd:wd,start:s,end:e,slot:sl};b.disabled=true;
+        LAB.ooSaveSched(row).then(function(ok){b.disabled=false;if(!ok)return;DASH.ooSched.unshift(row);V2.close();redraw();toast("Saved. From "+dl(nm)+": "+DOWL[wd+1]+"s, "+t12(s)+" to "+t12(e)+", "+sl+" minutes each.")})}})}
+
+  /* ---------- the booking panel for students ---------- */
+  function studentPanel(day){var x=ooDayFor(day)||ooInfo(day),note="";
+    function body(){var nowT=new Date(),my=x.off?null:ooDayBookings(x).find(function(b){return b.email===DASH.me.email});
+      if(x.off)return '<div class="offday"><b>No 1:1s on '+dl(x.reg)+'</b>Prof. Mesbahi is away'+(x.note?': '+esc(x.note):'')+'. Pick another week.</div>';
+      var e=new Date(x.d+"T00:00"),q=x.end.split(":");e.setHours(+q[0],+q[1]);
+      return (x.moved?'<div class="movedday">This week the 1:1s are on '+dl(x.d)+', '+t12(x.start)+' to '+t12(x.end)+'.</div>':'')+
+        (e>nowT&&!my?'<div class="field"><label for="oo-n">What do you want to talk about? <span class="opt">optional</span></label><input id="oo-n" value="'+esc(note)+'" placeholder="So Prof. Mesbahi can prepare"></div>':'')+
+        '<div style="display:grid;gap:8px">'+ooSlotsOf(x).map(function(t){var b=ooAt(t),mine=b&&b.email===DASH.me.email,en=new Date(t.getTime()+x.slot*6e4),pastS=t<=nowT;
+          return '<div class="slotrow'+(mine?' mine':'')+(pastS?' past':'')+'"><b>'+tD(t)+' to '+tD(en)+'</b>'+(b?'<span class="who">'+(mine?face(b.name)+'You'+(b.note?', '+esc(b.note):''):'Taken')+'</span>'+(mine&&!pastS?'<button type="button" class="btn secondary sm" data-oocx="'+esc(b.start)+'">Cancel</button>':''):ooKept(t)?'<span class="who">Taken</span>':'<span class="who">Open</span>'+(pastS||my?'':'<button type="button" class="btn secondary sm" data-oob="'+t.toISOString()+'">Book</button>'))+'</div>'}).join("")+'</div>'}
+    function re(){var n=document.getElementById("oo-n");if(n)note=n.value;document.getElementById("shB").innerHTML=body();redraw()}
+    V2.open("1:1s with Prof. Mesbahi",dlong(x.d)+(x.off?"":", "+t12(x.start)+" to "+t12(x.end)+", his office"),body(),"",function(b){
+      if(b.dataset.oob){var t=new Date(b.dataset.oob),wk=ooMine().filter(function(y){return Math.abs(new Date(y.start)-t)<6*864e5});
+        if(wk.length){toast("You already have a 1:1 that week. Cancel it first to pick another time.");return}
+        if(ooAt(t)){toast("Someone just took that slot. Please pick another.");re();return}
+        var n=document.getElementById("oo-n"),bk={start:t.toISOString(),email:DASH.me.email,name:DASH.me.name,note:n?n.value.trim():""};DASH.oneone.push(bk);ooEvents();re();toast("Booked "+tD(t)+". It is on your calendar.");LAB.bookOO(bk);return}
+      if(b.dataset.oocx){var y=DASH.oneone.find(function(z){return z.start===b.dataset.oocx&&z.email===DASH.me.email});if(!y)return;
+        later(function(){return "Your 1:1 is cancelled."},function(){DASH.oneone.splice(DASH.oneone.indexOf(y),1);ooEvents();re()},function(){DASH.oneone.push(y);ooEvents();re()},function(){LAB.cancelOO(y)})}})}
+  // the next day a student can book
+  function nextOpenDay(){var now=new Date(),u=upcoming().filter(function(x){return !x.off});var d=u.find(function(x){return ooSlotsOf(x).some(function(t){return t>now&&!ooAt(t)&&!ooKept(t)})})||u[0];return d?d.d:ooIso(now)}
+
+  /* ---------- group meetings ---------- */
+  function gmCancel(day){var t=DASH.talks.find(function(x){return x.date===day})||{names:[],titles:[]},list=t.names.map(function(n,i){return {name:n,email:emailOf(n),title:(t.titles||[])[i]||""}});
+    V2.open("Cancel group meeting",dlong(day),(list.length?'<div class="field"><span class="lab">'+list.length+(list.length===1?' person has a talk.':' people have talks.')+' They get a note to pick another week.</span><div class="who2">'+list.map(function(p){return '<span>'+face(p.name)+esc(first(p.name))+'</span>'}).join("")+'</div></div>':'')+
+      '<div class="field"><label for="gm-n">Note to the lab <span class="opt">optional</span></label><input id="gm-n" placeholder="For example, away at CDC"></div><p class="meta" style="margin:0">Everyone sees it on Today and the calendar.</p>',
+      '<button type="button" class="btn quiet" data-close>Back</button><button type="button" class="btn primary" data-go>Cancel meeting</button>',function(b){if(b.dataset.go==null)return;var n=document.getElementById("gm-n").value.trim();b.disabled=true;
+        LAB.gmCancel(day,n).then(function(ok){if(!ok){b.disabled=false;return}DASH.gmOff[day]={note:n,by:DASH.me.name,talks:list};
+          if(list.length){LAB.dropTalks(day);tell(list,function(){return "Group meeting on "+dl(day)+" is cancelled"},function(){return (n?n+". ":"")+"Pick another week for your talk."},"gm:"+day,"dashboard-calendar.html#talk");t.names=[];t.titles=[]}
+          V2.close();redraw();toast("Meeting cancelled."+(list.length?" "+list.map(function(p){return first(p.name)}).join(" and ")+" get a note.":""),function(){gmRestore(day)})})})}
+  function gmRestore(day){var o=DASH.gmOff[day]||{},list=o.talks||[];delete DASH.gmOff[day];LAB.gmRestore(day);LAB.unnotify("gm:"+day);
+    if(list.length){var t=DASH.talks.find(function(x){return x.date===day});if(t){t.names=list.map(function(p){return p.name});t.titles=list.map(function(p){return p.title})}LAB.addTalks(day,list.filter(function(p){return p.email}))}
+    redraw();toast("The meeting is back on.")}
+
+  return {block:block,card:card,handle:handle,dayPanel:dayPanel,manage:manage,studentPanel:studentPanel,nextOpenDay:nextOpenDay,gmCancel:gmCancel,gmRestore:gmRestore,boss:boss}
 })();
 </script>
 
