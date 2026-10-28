@@ -1,4 +1,4 @@
-<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover"></head><body><script src="vendor/supabase-2.117.2.js"></script><script src="lab.js?v=355324b7"></script><style>.lab-loading body{visibility:hidden}.live-hide{display:none!important}</style><!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover"></head><body><title>Today | RAIN Lab members</title><link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Caveat:wght@500;600&family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:wght@400;500;600&family=Urbanist:wght@500;600;700&display=swap"><style>:root{
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover"></head><body><script src="vendor/supabase-2.117.2.js"></script><script src="lab.js?v=54712fd7"></script><style>.lab-loading body{visibility:hidden}.live-hide{display:none!important}</style><!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover"></head><body><title>Today | RAIN Lab members</title><link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Caveat:wght@500;600&family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:wght@400;500;600&family=Urbanist:wght@500;600;700&display=swap"><style>:root{
   --cloud:#f6f8fb; --white:#ffffff; --ink:#13101d; --muted:#586174; --line:#e1e6ee;
   --blue:#1f6feb; --blue-text:#1a5fcc; --blue-soft:#e7effd;
   --night:#0b0714; --black:#000; --night-ink:#eef1f7; --night-muted:#9aa3b6; --night-line:#231d33;
@@ -859,7 +859,7 @@ var V2={};
 .v2 .ev b{display:block;font:600 14.5px var(--f-display)}
 .v2 .ev span span{display:block;font-size:13px;color:var(--muted)}
 .v2 .ev .t{font:500 12.5px var(--f-mono);color:var(--muted);white-space:nowrap}
-.v2 .ev.oneone .bar{background:#0e7490}.v2 .ev.reading .bar{background:#0f8a5f}.v2 .ev.bd .bar{background:#d9822b}
+.v2 .ev.lab .bar{background:#b0337a}.v2 .ev.oneone .bar{background:#0e7490}.v2 .ev.reading .bar{background:#0f8a5f}.v2 .ev.bd .bar{background:#d9822b}
 .v2 .slots{display:grid;grid-template-columns:minmax(0,1fr);gap:6px;margin:0}
 .v2 .slot{display:flex;align-items:center;gap:10px;padding:8px 10px;border-radius:10px;background:var(--bg);font-size:14.5px}
 .v2 .slot img,.v2 .slot .ini{width:28px;height:28px;border-radius:50%;object-fit:cover;font-size:11px}
@@ -954,12 +954,15 @@ var V2={};
       if(e.t==="reading")return DASH.groups.some(function(g){return g.id===e.gid&&g.members.indexOf(ME)>=0});
       if(e.t==="oneone")return e.mine||ooIsProf();return true});
     var days={};evs.forEach(function(e){(days[e.day]=days[e.day]||[]).push(e)});
+    (DASH.labEvents||[]).forEach(function(x){var s0=x.allDay?new Date(x.start+"T00:00"):new Date(x.start),e0=x.allDay?new Date(x.end+"T00:00"):new Date(x.end),d=Math.round((new Date(s0.getFullYear(),s0.getMonth(),s0.getDate())-monday(now))/864e5);
+      if(x.allDay){var span=Math.max(1,Math.round((e0-s0)/864e5));for(var k=0;k<span;k++){var dk=d+k;if(dk>=t0&&dk<t0+7)(days[dk]=days[dk]||[]).push({t:"lab",title:x.title,day:dk,where:x.where})}return}
+      if(d<t0||d>=t0+7)return;(days[d]=days[d]||[]).push({t:"lab",title:x.title,day:d,where:x.where,s:("0"+s0.getHours()).slice(-2)+":"+("0"+s0.getMinutes()).slice(-2),e:("0"+e0.getHours()).slice(-2)+":"+("0"+e0.getMinutes()).slice(-2)})});
     (DASH.birthdays||[]).forEach(function(b){var d=t0+b.inDays;if(b.inDays<7)(days[d]=days[d]||[]).push({t:"bd",title:(b.n===ME?"Your":first(b.n)+"'s")+" birthday",day:d})});
     var ks=Object.keys(days).map(Number).sort(function(a,b){return a-b});
     if(!ks.length)return '<p class="note">Nothing on the calendar in the next 7 days.</p>';
     return '<div class="agenda">'+ks.map(function(d){var dd=sessDate(d);
       return '<div class="day"><div class="dlabel'+(d===t0?' today':'')+'"><b>'+(d===t0?"Today":DOWS[dd.getDay()])+'</b><span>'+MON[dd.getMonth()]+' '+dd.getDate()+'</span></div><div>'+days[d].sort(function(a,b){return (a.s||"")<(b.s||"")?-1:1}).map(function(e){
-        var sub=e.t==="group"?[e.where,e.who].filter(Boolean).join(", "):e.t==="bd"?"":[e.where,e.t==="oneone"?e.who:""].filter(Boolean).join(", ");
+        var sub=e.t==="lab"?(e.where||""):e.t==="group"?[e.where,e.who].filter(Boolean).join(", "):e.t==="bd"?"":[e.where,e.t==="oneone"?e.who:""].filter(Boolean).join(", ");
         var href=e.t==="reading"?"dashboard-reading.html":e.t==="bd"?"":"dashboard-calendar.html";
         return (href?'<a class="ev '+e.t+'" href="'+href+'">':'<div class="ev '+e.t+'">')+'<span class="bar"></span><span><b>'+esc(e.title)+'</b>'+(sub?'<span>'+esc(sub)+'</span>':'')+'</span><span class="t">'+(e.s?t12(e.s)+' to '+t12(e.e):'All day')+'</span>'+(href?'</a>':'</div>')}).join("")+'</div></div>'}).join("")+'</div>'}
 

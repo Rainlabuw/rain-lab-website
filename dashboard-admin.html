@@ -1,4 +1,4 @@
-<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover"></head><body><script src="vendor/supabase-2.117.2.js"></script><script src="lab.js?v=355324b7"></script><style>.lab-loading body{visibility:hidden}.live-hide{display:none!important}</style><!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover"></head><body><title>Admin | RAIN Lab members</title><link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Caveat:wght@500;600&family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:wght@400;500;600&family=Urbanist:wght@500;600;700&display=swap"><style>:root{
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover"></head><body><script src="vendor/supabase-2.117.2.js"></script><script src="lab.js?v=54712fd7"></script><style>.lab-loading body{visibility:hidden}.live-hide{display:none!important}</style><!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover"></head><body><title>Admin | RAIN Lab members</title><link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Caveat:wght@500;600&family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:wght@400;500;600&family=Urbanist:wght@500;600;700&display=swap"><style>:root{
   --cloud:#f6f8fb; --white:#ffffff; --ink:#13101d; --muted:#586174; --line:#e1e6ee;
   --blue:#1f6feb; --blue-text:#1a5fcc; --blue-soft:#e7effd;
   --night:#0b0714; --black:#000; --night-ink:#eef1f7; --night-muted:#9aa3b6; --night-line:#231d33;
@@ -830,55 +830,31 @@ var V2={};
 </script>
 
 <style>
-.tabbar{display:flex;gap:.2rem;border-bottom:1px solid var(--line);margin-bottom:1.3rem;overflow-x:auto}
-.tabbar button{font:500 .95rem var(--f-display);background:none;border:0;border-bottom:2px solid transparent;padding:.6rem .9rem;cursor:pointer;color:var(--muted);white-space:nowrap}
-.tabbar button[aria-selected="true"]{color:var(--ink);border-bottom-color:var(--blue)}
-.pane[hidden]{display:none}
-.sec-h{margin:0 0 .8rem;font:700 1.05rem var(--f-display)}
-.sec-h+.lead{font-size:.86rem;color:var(--muted);margin:-.5rem 0 .9rem}
-.stack{display:grid;gap:.8rem;margin-bottom:2rem}
-.item{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:1rem;align-items:start}
-.item .who{display:flex;align-items:center;gap:.5rem;font-size:.8rem;color:var(--muted);margin-bottom:.35rem}
-.item .who img,.item .who .ini{width:24px;height:24px;border-radius:50%;object-fit:cover}
-.item .who .ini{display:grid;place-content:center;background:var(--blue-soft);color:var(--blue-text);font:600 .55rem var(--f-mono)}
-.item h3{font:600 1rem var(--f-display)}
-.item p.t{font-size:.9rem;color:#3e4657;margin-top:.2rem}
-.item .reply{font-size:.82rem;color:var(--muted);margin-top:.35rem}
-.item .acts{display:flex;flex-wrap:wrap;gap:.4rem;justify-content:flex-end}
-.item .noteform{grid-column:1 / -1;display:flex;gap:.5rem}
-.item .noteform input[aria-invalid="true"]::placeholder{color:#b42318}
-.item .noteform input{flex:1;font:inherit;font-size:.88rem;border:1px solid var(--line);border-radius:8px;padding:.45rem .65rem}
-.item.done{opacity:.6}
-table{width:100%;border-collapse:collapse;font-size:.9rem}
-th{text-align:left;font:500 .62rem var(--f-mono);letter-spacing:.1em;text-transform:uppercase;color:var(--muted);padding:.5rem .6rem;border-bottom:1px solid var(--line)}
-td{padding:.55rem .6rem;border-bottom:1px solid var(--line);vertical-align:middle}
-tr:last-child td{border-bottom:0}
-td .nm{display:flex;align-items:center;gap:.6rem}
-td .nm img,td .nm .ini{width:30px;height:30px;border-radius:50%;object-fit:cover}
-td .nm .ini{display:grid;place-content:center;background:var(--blue-soft);color:var(--blue-text);font:600 .6rem var(--f-mono)}
-td select{font:inherit;font-size:.85rem;border:1px solid var(--line);border-radius:6px;padding:.3rem .45rem;background:#fff}
-.lnk{background:none;border:0;color:var(--muted);font:500 .7rem var(--f-mono);cursor:pointer;padding:.2rem}
-.lnk:hover{color:#b42318}
-.tbl{overflow-x:auto}
-.addrow{display:grid;grid-template-columns:minmax(0,1.4fr) minmax(0,1fr) auto auto;gap:.5rem;margin-top:1rem;align-items:end}
-.addrow .fld{margin:0}
-.dgrid{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:1.2rem;align-items:start}
-.mini{list-style:none;margin:0;padding:0;display:grid;gap:.5rem}
-.mini li{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:.6rem;align-items:center;font-size:.88rem;padding:.45rem .6rem;border-radius:8px;background:#f6f8fb}
-.mini li small{display:block;color:var(--muted);font-size:.76rem}
-.mini+form{display:flex;gap:.5rem;margin-top:.7rem}
-.mini+form input{flex:1;min-width:0;font:inherit;font-size:.88rem;border:1px solid var(--line);border-radius:8px;padding:.45rem .65rem}
-.pglist{list-style:none;margin:0;padding:0;display:grid;gap:.6rem;max-width:44rem}
-.pglist li{display:flex;align-items:center;justify-content:space-between;gap:.8rem;background:#fff;border:1px solid var(--line);border-radius:10px;padding:.8rem 1rem}
-.pglist b{font:600 .98rem var(--f-display)}
-.pglist .acts{display:flex;gap:.4rem}
-.em{font:500 .78rem var(--f-mono);color:var(--muted)}
-.ov{list-style:none;margin:0;padding:0;display:grid;gap:.55rem}
-.ov li{display:flex;justify-content:space-between;gap:.8rem;font-size:.88rem;padding-bottom:.55rem;border-bottom:1px solid var(--line)}
-.ov li:last-child{border-bottom:0;padding-bottom:0}
-.ov li span:last-child{color:var(--muted);text-align:right}
-@media (max-width:600px){thead{display:none}#mrows tr{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:.4rem .6rem;padding:.7rem 0;border-bottom:1px solid var(--line)}#mrows td{border:0;padding:0}#mrows td:first-child{grid-column:1 / -1}}
-@media (max-width:900px){.dgrid{grid-template-columns:minmax(0,1fr)}.addrow{grid-template-columns:minmax(0,1fr)}.item{grid-template-columns:minmax(0,1fr)}.item .acts{justify-content:flex-start}}
+/* Admin, redesigned */
+.v2 .rvrow,.v2 .mrow{display:grid;grid-template-columns:auto minmax(0,1fr) auto auto;gap:14px;align-items:center;padding:14px 18px;border-top:1px solid var(--line-soft)}
+.v2 .rvrow{cursor:pointer}
+.v2 .rvrow:first-child,.v2 .mrow:first-child{border-top:0}
+.v2 .rvrow:hover{background:#fafbfe}
+.v2 .rvrow>img,.v2 .rvrow>.ini,.v2 .mrow>img,.v2 .mrow>.ini{width:34px;height:34px;border-radius:50%;object-fit:cover;font-size:12px}
+.v2 .rvrow b,.v2 .mrow b{display:block;font:600 15.5px/1.3 var(--f-display);overflow-wrap:anywhere}
+.v2 .rvrow .m,.v2 .mrow .m{display:block;font-size:13px;color:var(--muted);margin-top:2px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.v2 .rvrow .acts2{display:flex;gap:6px;align-items:center}
+.v2 .mrow select{border:1px solid var(--line);border-radius:9px;padding:7px 10px;background:var(--surface);font-size:14px}
+.v2 .mrow.alum{opacity:.6}
+.v2 .st{font:600 12px var(--f-body);text-transform:none;letter-spacing:0;border-radius:999px;padding:3px 9px;white-space:nowrap}
+.v2 .st.green{background:var(--green-soft);color:var(--green)}.v2 .st.amber{background:var(--amber-soft);color:var(--amber)}
+.v2 .tabs .cnt{font:600 11px var(--f-body);background:var(--blue);color:#fff;border-radius:999px;padding:1px 7px;margin-left:6px}
+.v2 .tabs .cnt:empty{display:none}
+.v2 .kv{display:grid;grid-template-columns:max-content minmax(0,1fr);gap:8px 16px;font-size:14.5px;margin:0}
+.v2 .kv dt{color:var(--muted)}
+.v2 .kv dd{margin:0;overflow-wrap:anywhere}
+.v2 .kv a{color:var(--blue-ink)}
+.v2 .quote.pre{white-space:pre-line}
+.v2 .gi{width:34px;height:34px;border-radius:10px;display:grid;place-items:center;font:600 13px var(--f-display);background:#f3edfd;color:#7c4dcc}
+.v2 .person .ini{width:30px;height:30px;font-size:12px}
+.v2 .menu{right:0;top:38px}
+.v2 .reply{font-size:13.5px;background:var(--bg);border-radius:10px;padding:8px 12px;margin:0}
+@media (max-width:860px){.v2 .rvrow{grid-template-columns:auto minmax(0,1fr) auto}.v2 .rvrow .acts2{display:none}.v2 .mrow{grid-template-columns:auto minmax(0,1fr) auto}.v2 .mrow .m2{display:none}}
 </style>
 <div class="dash">
   <aside class="rail r2" aria-label="Dashboard"><div class="brand2"><a class="brand" href="dashboard.html" aria-label="RAIN Lab dashboard"><svg class="logo" viewBox="0 0 397 73" role="img" aria-label="RAIN LAB">
@@ -893,145 +869,104 @@ td select{font:inherit;font-size:.85rem;border:1px solid var(--line);border-radi
 <path d="M127 15H141.693C143.684 15 145.615 15.219 147.486 15.657C149.358 16.0552 151.01 16.7321 152.444 17.6877C153.917 18.6433 155.091 19.8976 155.967 21.4505C156.843 23.0034 157.281 24.8947 157.281 27.1245C157.281 30.1904 156.405 32.699 154.653 34.65C152.941 36.5613 150.592 37.8553 147.606 38.5322L158.894 57.2864H149.816L140.02 39.3684H134.526V57.2864H127V15ZM140.677 33.2166C141.752 33.2166 142.828 33.137 143.903 32.9777C144.978 32.8184 145.933 32.5198 146.769 32.0818C147.645 31.6438 148.362 31.0266 148.92 30.2303C149.477 29.3941 149.756 28.3389 149.756 27.0648C149.756 25.91 149.497 24.9743 148.979 24.2576C148.462 23.5011 147.805 22.9038 147.008 22.4658C146.212 22.0278 145.296 21.7292 144.261 21.5699C143.266 21.4106 142.29 21.331 141.334 21.331H134.526V33.2166H140.677Z" fill="currentColor"/>
 </svg>
 </a><button type="button" class="bell" id="bell" aria-label="Notifications" aria-expanded="false"><svg viewBox="0 0 18 18" aria-hidden="true"><path d="M4.5 12.5V8a4.5 4.5 0 0 1 9 0v4.5l1.3 1.5H3.2zM7.3 15.5a1.8 1.8 0 0 0 3.4 0" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linejoin="round"/></svg><span class="bdot" hidden></span></button></div><nav class="nav2" aria-label="Dashboard pages"><a href="dashboard.html"><svg viewBox="0 0 20 20" aria-hidden="true"><path d="M3.5 9.2L10 3.8l6.5 5.4V16a.8.8 0 0 1-.8.8H12v-4.6H8v4.6H4.3a.8.8 0 0 1-.8-.8z" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"/></svg><span>Today</span></a><a href="dashboard-calendar.html"><svg viewBox="0 0 20 20" aria-hidden="true"><rect x="3" y="4.5" width="14" height="12.5" rx="2" fill="none" stroke="currentColor" stroke-width="1.5"/><path d="M3 8.5h14M7 2.8v3.4M13 2.8v3.4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg><span>Calendar</span></a><a href="dashboard-reading.html"><svg viewBox="0 0 20 20" aria-hidden="true"><path d="M10 5.5C8.3 4.3 6 3.8 3 4v11.5c3-.2 5.3.3 7 1.5 1.7-1.2 4-1.7 7-1.5V4c-3-.2-5.3.3-7 1.5zM10 5.5V17" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"/></svg><span>Reading</span></a><a href="dashboard-reviews.html"><svg viewBox="0 0 20 20" aria-hidden="true"><path d="M5 2.8h7l3.5 3.5V17.2H5z" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"/><path d="M7.5 11.5l2 2 3.5-4" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg><span>Reviews</span></a><a href="dashboard-courses.html"><svg viewBox="0 0 20 20" aria-hidden="true"><path d="M1.8 7.5L10 3.5l8.2 4L10 11.5zM5 9.2v4.3c1.8 1.9 8.2 1.9 10 0V9.2" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"/></svg><span>Courses</span></a><span class="sep" aria-hidden="true"></span><a class="adm-only adm" href="dashboard-admin.html" aria-current="page"><svg viewBox="0 0 20 20" aria-hidden="true"><path d="M10 2.5l6.5 2.7v4.6c0 3.9-2.7 6.5-6.5 7.9-3.8-1.4-6.5-4-6.5-7.9V5.2z" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"/></svg><span>Admin</span></a><button type="button" class="meTab" data-me aria-haspopup="true" aria-expanded="false" aria-label="Your menu"><img alt="" src="shiva-shakeri.jpg"><span>You</span></button></nav><button type="button" class="me" data-me aria-haspopup="true" aria-expanded="false"><img alt="" src="shiva-shakeri.jpg"><div><b>Shiva Shakeri</b><span id="roleLbl">Admin</span></div><svg class="chev" width="16" height="16" viewBox="0 0 16 16" aria-hidden="true"><path d="M4 10l4-4 4 4" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg></button><div class="memenu" id="memenu" role="menu" hidden><a role="menuitem" href="dashboard-website.html#profile"><svg viewBox="0 0 18 18" aria-hidden="true"><circle cx="9" cy="6.5" r="3" fill="none" stroke="currentColor" stroke-width="1.5"/><path d="M3.5 15.5c.7-3 2.8-4.5 5.5-4.5s4.8 1.5 5.5 4.5" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>My profile</a><a role="menuitem" href="dashboard-website.html#share"><svg viewBox="0 0 18 18" aria-hidden="true"><path d="M3 4h9v10H4.5A1.5 1.5 0 0 1 3 12.5zM12 7h3v5.5a1.5 1.5 0 0 1-3 0M5.5 7h4M5.5 10h4" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"/></svg>Share news</a><a role="menuitem" href="dashboard-website.html#addpub"><svg viewBox="0 0 18 18" aria-hidden="true"><path d="M5 2.5h6l3 3v10H5zM8 9.5h4M10 7.5v4" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round" stroke-linecap="round"/></svg>Add a publication</a><a role="menuitem" href="dashboard-polls.html"><svg viewBox="0 0 18 18" aria-hidden="true"><path d="M4 15V9M9 15V4M14 15v-4" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/></svg>Polls</a><a role="menuitem" href="dashboard-resources.html"><svg viewBox="0 0 18 18" aria-hidden="true"><path d="M7.5 10.5l3-3M6 8L4.5 9.5a2.5 2.5 0 0 0 3.5 3.5L9.5 11.5M12 10l1.5-1.5A2.5 2.5 0 0 0 10 5L8.5 6.5" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>Lab links</a><button type="button" role="menuitem" id="reqOpen"><svg viewBox="0 0 18 18" aria-hidden="true"><path d="M3 4h12v8H8l-3.5 3v-3H3z" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"/></svg>Ask the admins</button><span class="adm-only m-only"><a role="menuitem" href="dashboard-admin.html"><svg viewBox="0 0 18 18" aria-hidden="true"><path d="M9 2l6 2.5v4.2c0 3.6-2.5 6-6 7.3-3.5-1.3-6-3.7-6-7.3V4.5z" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"/></svg>Admin</a></span><hr><a role="menuitem" href="index.html"><svg viewBox="0 0 18 18" aria-hidden="true"><circle cx="9" cy="9" r="6.5" fill="none" stroke="currentColor" stroke-width="1.4"/><path d="M2.5 9h13M9 2.5c2 2 2 11 0 13M9 2.5c-2 2-2 11 0 13" fill="none" stroke="currentColor" stroke-width="1.2"/></svg>Public website</a><a role="menuitem" href="members.html" data-signout><svg viewBox="0 0 18 18" aria-hidden="true"><path d="M10.5 3H14v12h-3.5M8 5.5L4.5 9 8 12.5M4.5 9h7" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>Sign out</a></div></aside>
-  <main class="main">
-    
-    <header class="top"><div><h1>Admin</h1><p class="sub">Requests, members and lab data</p></div></header>
-    <div class="tabbar" role="tablist">
-      <button role="tab" data-tab="inbox" aria-selected="true">Inbox</button>
-      <button role="tab" data-tab="members" aria-selected="false">Members</button>
-      <button role="tab" data-tab="data" aria-selected="false">Lab data</button>
-      <button role="tab" class="live-hide" data-tab="pages" aria-selected="false">Pages</button>
-      <button role="tab" data-tab="overview" aria-selected="false">Overview</button>
-    </div>
-
-    <section class="pane" id="p-inbox">
-      <h2 class="sec-h">Website changes to approve</h2><p class="lead">News, profiles, papers and page edits from members. Approved changes go on the public website. Send one back with a note if it needs work.</p>
-      <div class="stack" id="newsq"></div>
-      <h2 class="sec-h">Requests</h2><p class="lead">From "Ask the admins" in the sidebar.</p>
-      <div class="stack" id="reqs"></div>
-    </section>
-
-    <section class="pane" id="p-members" hidden>
-      <section class="card"><h2>Who can sign in</h2>
-        <p class="lead" style="font-size:.86rem;color:var(--muted);margin:-.5rem 0 1rem">Only people on this list can sign in with their UW NetID. <b>Admins</b> can do everything and publish website changes directly. <b>Members</b> use every tool; their website changes wait for approval. <b>Alumni</b> stay on the list but can no longer sign in.</p>
-        <div class="tbl"><table><thead><tr><th>Name</th><th>Role</th><th>UW email</th><th></th></tr></thead><tbody id="mrows"></tbody></table></div>
-        <form class="addrow" id="madd" novalidate>
-          <label class="fld"><span>Name</span><input name="name" placeholder="Full name"></label>
-          <label class="fld"><span>UW NetID</span><input name="netid" placeholder="netid"></label>
-          <label class="fld"><span>Role</span><select name="role"><option>Member</option><option>Admin</option><option>Alumni</option></select></label>
-          <button class="btn dark">Add</button>
-        </form>
-        <p class="err" id="merr" hidden style="margin-top:.6rem">Add a name and a NetID.</p>
-      </section>
-    </section>
-
-    <section class="pane" id="p-data" hidden>
-      <div class="dgrid">
-        <section class="card"><h2>Pinned announcements</h2><ul class="mini" id="d-ann"></ul><form data-add="ann"><input placeholder="New announcement" aria-label="New announcement"><button class="btn sm dark">Pin</button></form></section>
-        <section class="card"><h2>Conferences</h2><ul class="mini" id="d-conf"></ul><form data-add="conf"><input placeholder="Name, start date (YYYY-MM-DD), place" aria-label="New conference"><button class="btn sm dark">Add</button></form></section>
-        <section class="card live-hide"><h2>Resource links</h2><ul class="mini" id="d-res"></ul><form data-add="res"><input placeholder="Name, link" aria-label="New resource link"><button class="btn sm dark">Add</button></form></section>
-      </div>
-    </section>
-
-    <section class="pane" id="p-pages" hidden>
-      <p class="lead" style="font-size:.9rem;color:#3e4657;margin-bottom:1rem;max-width:44rem">Open a page of the public website in edit mode. Every piece of text you can change is outlined: click it and type. Click a photo to swap it. Review your changes, then publish. The site updates in about a minute.</p>
-      <ul class="pglist" id="pglist"></ul>
-    </section>
-
-    <section class="pane" id="p-overview" hidden>
-      <div class="dgrid">
-        <section class="card"><h2>Reading groups</h2><ul class="ov" id="o-rg"></ul></section>
-        <section class="card"><h2>Draft reviews</h2><ul class="ov" id="o-rev"></ul></section>
-        <section class="card"><h2>Next group meeting</h2><ul class="ov" id="o-talks"></ul></section>
-        <section class="card"><h2>Open polls</h2><ul class="ov" id="o-polls"></ul></section>
-      </div>
-    </section>
+  <main class="main v2">
+  <div class="wrap" id="adWrap">
+    <header class="head">
+      <div><h1>Admin</h1><p>Approvals, requests, people and lab data.</p></div>
+      <button type="button" class="btn primary" id="adAdd" hidden><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M8 3v10M3 8h10" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg><span id="adAddL">Add a person</span></button>
+    </header>
+    <div class="tabs" role="tablist"><button type="button" role="tab" aria-selected="true" data-at="inbox">Inbox<span class="cnt" id="adCnt"></span></button><button type="button" role="tab" aria-selected="false" data-at="people">Members</button><button type="button" role="tab" aria-selected="false" data-at="data">Lab data</button></div>
+    <div id="adBody" style="display:grid;gap:22px"></div>
+  </div>
   </main>
 </div>
 <script>labReady(function(){
 
-if(!isAdmin()){labReady(function(){document.querySelector(".main").innerHTML='<header class="top"><div><h1>Admin</h1><p class="sub">For admins only</p></div></header><section class="card" style="max-width:34rem"><p>This page is for Prof. Mesbahi and the lab admin. If you need something, use <b>Ask the admins</b> in the sidebar.</p></section>'})}
 (function(){
-  if(!isAdmin())return;
-  var me=DASH.me.name,sendBack=null,replyTo=null;
-  function who(n,extra){return '<div class="who">'+face(n)+'<span>'+esc(n)+(extra?', '+esc(extra):'')+'</span></div>'}
-  // inbox
-  function drawInbox(){
-    var nq=DASH.changes.filter(function(n){return n.status==="waiting"});
-    document.getElementById("newsq").innerHTML=nq.map(function(n){return '<section class="card item">'+'<div>'+who(n.by,n.when)+'<span class="k">'+esc(n.kind+(n.type?', '+n.type:''))+'</span><h3>'+esc(n.title)+'</h3><p class="t" style="white-space:pre-line">'+esc(n.text)+'</p>'+(n.link?'<p class="t"><a href="'+esc(n.link)+'" target="_blank" rel="noopener">'+esc(n.link)+'</a></p>':'')+(n.photos||[]).map(function(u){return '<p class="t"><a href="'+esc(u)+'" target="_blank" rel="noopener">Open the photo</a></p>'}).join("")+'</div>'+
-      '<div class="acts"><button type="button" class="btn sm" data-back="'+n.id+'">Send back</button><button type="button" class="btn sm dark" data-ok="'+n.id+'">Approve</button></div>'+
-      (sendBack===n.id?'<form class="noteform" data-note="'+n.id+'"><input placeholder="What should they change?" aria-label="Note"><button class="btn sm dark">Send back</button></form>':'')+'</section>'}).join("")||'<p class="empty">Nothing waiting.</p>';
-    var rq=DASH.requests.slice().sort(function(a,b){return (a.status==="done")-(b.status==="done")});
-    document.getElementById("reqs").innerHTML=rq.map(function(r){var d=r.status==="done";return '<section class="card item'+(d?' done':'')+'"><div>'+who(r.by,r.when)+'<span class="k">'+esc(r.type)+'</span><p class="t">'+esc(r.text)+'</p>'+(r.reply?'<p class="reply">Reply: '+esc(r.reply)+'</p>':'')+'</div>'+
-      '<div class="acts">'+(d?'<span class="st ok">Done</span>':'<button type="button" class="btn sm" data-reply="'+r.id+'">Reply</button><button type="button" class="btn sm dark" data-done="'+r.id+'">Mark done</button>')+'</div>'+
-      (replyTo===r.id?'<form class="noteform" data-rep="'+r.id+'"><input placeholder="Short reply" aria-label="Reply"><button class="btn sm dark">Save reply</button></form>':'')+'</section>'}).join("");
-    var f=document.querySelector(".noteform input");if(f)f.focus();
-  }
-  var P=document.getElementById("p-inbox");
-  P.addEventListener("click",function(e){var b=e.target.closest("button");if(!b)return;var d=b.dataset;
-    if(d.ok){var c0=DASH.changes.find(function(n){return n.id===+d.ok});c0.status="published";sendBack=null;if(window.LAB)LAB.decideChange(c0);toast("Approved. It is on the public site within a minute.")}
-    else if(d.back){sendBack=sendBack===+d.back?null:+d.back}
-    else if(d.done){DASH.requests.find(function(r){return r.id===+d.done}).status="done";replyTo=null;if(window.LAB)LAB.updRequest(+d.done,{status:"done"})}
-    else if(d.reply){replyTo=replyTo===+d.reply?null:+d.reply}
-    else return;drawInbox()});
-  P.addEventListener("submit",function(e){e.preventDefault();var f=e.target,inp=f.querySelector("input"),v=inp.value.trim();if(!v){inp.placeholder=f.dataset.note?"Write a short note first":"Write a reply first";inp.setAttribute("aria-invalid","true");inp.focus();return}
-    if(f.dataset.note){var n=DASH.changes.find(function(x){return x.id===+f.dataset.note});n.status="back";n.note=v;sendBack=null;if(window.LAB)LAB.decideChange(n);toast("Sent back with your note.")}
-    if(f.dataset.rep){DASH.requests.find(function(x){return x.id===+f.dataset.rep}).reply=v;replyTo=null;if(window.LAB)LAB.updRequest(+f.dataset.rep,{reply:v})}
-    drawInbox()});
-  document.addEventListener("dash:redraw",drawInbox);
-  // members
-  // removals wait a few seconds so Undo can cancel them before anything is saved
-  function later(msg,apply,undo,commit){apply();var t=setTimeout(commit,6500);toast(msg(),function(){clearTimeout(t);undo()})}
-  var M;
-  if(DASH.people)M=DASH.people.map(function(p){return {name:p.name,email:p.email,role:p.role==="admin"?"Admin":p.role==="alumni"?"Alumni":"Member",st:p.email}});
-  else{M=DATA.members.map(function(m,i){return {name:m.name,role:m.name===me?"Admin":"Member",st:"Signed in"}});
-    M.push({name:"New student (sample)",role:"Member",st:"Invited"});
-    M.unshift({name:"Prof. Mesbahi",role:"Admin",st:"Signed in"})}
-  function drawM(){document.getElementById("mrows").innerHTML=M.map(function(m,i){return '<tr><td><div class="nm">'+(m.name==="Prof. Mesbahi"?'<img src="mehran.jpg" alt="">':face(m.name))+esc(m.name)+'</div></td>'+
-    '<td><select data-role="'+i+'" aria-label="Role for '+esc(m.name)+'"'+(m.name===me?' disabled title="You cannot change your own role"':'')+'>'+["Member","Admin","Alumni"].map(function(r){return '<option'+(r===m.role?' selected':'')+'>'+r+'</option>'}).join("")+'</select></td>'+
-    '<td>'+(m.email?'<span class="em">'+esc(m.email)+'</span>':'<span class="st '+(m.st==="Signed in"?'ok':'wait')+'">'+m.st+'</span>')+'</td><td style="text-align:right">'+(m.name===me||(!m.email&&m.name==="Prof. Mesbahi")?'':'<button type="button" class="lnk" data-rm="'+i+'" aria-label="Remove '+esc(m.name)+'">Remove</button>')+'</td></tr>'}).join("")}
-  document.getElementById("mrows").addEventListener("change",function(e){var s=e.target.closest("[data-role]");if(!s)return;var m=M[+s.dataset.role];m.role=s.value;if(window.LAB&&m.email)LAB.setRole(m.email,s.value.toLowerCase()).then(function(){toast(m.name+" is now "+s.value.toLowerCase()+".")})});
-  document.getElementById("mrows").addEventListener("click",function(e){var b=e.target.closest("[data-rm]");if(b){var i=+b.dataset.rm,x;later(function(){return x.name+" can no longer sign in."},function(){x=M.splice(i,1)[0];drawM()},function(){M.splice(i,0,x);drawM()},function(){if(window.LAB&&x.email)LAB.delMember(x.email)})}});
-  document.getElementById("madd").addEventListener("submit",function(e){e.preventDefault();var f=e.target;if(!f.name.value.trim()||!f.netid.value.trim()){document.getElementById("merr").hidden=false;return}
-    var nid=f.netid.value.trim().toLowerCase(),em=nid.indexOf("@")>0?nid:nid+"@uw.edu";
-    if(!/^[a-z0-9._-]+@uw\.edu$/.test(em)){document.getElementById("merr").textContent="Use a UW NetID or a @uw.edu email.";document.getElementById("merr").hidden=false;return}
-    document.getElementById("merr").hidden=true;var nm=f.name.value.trim(),rl=f.role.value;
-    if(window.LAB){LAB.addMember({email:em,name:nm,role:rl.toLowerCase()}).then(function(ok){if(ok){M.push({name:nm,email:em,role:rl,st:em});drawM();toast(nm+" can now sign in.")}});f.reset();return}
-    M.push({name:nm,role:rl,st:"Invited"});f.reset();drawM()});
-  // lab data
-  var RES=[["Paper template (LaTeX)","#"],["Poster template","#"],["Slide template","#"],["Lab SOPs","Dropbox"],["Lab GitHub","github.com/Rainlabuw"]];
-  function row(t,s,k,i){return '<li><span>'+esc(t)+(s?'<small>'+esc(s)+'</small>':'')+'</span><button type="button" class="lnk" data-del="'+k+'" data-i="'+i+'" aria-label="Remove '+esc(t)+'">Remove</button></li>'}
-  function drawD(){
-    document.getElementById("d-ann").innerHTML=DASH.announcements.map(function(a,i){return row(a.text,a.when,"ann",i)}).join("");
-    document.getElementById("d-conf").innerHTML=DASH.conferences.map(function(c,i){return row(c.short,[c.when,c.where].filter(Boolean).join(', '),"conf",i)}).join("");
-    document.getElementById("d-res").innerHTML=RES.map(function(r,i){return row(r[0],r[1]==="#"?"Link to add":r[1],"res",i)}).join("");
-  }
-  var D=document.getElementById("p-data");
-  D.addEventListener("click",function(e){var b=e.target.closest("[data-del]");if(!b)return;var i=+b.dataset.i;
-    var k=b.dataset.del,arr=({ann:DASH.announcements,conf:DASH.conferences,res:RES})[k],x=arr.splice(i,1)[0];drawD();
-    var t=setTimeout(function(){if(window.LAB&&x.id){if(k==="ann")LAB.delAnn(x.id);if(k==="conf")LAB.delConf(x.id)}},6500);
-    toast("Removed.",function(){clearTimeout(t);arr.splice(i,0,x);drawD()})});
-  D.addEventListener("submit",function(e){e.preventDefault();var f=e.target,v=f.querySelector("input").value.trim();if(!v)return;var p=v.split(",").map(function(x){return x.trim()});
-    if(f.dataset.add==="ann"){var a={by:DASH.me.name,when:"Today",text:v};DASH.announcements.unshift(a);if(window.LAB)LAB.addAnn(v).then(function(id){a.id=id})}
-    if(f.dataset.add==="conf"){if(!/^\d{4}-\d\d-\d\d$/.test(p[1]||"")){toast("Write it as: name, start date (YYYY-MM-DD), place");return}
-      var dd=new Date(p[1]+"T12:00"),c={name:p[0],short:p[0],when:MON[dd.getMonth()]+" "+dd.getDate()+", "+dd.getFullYear(),where:p[2]||"Location to add",start:p[1],who:[]};DASH.conferences.push(c);
-      if(window.LAB)LAB.addConf({name:p[0],short_name:p[0],starts_on:p[1],location:p[2]||null}).then(function(id){c.id=id})}
-    if(f.dataset.add==="res")RES.push([p[0],p[1]||""]);
-    f.reset();drawD()});
-  // overview: a light summary, no big numbers
-  function drawO(){
-    document.getElementById("o-rg").innerHTML=DASH.groups.map(function(g){return '<li><span>'+esc(g.name)+'</span><span>'+(g.state==="set"?esc(g.time):'Choosing a time')+', '+g.members.length+' members</span></li>'}).join("")||'<li><span>None yet</span><span></span></li>';
-    document.getElementById("o-rev").innerHTML=DASH.reviews.map(function(r){var a=r.reviewers.filter(function(x){return x.st==="accepted"}).length,dn=r.reviewers.filter(function(x){return x.st==="done"}).length;return '<li><span>'+esc(r.title)+'</span><span>'+esc(r.author)+', '+(dn&&!a?'feedback sent':a?a+' reviewing':'needs a reviewer')+'</span></li>'}).join("");
-    var t=nextTalk();document.getElementById("o-talks").innerHTML=t.names.map(function(n,i){return '<li><span>'+(i+1)+'. '+esc(n)+'</span><span>Talk</span></li>'}).join("")+'<li><span>Open slots</span><span>'+(DASH.maxTalks-t.names.length)+'</span></li>';
-    document.getElementById("o-polls").innerHTML=DASH.polls.filter(pollOpen).map(function(p){var v={};p.options.forEach(function(o){o.v.forEach(function(n){v[n]=1})});v=Object.keys(v).length;return '<li><span>'+esc(p.q)+'</span><span>'+v+(v===1?' person voted':' people voted')+'</span></li>'}).join("")||'<li><span>None open</span><span></span></li>';
-  }
-  // tabs
-  function tab(id){document.querySelectorAll("[data-tab]").forEach(function(b){b.setAttribute("aria-selected",String(b.dataset.tab===id))});
-    document.querySelectorAll(".pane").forEach(function(p){p.hidden=p.id!=="p-"+id});try{history.replaceState(null,"","#"+id)}catch(e){}}
-  document.querySelector(".tabbar").addEventListener("click",function(e){var b=e.target.closest("[data-tab]");if(b)tab(b.dataset.tab)});
-  document.getElementById("pglist").innerHTML=DASH.sitePages.map(function(p){return '<li><b>'+esc(p[0])+'</b><span class="acts"><a class="btn sm" href="'+p[1]+'">View</a><a class="btn sm dark" href="'+p[1]+'?edit">Edit this page</a></span></li>'}).join("");
-  drawInbox();drawM();drawD();drawO();
-  var h=location.hash.slice(1);if(document.getElementById("p-"+h))tab(h);
+  if(!isAdmin()){document.getElementById("adWrap").innerHTML='<header class="head"><div><h1>Admin</h1><p>For admins only.</p></div></header><div class="card" style="background:#fff;border:1px solid var(--line);border-radius:12px;padding:18px 20px;max-width:34rem"><p style="margin:0">This page is for Prof. Mesbahi and the lab admin. If you need something, use <b>Ask the admins</b> in the menu under your name.</p></div>';return}
+  var ME=DASH.me.name,tab="inbox";
+  var DOTS='<svg viewBox="0 0 18 18" aria-hidden="true"><circle cx="4" cy="9" r="1.5" fill="currentColor"/><circle cx="9" cy="9" r="1.5" fill="currentColor"/><circle cx="14" cy="9" r="1.5" fill="currentColor"/></svg>';
+  function first(n){var k=String(n).match(/"([^"]*)"/);return k?k[1]:String(n).split(" ")[0]}
+  function sec(t,rows,empty,extra){return '<div style="display:grid;gap:10px"><div class="sechead"><h2>'+t+'</h2>'+(extra||'')+'</div><div class="list" style="margin-top:6px">'+(rows||'<div class="empty">'+empty+'</div>')+'</div></div>'}
+  var M=(DASH.people||[]).map(function(p){return {name:p.name,email:p.email,role:p.role==="admin"?"Admin":p.role==="alumni"?"Alumni":"Member"}}).sort(function(a,b){return (a.role==="Alumni")-(b.role==="Alumni")||a.name.localeCompare(b.name)});
+  function waiting(){return DASH.changes.filter(function(c){return c.status==="waiting"})}
+  function openReq(){return DASH.requests.filter(function(r){return r.status!=="done"})}
+  function draw(){var n=waiting().length+openReq().length;document.getElementById("adCnt").textContent=n||"";
+    var add=document.getElementById("adAdd");add.hidden=tab==="inbox";document.getElementById("adAddL").textContent=tab==="people"?"Add a person":"Add an announcement";
+    var h="";
+    if(tab==="inbox"){
+      h=sec("Website changes to approve",waiting().map(function(c){return '<div class="rvrow" data-ch="'+c.id+'" tabindex="0" role="button">'+face(c.by)+'<span style="min-width:0"><b>'+esc(c.title)+'</b><span class="m">'+esc(c.kind==="Paper"?"Publication":c.kind)+' from '+esc(first(c.by))+', '+esc(c.when)+'</span></span><span class="acts2"><button type="button" class="btn quiet sm" data-chb="'+c.id+'">Send back</button><button type="button" class="btn primary sm" data-cha="'+c.id+'">Approve</button></span><span></span></div>'}).join(""),"Nothing waiting.")+
+        sec("Requests",DASH.requests.slice().sort(function(a,b){return (a.status==="done")-(b.status==="done")}).map(function(r){var d=r.status==="done";return '<div class="rvrow" data-rq="'+r.id+'" tabindex="0" role="button"'+(d?' style="opacity:.6"':'')+'>'+face(r.by)+'<span style="min-width:0"><b>'+esc(r.type)+'</b><span class="m">'+esc(first(r.by))+', '+esc(r.when)+': '+esc(r.text)+'</span></span><span class="acts2">'+(d?'<span class="st green">Done</span>':'<button type="button" class="btn secondary sm" data-rqd="'+r.id+'">Mark done</button>')+'</span><span></span></div>'}).join(""),"No requests yet. Members send them with Ask the admins.")}
+    if(tab==="people")h='<div class="list">'+M.map(function(m,i){var self=m.email===DASH.me.email;return '<div class="mrow'+(m.role==="Alumni"?' alum':'')+'">'+face(m.name)+'<span style="min-width:0"><b>'+esc(m.name)+(self?' <span style="color:var(--blue-ink);font-weight:600">(you)</span>':'')+'</b><span class="m">'+esc(m.email)+'</span></span>'+
+        '<select class="m2" data-role="'+i+'" aria-label="Role for '+esc(m.name)+'"'+(self?' disabled title="You cannot change your own role"':'')+'>'+["Member","Admin","Alumni"].map(function(r){return '<option'+(r===m.role?' selected':'')+'>'+r+'</option>'}).join("")+'</select>'+
+        (self?'<span style="width:34px"></span>':'<span style="position:relative"><button type="button" class="kebab" data-mm="'+i+'" aria-label="More for '+esc(m.name)+'" aria-haspopup="true" aria-expanded="false">'+DOTS+'</button></span>')+'</div>'}).join("")+'</div><p class="meta" style="margin:0">Only people on this list can sign in, with their UW Google account. Admins approve website changes and edit lab data. Alumni stay on the People page but can no longer sign in.</p>';
+    if(tab==="data")h=sec("Announcements",DASH.announcements.map(function(a,i){return '<div class="mrow">'+face(a.by)+'<span style="min-width:0"><b style="font-weight:500;font-family:var(--f-body);white-space:normal">'+esc(a.text)+'</b><span class="m">'+esc(first(a.by))+', '+esc(a.when)+'</span></span><span></span><button type="button" class="btn quiet sm" data-anrm="'+i+'">Remove</button></div>'}).join(""),"No announcements. They show on everyone's Today page.")+
+      sec("Conferences",DASH.conferences.slice().sort(function(a,b){return a.start<b.start?-1:1}).map(function(c){return '<div class="mrow"><span class="gi">'+esc((c.short||"?")[0])+'</span><span style="min-width:0"><b>'+esc(c.short)+'</b><span class="m">'+esc(c.when)+', '+esc(c.where)+(c.who.length?', '+c.who.length+' going':'')+'</span></span><span></span><button type="button" class="btn quiet sm" data-cfrm="'+c.id+'">Remove</button></div>'}).join(""),"No conferences yet.",'<button type="button" class="btn secondary sm" data-addconf>+ Add</button>');
+    document.getElementById("adBody").innerHTML=h}
+  function chById(id){return DASH.changes.find(function(c){return String(c.id)===String(id)})}
+  function approve(c){c.status="published";LAB.decideChange(c);draw();document.dispatchEvent(new Event("bell:refresh"));toast("Approved. It is on the public site within a minute.")}
+  function chPanel(c,backFirst){var back=!!backFirst,f=c.fields||{};
+    function body(){var rows=[];if(c.type)rows.push(["Type",esc(c.type)]);if(c.venue)rows.push(["Venue",esc(c.venue)+(c.year?", "+esc(c.year):"")]);if(f.authors)rows.push(["Authors",esc(f.authors)]);
+      var link=c.link||f.link;if(link)rows.push(["Link",'<a href="'+esc(link)+'" target="_blank" rel="noopener">'+esc(link)+'</a>']);
+      (c.photos||[]).forEach(function(u,i){rows.push([i?"":"Photo",'<a href="'+esc(u)+'" target="_blank" rel="noopener">Open the photo</a>'])});
+      if(c.wantsNews)rows.push(["Also",'They want a news post about it too']);
+      return '<div class="person">'+face(c.by)+esc(c.by)+'<span>'+esc(c.when)+'</span></div>'+(c.text?'<p class="quote pre">'+esc(c.text)+'</p>':'')+(rows.length?'<dl class="kv">'+rows.map(function(r){return '<dt>'+r[0]+'</dt><dd>'+r[1]+'</dd>'}).join("")+'</dl>':'')+
+        (back?'<div class="field"><label for="ch-n">What should they change?</label><textarea id="ch-n" placeholder="A short note for '+esc(first(c.by))+'"></textarea></div>':'')}
+    function foot(){return '<button type="button" class="btn secondary" data-chback>'+(back?'Send back with this note':'Send back')+'</button><button type="button" class="btn primary" data-chok>Approve</button>'}
+    V2.open(c.title,(c.kind==="Paper"?"Publication":c.kind)+" for the public website",body(),foot(),function(b){
+      if(b.dataset.chok!=null){V2.close();approve(c);return}
+      if(b.dataset.chback!=null){if(!back){back=true;document.getElementById("shB").innerHTML=body();document.getElementById("shF").innerHTML=foot();document.getElementById("ch-n").focus();return}
+        var note=document.getElementById("ch-n").value.trim();if(!note){toast("Write a short note first.");document.getElementById("ch-n").focus();return}
+        c.status="back";c.note=note;LAB.decideChange(c);V2.close();draw();document.dispatchEvent(new Event("bell:refresh"));toast("Sent back to "+first(c.by)+" with your note.")}});
+    if(back)setTimeout(function(){var n=document.getElementById("ch-n");if(n)n.focus()},80)}
+  function rqPanel(r){var d=r.status==="done";
+    V2.open(r.type,"From "+r.by+", "+r.when,'<p class="quote pre">'+esc(r.text)+'</p>'+(r.reply?'<p class="reply"><b>Your reply:</b> '+esc(r.reply)+'</p>':'')+
+      '<div class="field"><label for="rq-r">'+(r.reply?'Change the reply':'Reply')+' <span class="opt">optional</span></label><textarea id="rq-r" placeholder="They see it under Ask the admins">'+esc(r.reply||"")+'</textarea></div>',
+      '<button type="button" class="btn secondary" data-rqrep>Save reply</button>'+(d?'':'<button type="button" class="btn primary" data-rqdone>Mark done</button>'),function(b){
+        var v=document.getElementById("rq-r").value.trim(),patch={};if(v!==(r.reply||"")){r.reply=v;patch.reply=v||null}
+        if(b.dataset.rqdone!=null){r.status="done";patch.status="done"}
+        if(b.dataset.rqrep==null&&b.dataset.rqdone==null)return;
+        if(Object.keys(patch).length)LAB.updRequest(r.id,patch);V2.close();draw();document.dispatchEvent(new Event("bell:refresh"));toast(patch.status?"Marked done.":"Reply saved.")})}
+  function addPerson(){var role="Member";
+    function body(){return '<div class="field"><label for="np-n">Name</label><input id="np-n" placeholder="As it should show on the People page"></div><div class="field"><label for="np-e">UW NetID or email</label><input id="np-e" placeholder="netid or netid@uw.edu"></div>'+
+      '<div class="field"><span class="lab">Role</span><div class="seg2"><button type="button" data-r="Member" aria-pressed="'+(role==="Member")+'">Member</button><button type="button" data-r="Admin" aria-pressed="'+(role==="Admin")+'">Admin</button></div></div>'}
+    V2.open("Add a person","They sign in with their UW Google account.",body(),'<button type="button" class="btn quiet" data-close>Cancel</button><button type="button" class="btn primary" data-npadd>Add</button>',function(x){
+      if(x.dataset.r){role=x.dataset.r;document.querySelectorAll("#shB [data-r]").forEach(function(y){y.setAttribute("aria-pressed",String(y.dataset.r===role))});return}
+      if(x.dataset.npadd==null)return;var nm=document.getElementById("np-n").value.trim(),em=document.getElementById("np-e").value.trim().toLowerCase();
+      if(!nm||!em){toast("Add the name and NetID.");return}if(em.indexOf("@")<0)em+="@uw.edu";
+      if(!/^[a-z0-9._-]+@uw\.edu$/.test(em)){toast("Use a UW NetID or a @uw.edu email.");return}
+      if(M.some(function(m){return m.email===em})){toast("That person is already on the list.");return}
+      x.disabled=true;LAB.addMember({email:em,name:nm,role:role.toLowerCase()}).then(function(ok){x.disabled=false;if(!ok)return;var p={name:nm,email:em,role:role};M.push(p);(DASH.people=DASH.people||[]).push({name:nm,email:em,role:role.toLowerCase()});V2.close();draw();toast(nm+" can now sign in.")})})}
+  function addAnn(){V2.open("Add an announcement","Shows on everyone's Today page.",'<div class="field"><label for="an-t">Announcement</label><textarea id="an-t" placeholder="One or two lines"></textarea></div>','<button type="button" class="btn quiet" data-close>Cancel</button><button type="button" class="btn primary" data-anadd>Post</button>',function(x){
+    if(x.dataset.anadd==null)return;var t=document.getElementById("an-t").value.trim();if(!t){toast("Write the announcement.");return}
+    var a={by:ME,when:MON[new Date().getMonth()]+" "+new Date().getDate(),text:t};DASH.announcements.unshift(a);LAB.addAnn(t).then(function(id){a.id=id});V2.close();draw();toast("Posted. Everyone sees it on Today.")})}
+  function addConf(){V2.open("Add a conference","Members can mark that they are going. It shows on the Calendar.",'<div class="field"><label for="cf-n">Short name</label><input id="cf-n" placeholder="IEEE CDC 2027"></div><div class="field"><label for="cf-f">Full name <span class="opt">optional</span></label><input id="cf-f" placeholder="IEEE Conference on Decision and Control"></div><div class="two"><div class="field"><label for="cf-s">Starts</label><input id="cf-s" type="date"></div><div class="field"><label for="cf-e">Ends <span class="opt">optional</span></label><input id="cf-e" type="date"></div></div><div class="field"><label for="cf-w">Where</label><input id="cf-w" placeholder="City, country"></div><div class="field"><label for="cf-l">Website <span class="opt">optional</span></label><input id="cf-l" placeholder="https://"></div>',
+    '<button type="button" class="btn quiet" data-close>Cancel</button><button type="button" class="btn primary" data-cfadd>Add</button>',function(x){
+      if(x.dataset.cfadd==null)return;var g=function(id){return document.getElementById(id).value.trim()},nm=g("cf-n"),s=g("cf-s"),e=g("cf-e")||s;
+      if(!nm){toast("Add the name.");return}if(!s){toast("Add the start date.");return}if(e<s){toast("The end date is before the start.");return}
+      var ds=new Date(s+"T12:00"),de=new Date(e+"T12:00"),when=MON[ds.getMonth()]+" "+ds.getDate()+(e!==s?(de.getMonth()===ds.getMonth()?" to "+de.getDate():" to "+MON[de.getMonth()]+" "+de.getDate()):"")+", "+ds.getFullYear();
+      var c={name:g("cf-f")||nm,short:nm,start:s,end:e,when:when,where:g("cf-w")||"Location to add",link:g("cf-l"),who:[]};DASH.conferences.push(c);
+      var row={name:c.name,short_name:nm,starts_on:s,ends_on:e,location:g("cf-w")||null};if(c.link)row.link=c.link;
+      LAB.addConf(row).then(function(id){c.id=id;draw()});V2.close();draw();toast("Added.")})}
+  document.querySelector(".v2 .tabs").addEventListener("click",function(e){var b=e.target.closest("[data-at]");if(!b)return;tab=b.dataset.at;this.querySelectorAll("[data-at]").forEach(function(x){x.setAttribute("aria-selected",String(x===b))});try{history.replaceState(null,"",tab==="inbox"?location.pathname:"#"+tab)}catch(x){}draw()});
+  var body=document.getElementById("adBody");
+  body.addEventListener("click",function(e){var b;
+    if((b=e.target.closest("[data-cha]"))){e.stopPropagation();approve(chById(b.dataset.cha));return}
+    if((b=e.target.closest("[data-chb]"))){e.stopPropagation();chPanel(chById(b.dataset.chb),true);return}
+    if((b=e.target.closest("[data-rqd]"))){e.stopPropagation();var r=DASH.requests.find(function(x){return String(x.id)===b.dataset.rqd});r.status="done";LAB.updRequest(r.id,{status:"done"});draw();document.dispatchEvent(new Event("bell:refresh"));toast("Marked done.");return}
+    if((b=e.target.closest("[data-ch]"))){chPanel(chById(b.dataset.ch));return}
+    if((b=e.target.closest("[data-rq]"))){rqPanel(DASH.requests.find(function(x){return String(x.id)===b.dataset.rq}));return}
+    if((b=e.target.closest("[data-mm]"))){e.stopPropagation();var i=+b.dataset.mm,m=M[i];
+      V2.menu.open(b,[["Remove from the lab",function(){later(function(){return first(m.name)+" can no longer sign in."},function(){M.splice(M.indexOf(m),1);draw()},function(){M.splice(i,0,m);draw()},function(){LAB.delMember(m.email)})},"danger"]]);return}
+    if((b=e.target.closest("[data-anrm]"))){var ai=+b.dataset.anrm,a=DASH.announcements[ai];later(function(){return "Announcement removed."},function(){DASH.announcements.splice(ai,1);draw()},function(){DASH.announcements.splice(ai,0,a);draw()},function(){if(a.id)LAB.delAnn(a.id)});return}
+    if((b=e.target.closest("[data-cfrm]"))){var c=DASH.conferences.find(function(x){return String(x.id)===b.dataset.cfrm}),ci=DASH.conferences.indexOf(c);later(function(){return c.short+" removed."},function(){DASH.conferences.splice(ci,1);draw()},function(){DASH.conferences.splice(ci,0,c);draw()},function(){LAB.delConf(c.id)});return}
+    if((b=e.target.closest("[data-addconf]"))){addConf();return}});
+  body.addEventListener("keydown",function(e){if((e.key==="Enter"||e.key===" ")&&e.target.matches(".rvrow")){e.preventDefault();e.target.click()}});
+  body.addEventListener("change",function(e){var s=e.target.closest("[data-role]");if(!s)return;var m=M[+s.dataset.role],old=m.role;m.role=s.value;
+    LAB.setRole(m.email,s.value.toLowerCase()).then(function(){toast(first(m.name)+" is now "+(s.value==="Alumni"?"alumni and can no longer sign in":s.value.toLowerCase())+".")});draw()});
+  document.getElementById("adAdd").onclick=function(){if(tab==="people")addPerson();else addAnn()};
+  var hh=location.hash.slice(1);if(hh==="people"||hh==="data"){tab=hh;document.querySelectorAll(".v2 .tabs [data-at]").forEach(function(x){x.setAttribute("aria-selected",String(x.dataset.at===hh))})}
+  draw();document.addEventListener("dash:redraw",function(){if(!V2.isOpen())draw()});
 })();
 
 });</script>
