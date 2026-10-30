@@ -321,6 +321,7 @@ var LAB=(function(){
         await q(sb.from("site_changes").update({title:c.title,body:cbody(c),status:c.status,admin_note:null}).eq("id",c.id))}catch(e){fail(e)}},
     delChange:async function(c){try{await c._p;if(c.id)await q(sb.from("site_changes").delete().eq("id",c.id))}catch(e){fail(e)}},
     decideChange:async function(c){try{await q(sb.from("site_changes").update({status:c.status,admin_note:c.status==="back"?c.note:null,decided_at:new Date().toISOString()}).eq("id",c.id))}catch(e){fail(e)}},
+    saveEmails:async function(on){try{await q(sb.from("members").update({email_notifications:!!on}).eq("email",DASH.me.email))}catch(e){fail(e)}},
     saveBirthday:async function(m,d,show){try{await q(sb.from("members").update({birthday_month:m,birthday_day:d,show_birthday:!!show}).eq("email",DASH.me.email));
         Object.assign(DASH.me.row,{birthday_month:m,birthday_day:d,show_birthday:!!show})}catch(e){fail(e)}},
     addQual:async function(x){try{x.id=(await q(sb.from("quals_tips").insert({body:x.text,year:x.when||null}).select()))[0].id}catch(e){fail(e)}},
