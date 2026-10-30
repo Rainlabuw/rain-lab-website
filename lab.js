@@ -221,16 +221,11 @@ var LAB=(function(){
     paperVote:async function(ss,o){try{var me=DASH.me.email,ids=ss.options.map(function(x){return x.id}).filter(Boolean);
         if(ids.length)await q(sb.from("reading_paper_votes").delete().eq("email",me).in("option_id",ids));
         if(o){await o._p;await q(sb.from("reading_paper_votes").insert({option_id:o.id,email:me}))}}catch(e){fail(e)}},
-    // the lab Google Calendar (through the lab-calendar function) and personal subscribe links
-    labCal:async function(from,to){var tok=(await sb.auth.getSession()).data.session.access_token,f=function(d){return d.toISOString().slice(0,10)};
-      var r;try{r=await fetch(LAB_CFG.url+"/functions/v1/lab-calendar?from="+f(from)+"&to="+f(to),{headers:{Authorization:"Bearer "+tok,apikey:LAB_CFG.key}})}catch(e){throw new Error("The lab calendar is not connected yet (the lab-calendar function is not set up).")}
-      var j=await r.json().catch(function(){return {}});if(r.status===404)throw new Error("The lab calendar is not connected yet (the lab-calendar function is not set up).");if(!r.ok)throw new Error(j.error||"The lab calendar did not load.");return j.events||[]},
-    feedUrl:function(token){return LAB_CFG.url+"/functions/v1/lab-calendar?feed="+token},
-    feedLink:async function(reset){var t=sb.from("calendar_feeds");
-      if(reset)await q(t.delete().eq("email",DASH.me.email));
-      var row=(await q(t.select("token").eq("email",DASH.me.email)))[0];
-      if(!row)row=(await q(sb.from("calendar_feeds").insert({email:DASH.me.email}).select("token")))[0];
-      return row.token},
+    // the RAIN Group Calendar: events people add in Google, copied here by the calendar sync
+    labCal:async function(from,to){var st=await q(sb.from("lab_sync").select("last_run")).catch(function(){return []});
+      if(!st.length)throw new Error("The lab calendar is not connected yet (the RAIN calendar sync has not run).");
+      var rows=await q(sb.from("lab_events").select("*").lte("starts",to.toISOString()).gte("ends",from.toISOString()));
+      return rows.map(function(x){return {id:x.id,title:x.title,allDay:x.all_day,start:x.all_day?x.start_day:x.starts,end:x.all_day?x.end_day:x.ends,where:x.location||"",note:x.note||""}}).sort(function(a,b){return a.start<b.start?-1:1})},
     // the lab library and suggestions
     addLib:function(x,file){x._p=(async function(){try{var row={title:x.t,authors:x.a||null,link:x.link||null,area:x.ar||null,note:x.note||null};
         if(file){var fd=new FormData();fd.append("kind","library");fd.append("files",file);try{var j=await helper(fd);var f=j.saved[0];row.pdf_path=f.path;row.pdf_name=f.name;row.pdf_size=f.size||null;x.pdf=f.path;x.pdfName=f.name;x.pdfSize=f.size}

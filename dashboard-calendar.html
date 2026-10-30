@@ -1,4 +1,4 @@
-<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover"></head><body><script src="vendor/supabase-2.117.2.js"></script><script src="lab.js?v=cbd41e61"></script><style>.lab-loading body{visibility:hidden}.live-hide{display:none!important}</style><!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover"></head><body><title>Calendar | RAIN Lab members</title><link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Caveat:wght@500;600&family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:wght@400;500;600&family=Urbanist:wght@500;600;700&display=swap"><style>:root{
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover"></head><body><script src="vendor/supabase-2.117.2.js"></script><script src="lab.js?v=26fe079c"></script><style>.lab-loading body{visibility:hidden}.live-hide{display:none!important}</style><!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover"></head><body><title>Calendar | RAIN Lab members</title><link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Caveat:wght@500;600&family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:wght@400;500;600&family=Urbanist:wght@500;600;700&display=swap"><style>:root{
   --cloud:#f6f8fb; --white:#ffffff; --ink:#13101d; --muted:#586174; --line:#e1e6ee;
   --blue:#1f6feb; --blue-text:#1a5fcc; --blue-soft:#e7effd;
   --night:#0b0714; --black:#000; --night-ink:#eef1f7; --night-muted:#9aa3b6; --night-line:#231d33;
@@ -1360,8 +1360,8 @@ var V2OO=(function(){
   <main class="main v2">
   <div class="wrap">
     <header class="head">
-      <div><h1>Calendar</h1><p>Group meetings, talks, 1:1s and reading groups.</p></div>
-      <span style="display:flex;gap:8px;position:relative"><button type="button" class="btn secondary" id="calSub">Subscribe</button><button type="button" class="btn primary" id="calBook" aria-haspopup="true" aria-expanded="false"><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M8 3v10M3 8h10" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>Book</button></span>
+      <div><h1>Calendar</h1><p>Group meetings, talks, 1:1s and reading groups, in sync with the RAIN Group Calendar.</p></div>
+      <span style="display:flex;gap:8px;position:relative"><button type="button" class="btn primary" id="calBook" aria-haspopup="true" aria-expanded="false"><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M8 3v10M3 8h10" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>Book</button></span>
     </header>
     <div class="calbar">
       <div class="tabs" role="tablist"><button type="button" role="tab" aria-selected="true" data-cv="week">Week</button><button type="button" role="tab" aria-selected="false" data-cv="month">Month</button></div>
@@ -1377,7 +1377,7 @@ var V2OO=(function(){
 (function(){
   var ME=DASH.me.name,now=new Date();
   var DOWS=["Sun","Mon","Tue","Wed","Thu","Fri","Sat"],DOWL=["Sunday","Monday","Tuesday","Wednesday","Thursday","Friday","Saturday"],MONL=["January","February","March","April","May","June","July","August","September","October","November","December"];
-  var TYPES={gm:["Group meeting","#1f6feb"],lab:["Lab calendar","#b0337a"],oo:["1:1s","#0e7490"],rd:["Reading","#0f8a5f"],cf:["Conferences","#7c4dcc"],bd:["Birthdays","#d9822b"]};
+  var TYPES={gm:["Group meeting","#1f6feb"],lab:["Added in Google","#b0337a"],oo:["1:1s","#0e7490"],rd:["Reading","#0f8a5f"],cf:["Conferences","#7c4dcc"],bd:["Birthdays","#d9822b"]};
   var view="week",anchor=new Date(now),off={};try{off=JSON.parse(localStorage.getItem("rainCalOff")||"{}")}catch(e){}
   var MT=LAB_CFG.meeting;
   function first(n){var k=String(n).match(/"([^"]*)"/);return k?k[1]:String(n).split(" ")[0]}
@@ -1421,7 +1421,7 @@ var V2OO=(function(){
       body='<div class="month">'+["Mon","Tue","Wed","Thu","Fri","Sat","Sun"].map(function(x){return '<div class="mh">'+x+'</div>'}).join("")+cells.map(function(d){return '<div class="mc'+(d.getMonth()!==f.getMonth()?' other':'')+(same(d,now)?' today':'')+'"><span class="dn">'+d.getDate()+'</span>'+eventsOn(d).map(function(x){return evBtn(d,x)}).join("")+'</div>'}).join("")+'</div>'+
         '<div class="calag card">'+(agendaRows(cells.filter(function(d){return d.getMonth()===f.getMonth()}))||'<p class="meta" style="margin:0">Nothing this month.</p>')+'</div>'}
     document.getElementById("calBody").innerHTML=body;
-    var notYet=/not connected yet/i.test(DASH.labCalError||"");document.getElementById("calWarn").innerHTML=DASH.labCalError&&!off.lab&&(!notYet||isAdmin())?(notYet?'<p class="calwarn">Admins only: the lab Google Calendar is not connected yet. Everything else on the calendar works.</p>':'<p class="calwarn">The lab Google Calendar did not load: '+esc(DASH.labCalError)+'</p>'):''}
+    var notYet=/not connected yet/i.test(DASH.labCalError||"");document.getElementById("calWarn").innerHTML=DASH.labCalError&&!off.lab&&(!notYet||isAdmin())?(notYet?'<p class="calwarn">Admins only: the RAIN Group Calendar sync is not set up yet. Everything else on the calendar works.</p>':'<p class="calwarn">The RAIN Group Calendar did not load: '+esc(DASH.labCalError)+'</p>'):''}
 
   /* ---------- group meeting and talks ---------- */
   function gmPanel(d){var t=talkFor(d),ended=new Date(d);var p=String(MT.end).split(":");ended.setHours(+p[0],+p[1]);var gx=(DASH.gmOff||{})[iso(d)];
@@ -1457,19 +1457,6 @@ var V2OO=(function(){
     if(x.allDay){var a=new Date(x.start+"T00:00"),b=new Date(x.end+"T00:00");b.setDate(b.getDate()-1);sub=DOWL[a.getDay()]+", "+MONL[a.getMonth()]+" "+a.getDate()+(same(a,b)?"":" to "+DOWL[b.getDay()]+", "+MONL[b.getMonth()]+" "+b.getDate())+", all day"}
     else sub=DOWL[s0.getDay()]+", "+MONL[s0.getMonth()]+" "+s0.getDate()+", "+hmD(s0)+" to "+hmD(e0);
     V2.open(x.title,sub+(x.where?", "+x.where:""),(x.note?'<p class="note2">'+linkify(x.note.replace(/<br\s*\/?>/gi,"\n").replace(/<[^>]+>/g,""))+'</p>':'')+'<p class="meta" style="margin:0">From the RAIN Group Calendar in Google. Change it there and it updates here within a few minutes.</p>',"",null)}
-  function subscribe(){var token=null;
-    function body(){if(!token)return '<p style="margin:0">Your own link to the dashboard calendar. Add it once, and your group meetings, talks, reading groups, 1:1s, conferences and the lab Google Calendar show up in your calendar app and stay up to date.</p><div class="actions"><button type="button" class="btn primary" data-get>Get my link</button></div>';
-      var https=LAB.feedUrl(token),web=https.replace(/^https:/,"webcal:"),g="https://calendar.google.com/calendar/r?cid="+encodeURIComponent(web);
-      return '<div class="field"><span class="lab">Your link</span><div class="linkbox"><input id="feedU" readonly value="'+esc(https)+'" aria-label="Your calendar link"><button type="button" class="btn secondary sm" data-copy>Copy</button></div></div>'+
-        '<div class="actions"><a class="btn primary" href="'+esc(g)+'" target="_blank" rel="noopener">Add to Google Calendar</a><a class="btn secondary" href="'+esc(web)+'">Add to Apple Calendar</a></div>'+
-        '<p class="sec">If the button does not work</p><ol class="steps"><li>Open Google Calendar on a computer.</li><li>Next to <b>Other calendars</b>, click <b>+</b>, then <b>From URL</b>.</li><li>Paste your link and click <b>Add calendar</b>.</li></ol>'+
-        '<p class="meta" style="margin:0">Google checks for changes every few hours, so new bookings can take a while to show up there. The link is only for you. If you shared it by mistake, reset it.</p>'}
-    function foot(){return token?'<button type="button" class="btn quiet" data-reset style="margin-right:auto">Reset my link</button><button type="button" class="btn primary" data-close>Done</button>':''}
-    function show(){document.getElementById("shB").innerHTML=body();document.getElementById("shF").innerHTML=foot()}
-    V2.open("Subscribe in your calendar","Google Calendar, Apple Calendar or Outlook",body(),foot(),function(b){
-      if(b.dataset.get!=null||b.dataset.reset!=null){var reset=b.dataset.reset!=null;b.disabled=true;LAB.feedLink(reset).then(function(t){token=t;show();if(reset)toast("New link made. The old one no longer works.")},function(e){b.disabled=false;console.error(e);toast("Could not make your link. Please try again.")});return}
-      if(b.dataset.copy!=null){var i=document.getElementById("feedU");i.select();try{navigator.clipboard.writeText(i.value)}catch(e){document.execCommand("copy")}toast("Copied.")}})}
-
   /* ---------- controls ---------- */
   document.querySelector(".v2 .tabs").addEventListener("click",function(e){var b=e.target.closest("[data-cv]");if(!b)return;view=b.dataset.cv;this.querySelectorAll("button").forEach(function(x){x.setAttribute("aria-selected",String(x===b))});draw()});
   document.querySelector(".v2 .nav3").addEventListener("click",function(e){var b=e.target.closest("[data-step]");if(!b)return;var s=+b.dataset.step;
@@ -1479,9 +1466,7 @@ var V2OO=(function(){
   function nextMeetingDay(){var d=new Date(now);d.setHours(0,0,0,0);var p=String(MT.end).split(":");for(var i=0;i<21;i++){var x=new Date(d);x.setDate(d.getDate()+i);if(mon0(x)===MT.weekday){var en=new Date(x);en.setHours(+p[0],+p[1]);var t=DASH.talks.find(function(y){return y.date===iso(x)});if(en>now&&!(DASH.gmOff||{})[iso(x)]&&(!t||t.names.length<DASH.maxTalks||t.names.indexOf(ME)>=0))return x}}return d}
   document.getElementById("calBook").addEventListener("click",function(e){e.stopPropagation();
     V2.menu.open(this,(V2OO.boss()?[["Manage 1:1s",function(){V2OO.manage()}]]:[["A 1:1 with Prof. Mesbahi",function(){V2OO.studentPanel(nextOODay())}]]).concat([["A talk at group meeting",function(){gmPanel(nextMeetingDay())}]]))});
-  document.getElementById("calSub").onclick=subscribe;
   draw();
-  if(location.hash==="#subscribe")subscribe();
   if(location.hash==="#oneone")V2OO.studentPanel(nextOODay());if(location.hash==="#manage"&&V2OO.boss())V2OO.manage();if(location.hash==="#talk")gmPanel(nextMeetingDay());
   document.addEventListener("dash:redraw",function(){draw()});
 })();
