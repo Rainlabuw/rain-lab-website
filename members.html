@@ -1,4 +1,4 @@
-<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover"></head><body><!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover"></head><body><title>Members | RAIN Lab</title><link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Caveat:wght@500;600&family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:wght@400;500;600&family=Urbanist:wght@500;600;700&display=swap"><style>:root{
+<!doctype html><html lang="en"><head><meta charset="utf-8"><link rel="icon" href="favicon.svg" type="image/svg+xml"><link rel="apple-touch-icon" href="apple-touch-icon.png"><meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover"></head><body><!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover"></head><body><title>Members | RAIN Lab</title><link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Caveat:wght@500;600&family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:wght@400;500;600&family=Urbanist:wght@500;600;700&display=swap"><style>:root{
   --cloud:#f6f8fb; --white:#ffffff; --ink:#13101d; --muted:#586174; --line:#e1e6ee;
   --blue:#1f6feb; --blue-text:#1a5fcc; --blue-soft:#e7effd;
   --night:#0b0714; --black:#000; --night-ink:#eef1f7; --night-muted:#9aa3b6; --night-line:#231d33;
@@ -87,7 +87,7 @@ body{background:#000}
     <h1 id="t">Welcome back</h1>
     <p>Sign in with your UW Google account to open the lab dashboard.</p>
     <a class="uw" href="#" id="go"><b>W</b>Sign in with UW Google</a><p class="msg" id="msg" role="alert" hidden></p>
-    <p class="fine">Only RAIN Lab members on the lab list can enter.<br>Not a member yet? See <a href="join.html">how to join</a>.</p>
+    <p class="fine">Only RAIN Lab members.<br>Not on the list yet? Email Shiva at <a href="mailto:sshakeri@uw.edu">sshakeri@uw.edu</a>.</p>
   </section>
   
 </main>
@@ -97,7 +97,7 @@ body{background:#000}
   var sb=supabase.createClient("https://oetcmtyqxsiznjkzpthl.supabase.co","sb_publishable_BFwGDxrQtwCcW3pSZtQ-0A_f661pXMo");
   var msg=document.getElementById("msg"),go=document.getElementById("go");
   function say(t){msg.textContent=t;msg.hidden=false}
-  if(/[?&]e=notmember/.test(location.search))say("That account is not on the lab list. Sign in with your @uw.edu account, or ask Shiva to add you.");
+  if(/[?&]e=notmember/.test(location.search))say("That account is not on the lab list. Sign in with your @uw.edu account, or email Shiva at sshakeri@uw.edu to be added.");
   // already signed in: go straight to the dashboard
   sb.auth.getSession().then(function(r){if(r.data.session)location.replace("dashboard.html")});
   go.addEventListener("click",function(e){e.preventDefault();go.setAttribute("aria-busy","true");
@@ -110,7 +110,7 @@ body{background:#000}
   var sb=supabase.createClient("https://oetcmtyqxsiznjkzpthl.supabase.co","sb_publishable_BFwGDxrQtwCcW3pSZtQ-0A_f661pXMo");
   var msg=document.getElementById("msg"),go=document.getElementById("go");
   function say(t){msg.textContent=t;msg.hidden=false}
-  if(/[?&]e=notmember/.test(location.search))say("That account is not on the lab list. Sign in with your @uw.edu account, or ask Shiva to add you.");
+  if(/[?&]e=notmember/.test(location.search))say("That account is not on the lab list. Sign in with your @uw.edu account, or email Shiva at sshakeri@uw.edu to be added.");
   // already signed in: go straight to the dashboard
   sb.auth.getSession().then(function(r){if(r.data.session)location.replace("dashboard.html")});
   go.addEventListener("click",function(e){e.preventDefault();go.setAttribute("aria-busy","true");
