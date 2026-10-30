@@ -943,10 +943,8 @@ var V2={};
       '<div class="prof">'+face(me())+'<span><b>'+esc(v.name)+'</b><span>'+esc(v.topic||"Research topic not set")+'</span></span></div>'+
       '<dl class="kv"><dt>Website</dt><dd>'+lk(v.web)+'</dd><dt>LinkedIn</dt><dd>'+lk(v.li)+'</dd><dt>Scholar</dt><dd>'+lk(v.gs)+'</dd><dt>Birthday</dt><dd>'+(r.birthday_month?esc(FULLM[r.birthday_month-1]+" "+r.birthday_day)+(r.show_birthday===false?', private':', shown on Today'):'<span style="color:var(--muted)">Not set</span>')+'</dd>'+
         (pend?'<dt>Status</dt><dd>'+(pend.status==="back"?'<span class="st red">Sent back</span>':'<span class="st amber">Changes waiting for approval</span>')+'</dd>':'')+'</dl>'+
-      '<label class="check" style="margin-top:4px"><input type="checkbox" id="pf-em"'+(r.email_notifications===false?'':' checked')+'> Email me when something is for me</label><p class="meta" style="margin:2px 0 0">A 1:1 moved or cancelled, a review request, a reading group invitation or a suggested paper.</p>'+
       '<p class="sec">My website changes</p>'+myChanges(),
-      '<button type="button" class="btn primary" data-pe>Edit</button>',Object.assign(function(b){if(b.dataset.pe!=null){profile(true);return}changeActions(b,function(){profile(false)})},
-        {change:function(e){if(e.target.id!=="pf-em")return;var on=e.target.checked;r.email_notifications=on;LAB.saveEmails(on);toast(on?"You will get emails.":"No more emails. You still see everything on Today.")}}));return}
+      '<button type="button" class="btn primary" data-pe>Edit</button>',Object.assign(function(b){if(b.dataset.pe!=null){profile(true);return}changeActions(b,function(){profile(false)})}));return}
     V2.open("Edit my profile",admin()?"As an admin, changes go live right away.":"An admin checks profile changes before they go on the People page.",
       (backC&&backC.note?'<p class="calwarn" style="margin:0;font-size:13.5px;color:#8a1c12;background:#fdecea;border-radius:10px;padding:8px 12px"><b>Note from the admin:</b> '+esc(backC.note)+'</p>':'')+
       '<div class="field"><label for="pf-n">Name</label><input id="pf-n" value="'+esc(v.name)+'"></div><div class="field"><label for="pf-t">Research topic</label><textarea id="pf-t">'+esc(v.topic)+'</textarea></div>'+
